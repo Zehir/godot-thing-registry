@@ -121,6 +121,7 @@ func open_file(registry: ThingRegistry) -> void:
 	var edited_registry: EditedThingRegistry = EditedThingRegistry.new(registry, registry_root_node)
 	registry_root_node.set_metadata(0, edited_registry)
 	registry_root_node.set_text(0, registry.resource_path.get_file())
+	registry_root_node.set_icon(0, EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"))
 	edited_registry.dirty_changed.connect(_on_edited_registry_dirty_changed.bind(edited_registry))
 	tree.set_selected(edited_registry.get_root_node(), 0)
 #endregion

@@ -83,7 +83,6 @@ offset_bottom = 613.0
 layout_mode = 2
 text = "Foo"
 
-[connection signal="action_pressed" from="VBoxContainer/TopMenu" to="." method="_on_menu_action_pressed"]
 [connection signal="action_pressed" from="VBoxContainer/TopMenu" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_menu_action_pressed"]
 [connection signal="canceled" from="VBoxContainer/HSplitContainer/FilesystemPanel/FileDialog" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_file_dialog_canceled"]
 [connection signal="file_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel/FileDialog" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_file_dialog_file_selected"]

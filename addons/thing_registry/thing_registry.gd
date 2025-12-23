@@ -32,4 +32,4 @@ func _get_plugin_name():
 
 func _get_plugin_icon():
 	# Must return some kind of Texture for the icon.
-	return EditorInterface.get_editor_theme().get_icon("Object", "EditorIcons")
+	return EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons")
