@@ -18,7 +18,6 @@ func _enter_tree() -> void:
 
 	search.right_icon = EditorInterface.get_editor_theme().get_icon("Search", "EditorIcons")
 	_root_item = tree.create_item()
-	tree.hide_root = true
 
 	open_file.call_deferred(load("uid://d16rn65mugjfk"))
 #endregion
@@ -51,8 +50,6 @@ func _on_menu_action_pressed(action: Menu.Action) -> void:
 			var selected_registry: EditedThingRegistry = get_selected_registry()
 			if is_instance_valid(selected_registry):
 				close_others(selected_registry.get_registry())
-
-
 
 
 func _on_tree_item_selected() -> void:
@@ -121,9 +118,12 @@ func open_file(registry: ThingRegistry) -> void:
 	registry_root_node.set_metadata(0, edited_registry)
 	registry_root_node.set_text(0, registry.resource_path.get_file())
 	registry_root_node.set_icon(0, EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"))
+	registry_root_node.set_icon(1, EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"))
 	edited_registry.dirty_changed.connect(_on_edited_registry_dirty_changed.bind(weakref(edited_registry)))
 	tree.deselect_all()
 	tree.set_selected(edited_registry.get_root_node(), 0)
+
+
 #endregion
 
 #region Closing
