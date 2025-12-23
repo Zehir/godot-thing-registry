@@ -9,6 +9,11 @@ enum Action {
 	FILE_NEW_REGISTRY,
 	FILE_OPEN,
 	FILE_SAVE,
+	FILE_SAVE_ALL,
+	FILE_SHOW_IN_FILESYSTEM,
+	FILE_CLOSE,
+	FILE_CLOSE_ALL,
+	FILE_CLOSE_OTHER,
 }
 
 
@@ -27,6 +32,12 @@ func _init_menu() -> void:
 	_add_menu_item(file, Action.FILE_OPEN, tr("Open..."))
 	file.add_separator()
 	_add_menu_item(file, Action.FILE_SAVE, tr("Save"), KeyModifierMask.KEY_MASK_CMD_OR_CTRL | KEY_S)
+	_add_menu_item(file, Action.FILE_SAVE_ALL, tr("Save All"), KeyModifierMask.KEY_MASK_ALT | KeyModifierMask.KEY_MASK_SHIFT | KEY_S)
+	_add_menu_item(file, Action.FILE_SHOW_IN_FILESYSTEM, tr("Show in FileSystem"))
+	file.add_separator()
+	_add_menu_item(file, Action.FILE_CLOSE, tr("Close"), KeyModifierMask.KEY_MASK_CMD_OR_CTRL | KEY_W)
+	_add_menu_item(file, Action.FILE_CLOSE_ALL, tr("Close All"))
+	_add_menu_item(file, Action.FILE_CLOSE_OTHER, tr("Close Other registries"))
 
 
 func _add_menu_item(popup: PopupMenu, id: Action, text: String, shortcut_key: Key = KEY_NONE) -> void:
