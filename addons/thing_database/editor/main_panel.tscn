@@ -1,0 +1,92 @@
+[gd_scene format=3 uid="uid://bybjt46vqisvu"]
+
+[ext_resource type="Script" uid="uid://cbgf26fkyrq4a" path="res://addons/thing_database/editor/main_panel.gd" id="1_3xrmx"]
+[ext_resource type="Script" uid="uid://dsju3xwf6tler" path="res://addons/thing_database/editor/menu.gd" id="2_q5e72"]
+[ext_resource type="Script" uid="uid://cv6tebjxh2fr8" path="res://addons/thing_database/editor/filesystem_container.gd" id="3_dqsa0"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_3xrmx"]
+
+[node name="MainPanel" type="MarginContainer" unique_id=122300499 node_paths=PackedStringArray("search_line_edit", "file_button", "tree")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = -4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+script = ExtResource("1_3xrmx")
+search_line_edit = NodePath("VBoxContainer/HSplitContainer/FilesystemPanel/Search")
+file_button = NodePath("VBoxContainer/Menu/FileButton")
+tree = NodePath("VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=550638857]
+layout_mode = 2
+
+[node name="Menu" type="HBoxContainer" parent="VBoxContainer" unique_id=457806576 node_paths=PackedStringArray("file_button")]
+layout_mode = 2
+script = ExtResource("2_q5e72")
+file_button = NodePath("FileButton")
+
+[node name="FileButton" type="MenuButton" parent="VBoxContainer/Menu" unique_id=1695886560]
+layout_mode = 2
+button_group = SubResource("ButtonGroup_3xrmx")
+text = "File"
+flat = false
+switch_on_hover = true
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer" unique_id=28992417]
+layout_mode = 2
+size_flags_vertical = 3
+split_offsets = PackedInt32Array(200)
+split_offset = 200
+
+[node name="FilesystemPanel" type="VBoxContainer" parent="VBoxContainer/HSplitContainer" unique_id=300387013 node_paths=PackedStringArray("search", "tree")]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+script = ExtResource("3_dqsa0")
+search = NodePath("Search")
+tree = NodePath("PanelContainer/Tree")
+
+[node name="FileDialog" type="FileDialog" parent="VBoxContainer/HSplitContainer/FilesystemPanel" unique_id=12455751]
+title = "Save Thing Database As..."
+size = Vector2i(960, 540)
+mode_overrides_title = false
+filters = PackedStringArray("*.tres;Resource Files")
+
+[node name="Search" type="LineEdit" parent="VBoxContainer/HSplitContainer/FilesystemPanel" unique_id=918020083]
+layout_mode = 2
+placeholder_text = "Filter Things"
+
+[node name="PanelContainer" type="Panel" parent="VBoxContainer/HSplitContainer/FilesystemPanel" unique_id=621034262]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Tree" type="Tree" parent="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer" unique_id=1641927617]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 578.0
+size_flags_vertical = 3
+
+[node name="Panel" type="Panel" parent="VBoxContainer/HSplitContainer" unique_id=1095422419]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/Panel" unique_id=1325435223]
+layout_mode = 0
+offset_right = 932.0
+offset_bottom = 613.0
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/Panel/VBoxContainer" unique_id=1758917472]
+layout_mode = 2
+text = "Foo"
+
+[connection signal="action_pressed" from="VBoxContainer/Menu" to="." method="_on_menu_action_pressed"]
+[connection signal="action_pressed" from="VBoxContainer/Menu" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_menu_action_pressed"]
+[connection signal="canceled" from="VBoxContainer/HSplitContainer/FilesystemPanel/FileDialog" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_file_dialog_canceled"]
+[connection signal="file_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel/FileDialog" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_file_dialog_file_selected"]
+[connection signal="item_mouse_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_tree_item_mouse_selected"]
+[connection signal="item_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_tree_item_selected"]

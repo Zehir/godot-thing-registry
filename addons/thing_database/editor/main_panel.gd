@@ -1,0 +1,46 @@
+@tool
+extends MarginContainer
+const Menu = preload("uid://dsju3xwf6tler")
+
+@export var search_line_edit: LineEdit
+@export var file_button: MenuButton
+@export var tree: Tree
+
+
+func _enter_tree() -> void:
+	if is_part_of_edited_scene():
+		return
+	search_line_edit.right_icon = EditorInterface.get_editor_theme().get_icon("Search", "EditorIcons")
+	var root = tree.create_item()
+	tree.hide_root = true
+	var child1 = tree.create_item(root)
+	child1.set_text(0, "child1")
+	var child2 = tree.create_item(root)
+	child2.set_text(0, "child2")
+	var subchild1 = tree.create_item(child1)
+	subchild1.set_text(0, "Subchild1")
+
+
+func foo(test: String) -> void:
+	print(test)
+
+
+func _on_menu_action_pressed(action: Menu.Action) -> void:
+	match action:
+		Menu.Action.FILE_NEW_DATABASE:
+			#file_dialog.title = "New Thing Database..."
+
+			#for connection in file_dialog.file_selected.get_connections():
+			#	file_dialog.file_selected.disconnect(connection.callable)
+
+			#file_dialog.file_selected.connect(func (path: String):
+			#	print(path)
+			#	if ResourceLoader.exists(path):
+			#		print("already exist")
+			#	var new_database = ThingDatabase.new()
+			#	ResourceSaver.save(new_database, )
+			#, CONNECT_ONE_SHOT)
+			#file_dialog.popup_centered()
+			pass
+
+	prints("_on_menu_action_pressed", Menu.Action.find_key(action))
