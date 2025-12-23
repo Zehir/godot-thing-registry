@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://bybjt46vqisvu"]
 
-[ext_resource type="Script" uid="uid://cbgf26fkyrq4a" path="res://addons/thing_database/editor/main_panel.gd" id="1_3xrmx"]
-[ext_resource type="Script" uid="uid://dsju3xwf6tler" path="res://addons/thing_database/editor/menu.gd" id="2_q5e72"]
-[ext_resource type="Script" uid="uid://cv6tebjxh2fr8" path="res://addons/thing_database/editor/filesystem_container.gd" id="3_dqsa0"]
+[ext_resource type="Script" uid="uid://cbgf26fkyrq4a" path="res://addons/thing_registry/editor/main_panel.gd" id="1_3xrmx"]
+[ext_resource type="Script" uid="uid://dsju3xwf6tler" path="res://addons/thing_registry/editor/menu.gd" id="2_q5e72"]
+[ext_resource type="Script" uid="uid://cv6tebjxh2fr8" path="res://addons/thing_registry/editor/filesystem_container.gd" id="3_dqsa0"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_3xrmx"]
 
@@ -52,7 +52,7 @@ search = NodePath("Search")
 tree = NodePath("PanelContainer/Tree")
 
 [node name="FileDialog" type="FileDialog" parent="VBoxContainer/HSplitContainer/FilesystemPanel" unique_id=12455751]
-title = "Save Thing Database As..."
+title = "Save Thing Registry As..."
 size = Vector2i(960, 540)
 mode_overrides_title = false
 filters = PackedStringArray("*.tres;Resource Files")

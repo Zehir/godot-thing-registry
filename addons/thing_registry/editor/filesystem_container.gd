@@ -7,30 +7,30 @@ const Menu = preload("uid://dsju3xwf6tler")
 @export var tree: Tree
 @onready var file_dialog: FileDialog = $FileDialog
 
-var edited_databases: Array[EditedThingDatabase]
-var _current_saving_database: ThingDatabase = null
+var edited_registrys: Array[EditedThingRegistry]
+var _current_saving_registry: ThingRegistry = null
 
 
 #region Opening
-func open_file(database: ThingDatabase) -> void:
-	if not is_instance_valid(database):
+func open_file(registry: ThingRegistry) -> void:
+	if not is_instance_valid(registry):
 		return
-	prints("open", database)
+	prints("open", registry)
 #endregion
 
 #region Closing
-func close_file(database: ThingDatabase) -> void:
-	prints("close", database)
+func close_file(registry: ThingRegistry) -> void:
+	prints("close", registry)
 
 
 func close_all() -> void:
 	pass
 
 
-func close_others(database: ThingDatabase) -> void:
-	for edited_database: EditedThingDatabase in edited_databases.duplicate():
-		var file := edited_database.get_database()
-		if file == edited_database:
+func close_others(registry: ThingRegistry) -> void:
+	for edited_registry: EditedThingRegistry in edited_registrys.duplicate():
+		var file := edited_registry.get_registry()
+		if file == edited_registry:
 			continue
 
 		close_file(file)
@@ -38,8 +38,8 @@ func close_others(database: ThingDatabase) -> void:
 
 
 #region Saving
-func _start_save_as(file: ThingDatabase) -> void:
-	file_dialog.title = "Save ThingDatabase As..."
+func _start_save_as(file: ThingRegistry) -> void:
+	file_dialog.title = "Save ThingRegistry As..."
 	var path: String = "res://"
 	if not file.is_built_in() and not file.resource_path.is_empty():
 		path = file.resource_path
@@ -47,26 +47,26 @@ func _start_save_as(file: ThingDatabase) -> void:
 	file_dialog.current_path = path
 	file_dialog.popup_centered()
 
-	_current_saving_database = file
+	_current_saving_registry = file
 
 
 func _start_new_graph_creation() -> void:
-	file_dialog.title = "New Thing Database..."
+	file_dialog.title = "New Thing Registry..."
 	if file_dialog.current_path.get_extension() != "tres":
 		file_dialog.current_path = "%s/new_graph.tres" % file_dialog.current_path.get_base_dir()
 	file_dialog.popup_centered()
 
 
-func _on_file_saved(file: ThingDatabase) -> void:
-	var idx: int = edited_databases.find_custom(EditedThingDatabase.is_database.bind(file))
+func _on_file_saved(file: ThingRegistry) -> void:
+	var idx: int = edited_registrys.find_custom(EditedThingRegistry.is_registry.bind(file))
 	if idx == -1:
 		return
 
-	edited_databases[idx].set_dirty(false)
+	edited_registrys[idx].set_dirty(false)
 
 
-func _on_unsaved_file_found(file: ThingDatabase) -> void:
-	var idx: int = edited_databases.find_custom(EditedThingDatabase.is_database.bind(file))
+func _on_unsaved_file_found(file: ThingRegistry) -> void:
+	var idx: int = edited_registrys.find_custom(EditedThingRegistry.is_registry.bind(file))
 	if idx == -1:
 		return
 
@@ -79,7 +79,7 @@ func _on_unsaved_file_found(file: ThingDatabase) -> void:
 #region Signals
 func _on_menu_action_pressed(action: Menu.Action) -> void:
 	match action:
-		Menu.Action.FILE_NEW_DATABASE:
+		Menu.Action.FILE_NEW_REGISTRY:
 			print("foo")
 			pass
 	pass # Replace with function body.
@@ -100,29 +100,29 @@ func _on_file_dialog_file_selected(path: String) -> void:
 			path += "."
 		path += "tres"
 	elif extension != "tres":
-		push_error("Invalid extension for a Thing database file.")
+		push_error("Invalid extension for a Thing registry file.")
 		return
 
-	var new_database: ThingDatabase
+	var new_registry: ThingRegistry
 
-	if is_instance_valid(_current_saving_database):
-		close_file(_current_saving_database)
-		new_database = _current_saving_database
+	if is_instance_valid(_current_saving_registry):
+		close_file(_current_saving_registry)
+		new_registry = _current_saving_registry
 	else:
-		new_database = ThingDatabase.new()
+		new_registry = ThingRegistry.new()
 
-	new_database.take_over_path(path)
-	ResourceSaver.save(new_database, path)
+	new_registry.take_over_path(path)
+	ResourceSaver.save(new_registry, path)
 	open_file(load(path))
-	_current_saving_database = null
+	_current_saving_registry = null
 
 
 func _on_file_dialog_canceled() -> void:
-	_current_saving_database = null
+	_current_saving_registry = null
 
 
-func _on_edited_database_dirty_changed(new_value: bool, edited_database: ThingDatabase) -> void:
-	var idx := edited_databases.find(edited_database)
+func _on_edited_registry_dirty_changed(new_value: bool, edited_registry: ThingRegistry) -> void:
+	var idx := edited_registrys.find(edited_registry)
 	if idx == -1:
 		return
 
@@ -133,20 +133,20 @@ func _on_edited_database_dirty_changed(new_value: bool, edited_database: ThingDa
 	#file_list.set_item_text(idx, text)
 #endregion
 
-#region EditedThingDatabase
-class EditedThingDatabase extends RefCounted:
+#region EditedThingRegistry
+class EditedThingRegistry extends RefCounted:
 	signal dirty_changed(new_value: bool)
 
-	var _database: ThingDatabase : get = get_database
+	var _registry: ThingRegistry : get = get_registry
 	var _dirty: bool = false : set = set_dirty, get = is_unsaved
 
-	static func is_database(edited_database: EditedThingDatabase, database: ThingDatabase) -> bool:
-		return edited_database.get_database() == database
+	static func is_registry(edited_registry: EditedThingRegistry, registry: ThingRegistry) -> bool:
+		return edited_registry.get_registry() == registry
 
 
-	func _init(database: ThingDatabase) -> void:
-		_database = database
-		_database.changed.connect(set_dirty.bind(true))
+	func _init(registry: ThingRegistry) -> void:
+		_registry = registry
+		_registry.changed.connect(set_dirty.bind(true))
 
 
 	func set_dirty(value: bool) -> void:
@@ -160,6 +160,6 @@ class EditedThingDatabase extends RefCounted:
 		return _dirty
 
 
-	func get_database() -> ThingDatabase:
-		return _database
+	func get_registry() -> ThingRegistry:
+		return _registry
 #endregion

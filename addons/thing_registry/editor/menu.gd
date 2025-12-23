@@ -6,7 +6,7 @@ signal action_pressed(action: Action)
 
 enum Action {
 	FILE_NEW_THING,
-	FILE_NEW_DATABASE,
+	FILE_NEW_REGISTRY,
 	FILE_OPEN,
 	FILE_SAVE,
 }
@@ -23,7 +23,7 @@ func _init_menu() -> void:
 	var file: PopupMenu = file_button.get_popup()
 	file.id_pressed.connect(action_pressed.emit)
 	_add_menu_item(file, Action.FILE_NEW_THING, tr("New Thing"), KeyModifierMask.KEY_MASK_CMD_OR_CTRL | KEY_N)
-	_add_menu_item(file, Action.FILE_NEW_DATABASE, tr("New Thing database..."), KeyModifierMask.KEY_MASK_CMD_OR_CTRL | KeyModifierMask.KEY_MASK_SHIFT | KEY_N)
+	_add_menu_item(file, Action.FILE_NEW_REGISTRY, tr("New Thing registry..."), KeyModifierMask.KEY_MASK_CMD_OR_CTRL | KeyModifierMask.KEY_MASK_SHIFT | KEY_N)
 	_add_menu_item(file, Action.FILE_OPEN, tr("Open..."))
 	file.add_separator()
 	_add_menu_item(file, Action.FILE_SAVE, tr("Save"), KeyModifierMask.KEY_MASK_CMD_OR_CTRL | KEY_S)

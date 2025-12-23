@@ -27,8 +27,8 @@ func foo(test: String) -> void:
 
 func _on_menu_action_pressed(action: Menu.Action) -> void:
 	match action:
-		Menu.Action.FILE_NEW_DATABASE:
-			#file_dialog.title = "New Thing Database..."
+		Menu.Action.FILE_NEW_REGISTRY:
+			#file_dialog.title = "New Thing Registry..."
 
 			#for connection in file_dialog.file_selected.get_connections():
 			#	file_dialog.file_selected.disconnect(connection.callable)
@@ -37,8 +37,8 @@ func _on_menu_action_pressed(action: Menu.Action) -> void:
 			#	print(path)
 			#	if ResourceLoader.exists(path):
 			#		print("already exist")
-			#	var new_database = ThingDatabase.new()
-			#	ResourceSaver.save(new_database, )
+			#	var new_registry = ThingRegistry.new()
+			#	ResourceSaver.save(new_registry, )
 			#, CONNECT_ONE_SHOT)
 			#file_dialog.popup_centered()
 			pass

@@ -1,5 +1,5 @@
 extends Resource
-class_name ThingDatabase
+class_name ThingRegistry
 
 const ThingDefinition = preload("uid://bv17pvlus3fap")
 
