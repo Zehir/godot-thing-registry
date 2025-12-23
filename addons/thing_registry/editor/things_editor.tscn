@@ -6,7 +6,7 @@
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_3xrmx"]
 
-[node name="ThingsEditor" type="MarginContainer" unique_id=122300499 node_paths=PackedStringArray("file_button", "tree")]
+[node name="ThingsEditor" type="MarginContainer" unique_id=122300499 node_paths=PackedStringArray("filesystem_panel")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -19,8 +19,7 @@ theme_override_constants/margin_top = -4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 script = ExtResource("1_7p1ck")
-file_button = NodePath("VBoxContainer/TopMenu/FileButton")
-tree = NodePath("VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree")
+filesystem_panel = NodePath("VBoxContainer/HSplitContainer/FilesystemPanel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=550638857]
 layout_mode = 2

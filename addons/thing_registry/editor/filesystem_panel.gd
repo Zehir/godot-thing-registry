@@ -103,26 +103,26 @@ func _on_edited_registry_dirty_changed(new_value: bool, edited: EditedThingRegis
 
 #region Opening
 func open_file_from_path(path: String) -> void:
-	prints("open_file_from_path", path)
-	var registry: ThingRegistry = ResourceLoader.load(path)
-	var edited_registry: EditedThingRegistry = get_opened_edited_registry(registry)
-	if is_instance_valid(edited_registry):
-		tree.set_selected(edited_registry.get_root_node(), 0)
-		return
-
-	open_file(registry)
+	open_file(ResourceLoader.load(path))
 
 
 func open_file(registry: ThingRegistry) -> void:
 	if not is_instance_valid(registry):
 		return
 
+	var edited_registry: EditedThingRegistry = get_opened_edited_registry(registry)
+	if is_instance_valid(edited_registry):
+		tree.deselect_all()
+		tree.set_selected(edited_registry.get_root_node(), 0)
+		return
+
 	var registry_root_node = tree.create_item(_root_item)
-	var edited_registry: EditedThingRegistry = EditedThingRegistry.new(registry, registry_root_node)
+	edited_registry = EditedThingRegistry.new(registry, registry_root_node)
 	registry_root_node.set_metadata(0, edited_registry)
 	registry_root_node.set_text(0, registry.resource_path.get_file())
 	registry_root_node.set_icon(0, EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"))
-	edited_registry.dirty_changed.connect(_on_edited_registry_dirty_changed.bind(edited_registry))
+	edited_registry.dirty_changed.connect(_on_edited_registry_dirty_changed.bind(weakref(edited_registry)))
+	tree.deselect_all()
 	tree.set_selected(edited_registry.get_root_node(), 0)
 #endregion
 
