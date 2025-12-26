@@ -20,4 +20,4 @@ config/icon="res://icon.svg"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/thing_registry/plugin.cfg")
+enabled=PackedStringArray("res://addons/thing_registry/plugin.cfg", "res://addons/zylann.editor_debugger/plugin.cfg")

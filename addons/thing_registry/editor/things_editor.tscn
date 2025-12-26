@@ -7,6 +7,15 @@
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_3xrmx"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ybxgq"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
+corner_detail = 1
+anti_aliasing = false
+
 [node name="ThingsEditor" type="MarginContainer" unique_id=122300499 node_paths=PackedStringArray("filesystem_panel")]
 anchors_preset = 15
 anchor_right = 1.0
@@ -77,6 +86,7 @@ hide_root = true
 [node name="ThingPanel" type="Panel" parent="VBoxContainer/HSplitContainer" unique_id=1095422419]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_ybxgq")
 
 [node name="ThingClassEditor" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/ThingPanel" unique_id=910897736]
 layout_mode = 1
