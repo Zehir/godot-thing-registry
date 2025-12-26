@@ -4,26 +4,35 @@
 [ext_resource type="Script" uid="uid://bv17pvlus3fap" path="res://addons/thing_registry/resources/thing_definition.gd" id="2_liavt"]
 [ext_resource type="Script" uid="uid://c5vtjh1vxprgr" path="res://addons/thing_registry/resources/thing_property.gd" id="3_liavt"]
 
+[sub_resource type="Resource" id="Resource_7h88h"]
+resource_name = "Resources"
+script = ExtResource("2_liavt")
+uid = 1
+parent_uid = 2
+metadata/_custom_type_script = "uid://bv17pvlus3fap"
+
 [sub_resource type="Resource" id="Resource_jyfd4"]
 script = ExtResource("3_liavt")
 name = "name"
 type = 4
 metadata/_custom_type_script = "uid://c5vtjh1vxprgr"
 
-[sub_resource type="Resource" id="Resource_liavt"]
+[sub_resource type="Resource" id="Resource_lyq0x"]
 script = ExtResource("3_liavt")
 name = "icon"
 type = 24
 metadata/_custom_type_script = "uid://c5vtjh1vxprgr"
 
-[sub_resource type="Resource" id="Resource_lyq0x"]
+[sub_resource type="Resource" id="Resource_liavt"]
+resource_name = "Items"
 script = ExtResource("2_liavt")
-class_id = &"Items"
-properties = Array[ExtResource("3_liavt")]([SubResource("Resource_jyfd4"), SubResource("Resource_liavt")])
+uid = 2
+properties = Array[ExtResource("3_liavt")]([SubResource("Resource_jyfd4"), SubResource("Resource_lyq0x")])
 metadata/_custom_type_script = "uid://bv17pvlus3fap"
 
 [resource]
 script = ExtResource("1_kg6p2")
-things = Dictionary[StringName, ExtResource("2_liavt")]({
-&"items": SubResource("Resource_lyq0x")
+_thing_definitions = Dictionary[int, ExtResource("2_liavt")]({
+1: SubResource("Resource_7h88h"),
+2: SubResource("Resource_liavt")
 })

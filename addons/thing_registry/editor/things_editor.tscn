@@ -90,4 +90,3 @@ text = "Foo"
 [connection signal="canceled" from="VBoxContainer/HSplitContainer/FilesystemPanel/FileDialog" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_file_dialog_canceled"]
 [connection signal="file_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel/FileDialog" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_file_dialog_file_selected"]
 [connection signal="item_mouse_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_tree_item_mouse_selected"]
-[connection signal="item_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_tree_item_selected"]

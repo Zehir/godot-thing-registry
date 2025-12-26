@@ -33,9 +33,13 @@ func _on_menu_action_pressed(action: Menu.Action) -> void:
 		Menu.Action.FILE_OPEN:
 			EditorInterface.popup_quick_open(open_file_from_path, ["ThingRegistry"])
 		Menu.Action.FILE_SAVE:
-			pass
+			var selected_registry: EditedThingRegistry = get_selected_registry()
+			if is_instance_valid(selected_registry):
+				ResourceSaver.save(selected_registry.get_registry())
+				_on_file_saved(selected_registry.get_registry())
+			EditorInterface.save_all_scenes()
 		Menu.Action.FILE_SAVE_ALL:
-			pass
+			EditorInterface.save_all_scenes()
 		Menu.Action.FILE_SHOW_IN_FILESYSTEM:
 			var selected_registry: EditedThingRegistry = get_selected_registry()
 			if is_instance_valid(selected_registry):
@@ -53,11 +57,15 @@ func _on_menu_action_pressed(action: Menu.Action) -> void:
 
 
 func _on_tree_item_selected() -> void:
+	print("selected")
 	pass # Replace with function body.
 
 
 func _on_tree_item_mouse_selected(mouse_position: Vector2, mouse_button_index: int) -> void:
-	pass # Replace with function body.
+	var item: TreeItem = tree.get_item_at_position(mouse_position)
+	var metadata = item.get_metadata(0)
+	if metadata is EditedThingRegistry:
+		EditorInterface.inspect_object(metadata.get_registry())
 
 
 func _on_file_dialog_file_selected(path: String) -> void:
@@ -89,7 +97,7 @@ func _on_file_dialog_canceled() -> void:
 
 
 func _on_edited_registry_dirty_changed(new_value: bool, edited: EditedThingRegistry) -> void:
-	var root_node : TreeItem = edited.get_root_node()
+	var root_node : TreeItem = edited.get_tree_node()
 	var text := root_node.get_text(0)
 	text = text.trim_suffix("(*)")
 	if new_value == true:
@@ -110,20 +118,13 @@ func open_file(registry: ThingRegistry) -> void:
 	var edited_registry: EditedThingRegistry = get_opened_edited_registry(registry)
 	if is_instance_valid(edited_registry):
 		tree.deselect_all()
-		tree.set_selected(edited_registry.get_root_node(), 0)
+		tree.set_selected(edited_registry.get_tree_node(), 0)
 		return
 
-	var registry_root_node = tree.create_item(_root_item)
-	edited_registry = EditedThingRegistry.new(registry, registry_root_node)
-	registry_root_node.set_metadata(0, edited_registry)
-	registry_root_node.set_text(0, registry.resource_path.get_file())
-	registry_root_node.set_icon(0, EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"))
-	registry_root_node.set_icon(1, EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"))
+	edited_registry = EditedThingRegistry.new(registry, _root_item)
 	edited_registry.dirty_changed.connect(_on_edited_registry_dirty_changed.bind(weakref(edited_registry)))
 	tree.deselect_all()
-	tree.set_selected(edited_registry.get_root_node(), 0)
-
-
+	tree.set_selected(edited_registry.get_tree_node(), 0)
 #endregion
 
 #region Closing
@@ -135,7 +136,7 @@ func close_file(registry: ThingRegistry) -> void:
 
 func close_edited_file(edited_registry: EditedThingRegistry) -> void:
 	# TODO check if the registry is dirty
-	edited_registry.get_root_node().free()
+	edited_registry.get_tree_node().free()
 
 
 func close_all() -> void:
@@ -184,7 +185,7 @@ func _on_unsaved_file_found(file: ThingRegistry) -> void:
 	if edited == null or not is_instance_valid(edited):
 		return
 
-	edited.get_root_node().set_text(0, "[unsaved]")
+	edited.get_tree_node().set_text(0, "[unsaved]")
 	_start_save_as(file)
 #endregion
 
@@ -213,12 +214,41 @@ func get_selected_registry() -> EditedThingRegistry:
 	return null
 
 
-class EditedThingRegistry extends RefCounted:
+
+@abstract
+class EditedThing extends RefCounted:
+	var _registry: ThingRegistry : get = get_registry
+	var _tree_node: TreeItem : get = get_tree_node
+
+
+	func _init(registry: ThingRegistry, root_item: TreeItem) -> void:
+		_registry = registry
+		_populate(root_item)
+		_connect_signals()
+
+
+	func get_registry() -> ThingRegistry:
+		return _registry
+
+
+	func get_tree_node() -> TreeItem:
+		return _tree_node
+
+
+	@abstract
+	func _populate(root_item: TreeItem) -> void
+
+
+	@abstract
+	func _connect_signals() -> void
+
+
+
+class EditedThingRegistry extends EditedThing:
 	signal dirty_changed(new_value: bool)
 
-	var _registry: ThingRegistry : get = get_registry
 	var _dirty: bool = false : set = set_dirty, get = is_unsaved
-	var _root_node: TreeItem : get = get_root_node
+	var _thing_nodes: Dictionary[int, EditedThingDefinition] = {}
 
 	static func is_registry(edited_registry: EditedThingRegistry, registry: ThingRegistry) -> bool:
 		if not edited_registry is EditedThingRegistry:
@@ -226,10 +256,31 @@ class EditedThingRegistry extends RefCounted:
 		return edited_registry.get_registry() == registry
 
 
-	func _init(registry: ThingRegistry, root_node: TreeItem) -> void:
-		_registry = registry
-		_root_node = root_node
+	func _populate(root: TreeItem) -> void:
+		_tree_node = root.get_tree().create_item(root)
+		_tree_node.set_metadata(0, self)
+		_tree_node.set_icon(0, EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"))
+		if _registry.resource_name.length() > 0:
+			_tree_node.set_text(0, _registry.resource_name)
+		else:
+			_tree_node.set_text(0, _registry.resource_path.get_file())
+
+		populate_things()
+
+
+	func populate_things(parent_uid: int = 0, parent_node: TreeItem = _tree_node) -> void:
+		var thing_definitions: Dictionary[int, ThingDefinition] = _registry.get_thing_definitions()
+		for uid in thing_definitions.keys():
+			var definition: ThingDefinition = thing_definitions.get(uid)
+			if definition.parent_uid == parent_uid:
+				var edited = EditedThingDefinition.new(_registry, parent_node, self, definition)
+				_thing_nodes.set(uid, edited)
+
+
+	func _connect_signals():
 		_registry.changed.connect(set_dirty.bind(true))
+		_registry.thing_added.connect(_on_added_thing)
+		_registry.thing_removed.connect(_on_removed_thing)
 
 
 	func set_dirty(value: bool) -> void:
@@ -243,10 +294,49 @@ class EditedThingRegistry extends RefCounted:
 		return _dirty
 
 
-	func get_registry() -> ThingRegistry:
-		return _registry
+	func _on_added_thing(uid: int) -> void:
+		pass
+
+	func _on_removed_thing(uid: int) -> void:
+		pass
 
 
-	func get_root_node() -> TreeItem:
-		return _root_node
+	func unpopulate() -> void:
+		pass
+
+#endregion
+
+
+#region EditedThingDefinition
+class EditedThingDefinition extends EditedThing:
+	var _thing: ThingDefinition : get = get_thing
+	var _edited_registry: EditedThingRegistry
+
+
+	func _init(registry: ThingRegistry, root_item: TreeItem, edited_registry: EditedThingRegistry, thing: ThingDefinition) -> void:
+		assert(registry.get_thing_definitions().has(thing.uid), "Could not find thing with uid %s in registry %s" % [thing.uid, registry.resource_path])
+		_thing = thing
+		_edited_registry = edited_registry
+		super(registry, root_item)
+
+
+	func get_thing() -> ThingDefinition:
+		return _thing
+
+
+	func _populate(root: TreeItem) -> void:
+		_tree_node = root.get_tree().create_item(root)
+		_tree_node.set_metadata(0, self)
+		_tree_node.set_icon(0, EditorInterface.get_editor_theme().get_icon("Object", "EditorIcons"))
+		if _thing.resource_name.length() > 0:
+			_tree_node.set_text(0, _thing.resource_name)
+		else:
+			_tree_node.set_text(0, _thing.resource_path.get_file())
+
+		_edited_registry.populate_things(_thing.uid, _tree_node)
+
+
+	func _connect_signals():
+		pass
+
 #endregion
