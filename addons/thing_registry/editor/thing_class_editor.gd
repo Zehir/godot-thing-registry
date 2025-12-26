@@ -38,12 +38,11 @@ func _on_filesystem_panel_thing_class_selected(script: GDScript) -> void:
 
 
 class CounterPart extends Object:
-	@export_category("Class")
-	@export var display_name: String
-	@export var _class_name: String
-	@export var parent_class: String
+	@export_category("Class definition")
+	@export var _display_name: String
+	@export var _class: String
+	@export var _parent_class: String
 	@export_category("Test number")
-
 
 
 	@export var number_count = 3:
@@ -55,9 +54,10 @@ class CounterPart extends Object:
 	var numbers = PackedInt32Array([0, 0, 0])
 
 	func _init(base_script: GDScript) -> void:
-		display_name = base_script.resource_name
-		_class_name = base_script.get_global_name()
-		parent_class = base_script.get_base_script().get_global_name()
+		_display_name = base_script.resource_name
+		_class = base_script.get_global_name()
+		_parent_class = base_script.get_base_script().get_global_name()
+		# TODO load / save metadata somewhere ? # https://github.com/godotengine/godot/issues/84653
 
 	func _get_property_list() -> Array[Dictionary]:
 		var properties: Array[Dictionary] = []
