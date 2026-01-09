@@ -1,35 +1,63 @@
 @tool
 class_name Thing
-extends RefCounted
+#extends RefCounted
+extends Resource
 
 
-var _registry: ThingRegistry
+var external_properties: Dictionary[StringName, Variant] = {}
+
+#var foo: int
+
+@export var _definition: ThingDefinition:
+	set(value):
+		_definition = value
+		if is_instance_valid(_definition):
+			_definition.property_list_changed.connect(notify_property_list_changed)
+		notify_property_list_changed()
 
 
-static func is_valid_child_class(script: GDScript, display_warnings: bool = false) -> bool:
-	if not script.get_instance_base_type() == "RefCounted":
-		if display_warnings:
-			push_warning("Script is not a child class of 'RefCounted' at '%s'" % script.resource_path)
-		return false
-	if script.is_abstract():
-		if display_warnings:
-			push_warning("Script is abstract at '%s'" % script.resource_path)
-		return false
-	if not script.is_tool():
-		if display_warnings:
-			push_warning("Script is missing the @tool anotation at '%s'" % script.resource_path)
-		return false
-	if not script.can_instantiate():
-		if display_warnings:
-			push_warning("Script can't be instantiated at '%s'" % script.resource_path)
-		return false
+func _get_property_list() -> Array[Dictionary]:
+	var properties: Array[Dictionary] = []
+	if is_instance_valid(_definition):
+		for property in _definition.get_property_list():
+			if not _definition.is_property_external(property.name):
+				continue
+			var cloned: Dictionary = property.duplicate()
+			cloned.usage = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_EDITOR #  | PROPERTY_USAGE_SCRIPT_VARIABLE
+			properties.append(cloned)
 
-	var base_script: Script = script.get_base_script()
-	while base_script != null:
-		if base_script == Thing:
-			return true
-		base_script = base_script.get_base_script()
+	return properties
 
-	if display_warnings:
-		push_warning("Script is not a child class of the Thing class at '%s'" % script.resource_path)
+
+func is_property_external(property: StringName) -> bool:
+	return is_instance_valid(_definition) and _definition.is_property_external(property)
+
+
+func _get(property):
+	if is_property_external(property):
+		return external_properties.get(property)
+
+
+func _set(property: StringName, value: Variant) -> bool:
+	if is_property_external(property):
+		external_properties.set(property, value)
+		return true
 	return false
+
+
+func _property_can_revert(property: StringName) -> bool:
+	if is_property_external(property):
+		return _definition.property_can_revert(property)
+	return false
+
+
+func _property_get_revert(property: StringName) -> Variant:
+	if is_property_external(property):
+		return _definition.property_get_revert(property)
+	return null
+
+
+func _validate_property(property: Dictionary) -> void:
+	if is_property_external(property.name):
+		if property_can_revert(property.name) and property_get_revert(property.name) == get(property.name):
+			property.usage = PROPERTY_USAGE_NONE

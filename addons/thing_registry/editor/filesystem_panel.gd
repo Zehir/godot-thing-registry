@@ -2,7 +2,6 @@
 extends VBoxContainer
 
 
-signal registry_selected(registry: EditedThingRegistry)
 signal thing_class_selected(script: GDScript)
 
 
@@ -12,7 +11,7 @@ const Menu = preload("uid://dsju3xwf6tler")
 @export var tree: Tree
 @onready var file_dialog: FileDialog = $FileDialog
 
-var _current_saving_registry: ThingRegistry = null
+
 var _root_item: TreeItem
 
 
@@ -30,7 +29,6 @@ func _enter_tree() -> void:
 	search.right_icon = EditorInterface.get_editor_theme().get_icon("Search", "EditorIcons")
 	_root_item = tree.create_item()
 
-	open_file.call_deferred(load("uid://d16rn65mugjfk"))
 #endregion
 
 
@@ -39,8 +37,6 @@ func _on_menu_action_pressed(action: Menu.Action) -> void:
 	match action:
 		Menu.Action.FILE_NEW_THING:
 			pass
-		Menu.Action.FILE_NEW_REGISTRY:
-			_start_new_registry_creation()
 		Menu.Action.FILE_OPEN:
 			EditorInterface.popup_quick_open(open_file_from_path, ["ThingRegistry"])
 		Menu.Action.FILE_RELOAD:
@@ -52,9 +48,9 @@ func _on_menu_action_pressed(action: Menu.Action) -> void:
 					open_file(registry)
 		Menu.Action.FILE_SAVE:
 			var selected_registry: EditedThingRegistry = get_selected_registry()
-			if is_instance_valid(selected_registry):
-				ResourceSaver.save(selected_registry.get_registry())
-				_on_file_saved(selected_registry.get_registry())
+			#if is_instance_valid(selected_registry):
+				#ResourceSaver.save(selected_registry.get_registry())
+				#_on_file_saved(selected_registry.get_registry())
 			EditorInterface.save_all_scenes()
 		Menu.Action.FILE_SAVE_ALL:
 			EditorInterface.save_all_scenes()
@@ -77,10 +73,10 @@ func _on_menu_action_pressed(action: Menu.Action) -> void:
 func _on_tree_item_mouse_selected(mouse_position: Vector2, mouse_button_index: int) -> void:
 	var item: TreeItem = tree.get_item_at_position(mouse_position)
 	var metadata = item.get_metadata(TC.NAME)
-	if metadata is EditedThingRegistry:
-		registry_selected.emit(metadata)
-	elif metadata is GDScript and Thing.is_valid_child_class(metadata):
-		thing_class_selected.emit(metadata)
+	#if metadata is EditedThingRegistry:
+		#registry_selected.emit(metadata)
+	#elif metadata is GDScript and Thing.is_valid_child_class(metadata):
+		#thing_class_selected.emit(metadata)
 
 
 func _on_file_dialog_file_selected(path: String) -> void:
@@ -92,23 +88,21 @@ func _on_file_dialog_file_selected(path: String) -> void:
 	elif extension != "tres":
 		push_error("Invalid extension for a Thing registry file.")
 		return
+#
+	#var new_registry: ThingRegistry
+#
+	#if is_instance_valid(_current_saving_registry):
+		#close_file(_current_saving_registry)
+		#new_registry = _current_saving_registry
+	#else:
+		#new_registry = ThingRegistry.new()
+#
+	#new_registry.take_over_path(path)
+	#ResourceSaver.save(new_registry, path)
+	#open_file(load(path))
+	#_current_saving_registry = null
 
-	var new_registry: ThingRegistry
 
-	if is_instance_valid(_current_saving_registry):
-		close_file(_current_saving_registry)
-		new_registry = _current_saving_registry
-	else:
-		new_registry = ThingRegistry.new()
-
-	new_registry.take_over_path(path)
-	ResourceSaver.save(new_registry, path)
-	open_file(load(path))
-	_current_saving_registry = null
-
-
-func _on_file_dialog_canceled() -> void:
-	_current_saving_registry = null
 
 
 func _on_edited_registry_dirty_changed(new_value: bool, edited: EditedThingRegistry) -> void:
@@ -123,7 +117,8 @@ func _on_edited_registry_dirty_changed(new_value: bool, edited: EditedThingRegis
 
 #region Opening
 func open_file_from_path(path: String) -> void:
-	open_file(ResourceLoader.load(path))
+	pass
+	#open_file(ResourceLoader.load(path))
 
 
 func open_file(registry: ThingRegistry) -> void:
@@ -177,8 +172,6 @@ func _start_save_as(file: ThingRegistry) -> void:
 
 	file_dialog.current_path = path
 	file_dialog.popup_centered()
-
-	_current_saving_registry = file
 
 
 func _start_new_registry_creation() -> void:
@@ -283,7 +276,7 @@ class EditedThingRegistry extends RefCounted:
 				continue
 
 			var resource = ResourceLoader.load("%s/%s" % [path, file_name])
-			if resource is GDScript and Thing.is_valid_child_class(resource, true):
+			if resource is GDScript and ThingRegistry.is_valid_child_class(resource, true):
 				_add_script_in_tree(resource)
 
 		for sub_directory in directory.get_directories():

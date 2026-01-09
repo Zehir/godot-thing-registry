@@ -100,7 +100,6 @@ size_flags_vertical = 3
 script = ExtResource("4_ybxgq")
 
 [connection signal="action_pressed" from="VBoxContainer/TopMenu" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_menu_action_pressed"]
-[connection signal="thing_class_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel" to="VBoxContainer/HSplitContainer/ThingPanel/ThingClassEditor" method="_on_filesystem_panel_thing_class_selected"]
 [connection signal="canceled" from="VBoxContainer/HSplitContainer/FilesystemPanel/FileDialog" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_file_dialog_canceled"]
 [connection signal="file_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel/FileDialog" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_file_dialog_file_selected"]
 [connection signal="item_mouse_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_tree_item_mouse_selected"]

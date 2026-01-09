@@ -19,6 +19,17 @@ func populate(script: GDScript):
 	editor_inspector.edit(_counterpart)
 
 
+	var base = (ThingResource as GDScript).get_base_script()
+
+	var item: Thing = Thing.new()
+	item.set_script(ThingItem)
+	item.set_script(ThingResource)
+
+	print(item.toto)
+
+
+
+
 
 func unpopulate():
 	if is_instance_valid(_counterpart):
@@ -40,58 +51,52 @@ func _on_filesystem_panel_thing_class_selected(script: GDScript) -> void:
 class CounterPart extends Object:
 	@export_category("Class definition")
 	@export var _display_name: String
-	@export var _class: String
-	@export var _parent_class: String
-	@export_category("Test number")
+	@export var _class: StringName
+	@export var _parent_class: StringName
 
+	const revertable_properties: Array[StringName] = [
+		&"_display_name",
+		&"_class",
+		&"_parent_class"
+	]
 
-	@export var number_count = 3:
-		set(nc):
-			number_count = nc
-			numbers.resize(number_count)
-			notify_property_list_changed()
-
-	var numbers = PackedInt32Array([0, 0, 0])
+	var _base_script: GDScript
 
 	func _init(base_script: GDScript) -> void:
-		_display_name = base_script.resource_name
-		_class = base_script.get_global_name()
-		_parent_class = base_script.get_base_script().get_global_name()
+		_base_script = base_script
+		for property in revertable_properties:
+			set(property, _property_get_revert(property))
+
+		if not _base_script.resource_name.is_empty():
+			_display_name = _base_script.resource_name
+
 		# TODO load / save metadata somewhere ? # https://github.com/godotengine/godot/issues/84653
 
 	func _get_property_list() -> Array[Dictionary]:
 		var properties: Array[Dictionary] = []
-
-		for i in range(number_count):
-			properties.append({
-				"name": "number_%d" % i,
-				"type": TYPE_INT,
-				"hint": PROPERTY_HINT_ENUM,
-				"hint_string": "ZERO,ONE,TWO,THREE,FOUR,FIVE",
-			})
-
-
-
 		return properties
 
 	func _validate_property(property: Dictionary) -> void:
-		#prints("_validate_property", property.name)
-		if property.name == "script":
-			property.usage = property.usage | PROPERTY_USAGE_NO_EDITOR
+		pass
 
-			#prints("script", property)
 
-	func _get(property):
-		if property.begins_with("number_"):
-			var index = property.get_slice("_", 1).to_int()
-			return numbers[index]
+	func _property_can_revert(property: StringName) -> bool:
+		return revertable_properties.has(property)
 
-	func _set(property, value):
-		if property.begins_with("number_"):
-			var index = property.get_slice("_", 1).to_int()
-			numbers[index] = value
-			return true
-		return false
+
+	func _property_get_revert(property: StringName) -> Variant:
+		match property:
+			&"_display_name":
+				var display_name = _base_script.get_global_name()
+				if display_name.is_empty():
+					display_name = _base_script.resource_path.get_file().trim_suffix(".gd").capitalize()
+				display_name = display_name.trim_prefix("Thing")
+				return display_name
+			&"_class":
+				return _base_script.get_global_name()
+			&"_parent_class":
+				return _base_script.get_base_script().get_global_name()
+		return null
 
 
 class CounterPartEditorInspectorPlugin extends EditorInspectorPlugin:

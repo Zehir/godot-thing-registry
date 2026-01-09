@@ -9,6 +9,8 @@ var things_editor: ThingsEditor
 var cleanup_callables: Array[Callable] = []
 
 func _enter_tree() -> void:
+	add_autoload_singleton("ThingRegistry", load("uid://bcpxjdpetdhsw").resource_path)
+
 	cleanup_callables.append(ThingClassEditor.init_plugin(self))
 
 	things_editor = ThingsEditor.get_scene().instantiate()
@@ -17,6 +19,8 @@ func _enter_tree() -> void:
 
 
 func _exit_tree() -> void:
+	remove_autoload_singleton("ThingRegistry")
+
 	cleanup_callables.reverse()
 	for callable in cleanup_callables:
 		if is_instance_valid(callable) and callable.is_valid():
@@ -46,9 +50,10 @@ func _get_plugin_icon():
 
 
 func _handles(object: Object) -> bool:
-	return object is ThingRegistry
+	return false
+	#return object is ThingRegistry
 
 
-func _edit(object: Object) -> void:
-	if object is ThingRegistry:
-		things_editor.filesystem_panel.open_file(object)
+#func _edit(object: Object) -> void:
+	#if object is ThingRegistry:
+		#things_editor.filesystem_panel.open_file(object)
