@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ThingDefinition" format=3 uid="uid://bioa82gbw211v"]
+
+[ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing_definition.gd" id="1_t6hd3"]
+
+[resource]
+script = ExtResource("1_t6hd3")
+parent = "uid://roo8g4716v5y"
+metadata/_custom_type_script = "uid://dirfs1dh5k0r"

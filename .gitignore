@@ -17,4 +17,4 @@ mono_crash.*.json
 
 # Plugin-specific ignores
 addons/*
-!addons/things_registry/
+!addons/thing_registry/

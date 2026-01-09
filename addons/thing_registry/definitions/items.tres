@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ThingDefinition" format=3 uid="uid://roo8g4716v5y"]
+
+[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_definition_module.gd" id="1_swwdd"]
+[ext_resource type="Script" uid="uid://dt6m4ybqdtu6r" path="res://addons/thing_registry/modules/items.gd" id="1_w7cmp"]
+[ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing_definition.gd" id="2_swwdd"]
+
+[sub_resource type="Resource" id="Resource_oxixp"]
+script = ExtResource("1_w7cmp")
+metadata/_custom_type_script = "uid://dt6m4ybqdtu6r"
+
+[resource]
+script = ExtResource("2_swwdd")
+modules = Array[ExtResource("1_swwdd")]([SubResource("Resource_oxixp")])
+properties = null
+metadata/_custom_type_script = "uid://dirfs1dh5k0r"

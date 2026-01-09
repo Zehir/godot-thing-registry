@@ -6,6 +6,9 @@ extends Resource
 
 var external_properties: Dictionary[StringName, Variant] = {}
 
+
+
+
 #var foo: int
 
 @export var _definition: ThingDefinition:

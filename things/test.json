@@ -1,0 +1,22 @@
+{
+	"items": {
+		"modules": ["uid://doezkdoz"], "_comment_modules": "An item can have one or multiples modules",
+		"name": "",
+		"count": 1,
+		"stack_size": 64,
+		"description": ""
+	},
+	"tools": {
+		"modules": ["uid://doezkdoz"],
+		"inherits": "items",
+		"stack_size": 1
+	},
+	"axe": {
+		"inherits": "tools",
+		"damage": 10,
+		"description": "A simple axe",
+		"model_3D": {
+			"type": "Object",
+		}
+	}
+}
