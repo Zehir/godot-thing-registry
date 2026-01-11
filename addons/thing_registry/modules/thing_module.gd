@@ -32,14 +32,14 @@ func thing_property_can_revert(property: StringName, _thing: Thing) -> bool:
 
 
 func thing_property_get_revert(property: StringName, thing: Thing) -> Variant:
-	if not thing._parent is Thing:
+	if not thing.parent is Thing:
 		return _thing_property_get_revert(property, thing)
 
 	var full_name: StringName = StringName(get_module_name() + "/" + property)
-	if thing._parent.properties.has(full_name):
-		return thing._parent.properties.get(full_name)
+	if thing.parent.properties.has(full_name):
+		return thing.parent.properties.get(full_name)
 
-	return thing_property_get_revert(property, thing._parent)
+	return thing_property_get_revert(property, thing.parent)
 
 
 

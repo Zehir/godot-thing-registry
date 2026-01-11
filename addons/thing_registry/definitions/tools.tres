@@ -5,4 +5,4 @@
 
 [resource]
 script = ExtResource("3_exueu")
-parent = &"uid://cp71dreqaus01"
+parent_id = &"uid://cp71dreqaus01"

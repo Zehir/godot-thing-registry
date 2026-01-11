@@ -5,23 +5,23 @@ extends Resource
 signal module_changed()
 
 
-@export_custom(PROPERTY_HINT_RESOURCE_TYPE, "Thing", PROPERTY_USAGE_EDITOR) var _parent: Thing:
+@export_custom(PROPERTY_HINT_RESOURCE_TYPE, "Thing", PROPERTY_USAGE_EDITOR) var parent: Thing:
 	get():
-		if parent.is_empty():
+		if parent_id.is_empty():
 			return null
-		return load(parent)
+		return load(parent_id)
 	set(value):
-		if is_instance_valid(_parent):
-			_parent.childs.erase.call_deferred(ResourceUID.path_to_uid(resource_path))
+		if is_instance_valid(parent):
+			parent.childs.erase.call_deferred(ResourceUID.path_to_uid(resource_path))
 		if is_instance_valid(value):
 			value.childs.append.call_deferred(ResourceUID.path_to_uid(resource_path))
-			parent = ResourceUID.path_to_uid(value.resource_path)
+			parent_id = ResourceUID.path_to_uid(value.resource_path)
 		else:
-			parent = ""
+			parent_id = ""
 		notify_property_list_changed()
 
 #TODO check for infinite loop
-@export_storage var parent: StringName
+@export_storage var parent_id: StringName
 
 ## References to child Things
 @export_storage var childs: Array[StringName] = []
@@ -72,7 +72,7 @@ func notify_childrens_property_value_changed(property_name: StringName, old_valu
 ## Called when a parent property value has changed.
 func _on_parent_property_value_changed(property_name: StringName, old_value: Variant):
 	if get(property_name) == old_value:
-		set(property_name, _parent.get(property_name))
+		set(property_name, parent.get(property_name))
 
 
 ## Load modules from parent and self.
@@ -82,8 +82,8 @@ func get_modules(force_refresh: bool = false) -> Dictionary[StringName, ThingMod
 		return _loaded_modules
 
 	var modules_list: Dictionary[StringName, ThingModule] = {}
-	if _parent is Thing:
-		modules_list = _parent.get_modules()
+	if parent is Thing:
+		modules_list = parent.get_modules()
 	for module in modules:
 		if not module is ThingModule:
 			continue
@@ -169,6 +169,13 @@ func _get(property: StringName) -> Variant:
 	return properties.get(property)
 
 
+func is_child_of(other: Thing) -> bool:
+	var current: Thing = self
+	while is_instance_valid(current.parent):
+		if current.parent == other:
+			return true
+		current = current.parent
+	return false
 
 #@export_tool_button("Debug") var debug_action = debug
 #func debug():
