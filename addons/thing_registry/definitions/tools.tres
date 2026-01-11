@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="ThingDefinition" format=3 uid="uid://bioa82gbw211v"]
+[gd_resource type="Resource" script_class="Thing" format=3 uid="uid://bioa82gbw211v"]
 
-[ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing_definition.gd" id="1_t6hd3"]
+[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="1_3tp8j"]
+[ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="1_t6hd3"]
+[ext_resource type="Resource" uid="uid://roo8g4716v5y" path="res://addons/thing_registry/definitions/items.tres" id="2_tl775"]
 
 [resource]
 script = ExtResource("1_t6hd3")
-parent = "uid://roo8g4716v5y"
-metadata/_custom_type_script = "uid://dirfs1dh5k0r"
+parent = ExtResource("2_tl775")

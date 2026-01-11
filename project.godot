@@ -35,6 +35,10 @@ config/icon="res://icon.svg"
 
 ThingRegistry="*uid://bcpxjdpetdhsw"
 
+[debug]
+
+gdscript/warnings/directory_rules={}
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/thing_registry/plugin.cfg")
