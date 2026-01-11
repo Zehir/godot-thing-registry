@@ -1,15 +1,14 @@
-[gd_resource type="Resource" script_class="Thing" format=3 uid="uid://roo8g4716v5y"]
+[gd_resource type="Resource" script_class="Thing" format=3 uid="uid://cp71dreqaus01"]
 
-[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="1_swwdd"]
+[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="1_w7cmp"]
 [ext_resource type="Script" uid="uid://dt6m4ybqdtu6r" path="res://addons/thing_registry/modules/items_module.gd" id="2_oxixp"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_swwdd"]
 
-[sub_resource type="Resource" id="Resource_swwdd"]
+[sub_resource type="Resource" id="Resource_q7ql3"]
 script = ExtResource("2_oxixp")
 metadata/_custom_type_script = "uid://dt6m4ybqdtu6r"
 
 [resource]
 script = ExtResource("2_swwdd")
-childs = Array[StringName]([&"uid://bioa82gbw211v"])
-modules = Array[ExtResource("1_swwdd")]([SubResource("Resource_swwdd")])
-item/name = "Item"
+childs = Array[StringName]([&"uid://6ej7idjf3wfe"])
+modules = Array[ExtResource("1_w7cmp")]([SubResource("Resource_q7ql3")])

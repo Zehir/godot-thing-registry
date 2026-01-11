@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cbgf26fkyrq4a" path="res://addons/thing_registry/editor/things_editor.gd" id="1_7p1ck"]
 [ext_resource type="Script" uid="uid://dsju3xwf6tler" path="res://addons/thing_registry/editor/top_menu.gd" id="2_ybxgq"]
-[ext_resource type="Script" uid="uid://cv6tebjxh2fr8" path="res://addons/thing_registry/editor/filesystem_panel.gd" id="3_cwkf3"]
+[ext_resource type="Script" uid="uid://cao610uqi1ac6" path="res://addons/thing_registry/editor/thing_tree.gd" id="4_cwkf3"]
 [ext_resource type="Script" uid="uid://1wve8y0fjon7" path="res://addons/thing_registry/editor/thing_class_editor.gd" id="4_ybxgq"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_3xrmx"]
@@ -18,7 +18,7 @@ bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
 corner_detail = 1
 anti_aliasing = false
 
-[node name="ThingsEditor" type="MarginContainer" unique_id=122300499 node_paths=PackedStringArray("filesystem_panel")]
+[node name="ThingsEditor" type="MarginContainer" unique_id=122300499]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -31,7 +31,6 @@ theme_override_constants/margin_top = -4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 script = ExtResource("1_7p1ck")
-filesystem_panel = NodePath("VBoxContainer/HSplitContainer/FilesystemPanel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=550638857]
 layout_mode = 2
@@ -54,12 +53,9 @@ size_flags_vertical = 3
 split_offsets = PackedInt32Array(200)
 split_offset = 200
 
-[node name="FilesystemPanel" type="VBoxContainer" parent="VBoxContainer/HSplitContainer" unique_id=300387013 node_paths=PackedStringArray("search", "tree")]
+[node name="FilesystemPanel" type="VBoxContainer" parent="VBoxContainer/HSplitContainer" unique_id=300387013]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-script = ExtResource("3_cwkf3")
-search = NodePath("HBoxContainer/Search")
-tree = NodePath("PanelContainer/Tree")
 
 [node name="FileDialog" type="FileDialog" parent="VBoxContainer/HSplitContainer/FilesystemPanel" unique_id=12455751]
 title = "Save Thing Registry As..."
@@ -83,7 +79,7 @@ text = "Add breadcrub here with parents things"
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Tree" type="Tree" parent="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer" unique_id=1641927617]
+[node name="Tree" type="Tree" parent="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer" unique_id=1641927617 node_paths=PackedStringArray("search", "file_dialog")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -91,10 +87,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
+theme_override_constants/draw_guides = 0
 theme_override_styles/hovered = SubResource("StyleBoxEmpty_ybxgq")
 columns = 3
 hide_root = true
-select_mode = 2
+script = ExtResource("4_cwkf3")
+search = NodePath("../../HBoxContainer/Search")
+file_dialog = NodePath("../../FileDialog")
 
 [node name="ThingPanel" type="Panel" parent="VBoxContainer/HSplitContainer" unique_id=1095422419]
 visible = false
@@ -113,7 +112,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("4_ybxgq")
 
-[connection signal="action_pressed" from="VBoxContainer/TopMenu" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_menu_action_pressed"]
-[connection signal="canceled" from="VBoxContainer/HSplitContainer/FilesystemPanel/FileDialog" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_file_dialog_canceled"]
-[connection signal="file_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel/FileDialog" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_file_dialog_file_selected"]
-[connection signal="item_mouse_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" to="VBoxContainer/HSplitContainer/FilesystemPanel" method="_on_tree_item_mouse_selected"]
+[connection signal="action_pressed" from="VBoxContainer/TopMenu" to="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" method="_on_menu_action_pressed"]
+[connection signal="canceled" from="VBoxContainer/HSplitContainer/FilesystemPanel/FileDialog" to="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" method="_on_file_dialog_canceled"]
+[connection signal="file_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel/FileDialog" to="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" method="_on_file_dialog_file_selected"]
+[connection signal="item_mouse_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" to="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" method="_on_item_mouse_selected"]

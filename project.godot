@@ -31,10 +31,6 @@ config/name="Thing registry"
 config/features=PackedStringArray("4.6")
 config/icon="res://icon.svg"
 
-[autoload]
-
-ThingRegistry="*uid://bcpxjdpetdhsw"
-
 [debug]
 
 gdscript/warnings/directory_rules={}

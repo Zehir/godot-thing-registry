@@ -1,24 +1,25 @@
 @tool
-extends VBoxContainer
+class_name ThingTree
+extends Tree
+
 
 
 signal thing_selected(thing: Thing)
-
-
-const Menu = preload("uid://dsju3xwf6tler")
-
-@export var search: LineEdit
-@export var tree: Tree
-@onready var file_dialog: FileDialog = $FileDialog
-
-
-var _root_item: TreeItem
-
 
 ## Tree columns indexes
 enum Column {
 	UID,
 }
+
+
+const Menu = preload("uid://dsju3xwf6tler")
+
+
+@export var search: LineEdit
+@export var file_dialog: FileDialog
+
+
+var _root_item: TreeItem
 
 
 #region Virtual methods
@@ -27,7 +28,7 @@ func _enter_tree() -> void:
 		return
 
 	search.right_icon = EditorInterface.get_editor_theme().get_icon("Search", "EditorIcons")
-	_root_item = tree.create_item()
+	_root_item = create_item()
 
 	open_file(load("uid://cp71dreqaus01"))
 	#open_file(load("uid://6ej7idjf3wfe"))
@@ -43,7 +44,7 @@ func _on_menu_action_pressed(action: Menu.Action) -> void:
 			EditorInterface.popup_quick_open(open_file_from_path, ["Thing"])
 		Menu.Action.FILE_RELOAD:
 			for child: TreeItem in _root_item.get_children():
-				var metadata = child.get_metadata(Column.UID)
+				var metadata = child.get_metadata(ThingTree.Column.UID)
 				if metadata is EditedThing:
 					var thing = metadata.get_thing()
 					close_file(thing)
@@ -72,14 +73,6 @@ func _on_menu_action_pressed(action: Menu.Action) -> void:
 				close_others(selected_thing.get_thing())
 
 
-func _on_tree_item_mouse_selected(mouse_position: Vector2, mouse_button_index: int) -> void:
-	var item: TreeItem = tree.get_item_at_position(mouse_position)
-	var metadata = item.get_metadata(Column.UID)
-	#if metadata is EditedThing:
-		#thing_selected.emit(metadata)
-	#elif metadata is GDScript and Thing.is_valid_child_class(metadata):
-		#thing_selected.emit(metadata)
-
 
 func _on_file_dialog_file_selected(path: String) -> void:
 	var extension: String = path.get_extension()
@@ -106,14 +99,6 @@ func _on_file_dialog_file_selected(path: String) -> void:
 
 
 
-
-func _on_edited_thing_dirty_changed(new_value: bool, edited: EditedThing) -> void:
-	var root_node : TreeItem = edited.get_tree_node()
-	var text := root_node.get_text(Column.UID)
-	text = text.trim_suffix("(*)")
-	if new_value == true:
-		text += "(*)"
-	root_node.set_text(Column.UID, text)
 #endregion
 
 
@@ -128,14 +113,14 @@ func open_file(thing: Thing) -> void:
 
 	var edited_thing: EditedThing = get_opened_edited_thing(thing)
 	if is_instance_valid(edited_thing):
-		tree.deselect_all()
-		tree.set_selected(edited_thing.get_tree_node(), Column.UID)
+		deselect_all()
+		set_selected(edited_thing.get_tree_node(), Column.UID)
 		return
 
 	edited_thing = EditedThing.new(thing, _root_item)
 	edited_thing.dirty_changed.connect(_on_edited_thing_dirty_changed.bind(weakref(edited_thing)))
-	tree.deselect_all()
-	tree.set_selected(edited_thing.get_tree_node(), Column.UID)
+	deselect_all()
+	set_selected(edited_thing.get_tree_node(), Column.UID)
 #endregion
 
 #region Closing
@@ -207,7 +192,7 @@ func get_opened_edited_thing(thing: Thing) -> EditedThing:
 
 
 func get_selected_thing() -> EditedThing:
-	var current_item: TreeItem = tree.get_selected()
+	var current_item: TreeItem = get_selected()
 	while true:
 		if current_item == null:
 			return null
@@ -330,3 +315,54 @@ class EditedThing extends RefCounted:
 
 
 ##endregion
+
+
+
+
+func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
+	prints("_can_drop_data", at_position, data)
+	return true
+
+func _drop_data(at_position: Vector2, data: Variant) -> void:
+	prints("_drop_data", at_position, data)
+
+
+func _get_drag_data(at_position: Vector2) -> Variant:
+	var data = {"foo": "bar"}
+
+	var item: TreeItem  = get_item_at_position(at_position)
+	var metadata: Thing = item.get_metadata(Column.UID)
+
+	print(metadata is Thing)
+	var label: Label = Label.new()
+	label.text = metadata.resource_name
+	set_drag_preview(label)
+
+	return data
+
+
+func _on_item_mouse_selected(mouse_position: Vector2, mouse_button_index: int) -> void:
+	pass # Replace with function body.
+
+	var item: TreeItem = get_item_at_position(mouse_position)
+	var metadata = item.get_metadata(Column.UID)
+	#if metadata is EditedThing:
+		#thing_selected.emit(metadata)
+	#elif metadata is GDScript and Thing.is_valid_child_class(metadata):
+		#thing_selected.emit(metadata)
+
+
+
+
+
+func _on_edited_thing_dirty_changed(new_value: bool, edited: EditedThing) -> void:
+	var root_node : TreeItem = edited.get_tree_node()
+	var text := root_node.get_text(Column.UID)
+	text = text.trim_suffix("(*)")
+	if new_value == true:
+		text += "(*)"
+	root_node.set_text(Column.UID, text)
+
+
+func _on_file_dialog_canceled() -> void:
+	pass # Replace with function body.
