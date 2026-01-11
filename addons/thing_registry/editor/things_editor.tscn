@@ -7,6 +7,8 @@
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_3xrmx"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ybxgq"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ybxgq"]
 content_margin_left = 4.0
 content_margin_top = 4.0
@@ -56,7 +58,7 @@ split_offset = 200
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 script = ExtResource("3_cwkf3")
-search = NodePath("Search")
+search = NodePath("HBoxContainer/Search")
 tree = NodePath("PanelContainer/Tree")
 
 [node name="FileDialog" type="FileDialog" parent="VBoxContainer/HSplitContainer/FilesystemPanel" unique_id=12455751]
@@ -65,9 +67,17 @@ size = Vector2i(960, 540)
 mode_overrides_title = false
 filters = PackedStringArray("*.tres;Resource Files")
 
-[node name="Search" type="LineEdit" parent="VBoxContainer/HSplitContainer/FilesystemPanel" unique_id=918020083]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/FilesystemPanel" unique_id=1792909648]
+layout_mode = 2
+
+[node name="Search" type="LineEdit" parent="VBoxContainer/HSplitContainer/FilesystemPanel/HBoxContainer" unique_id=918020083]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 placeholder_text = "Filter Things"
+
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/FilesystemPanel/HBoxContainer" unique_id=1333639819]
+layout_mode = 2
+text = "Add breadcrub here with parents things"
 
 [node name="PanelContainer" type="Panel" parent="VBoxContainer/HSplitContainer/FilesystemPanel" unique_id=621034262]
 layout_mode = 2
@@ -81,9 +91,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
+theme_override_styles/hovered = SubResource("StyleBoxEmpty_ybxgq")
+columns = 3
 hide_root = true
+select_mode = 2
 
 [node name="ThingPanel" type="Panel" parent="VBoxContainer/HSplitContainer" unique_id=1095422419]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_ybxgq")

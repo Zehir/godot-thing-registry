@@ -5,19 +5,23 @@ extends Resource
 signal module_changed()
 
 
-#TODO check for infinite loop
-@export var parent: Thing:
+@export_custom(PROPERTY_HINT_RESOURCE_TYPE, "Thing", PROPERTY_USAGE_EDITOR) var _parent: Thing:
+	get():
+		if parent.is_empty():
+			return null
+		return load(parent)
 	set(value):
-		var uid: StringName = StringName(ResourceUID.path_to_uid(resource_path))
-		if parent is Thing:
-			var temp_childs = parent.childs.duplicate()
-			temp_childs.erase(uid)
-			parent.childs = temp_childs
-		parent = value
-		if parent is Thing:
-			var temp_childs = parent.childs.duplicate()
-			temp_childs.append(uid)
-			parent.childs = temp_childs
+		if is_instance_valid(_parent):
+			_parent.childs.erase.call_deferred(ResourceUID.path_to_uid(resource_path))
+		if is_instance_valid(value):
+			value.childs.append.call_deferred(ResourceUID.path_to_uid(resource_path))
+			parent = ResourceUID.path_to_uid(value.resource_path)
+		else:
+			parent = ""
+		notify_property_list_changed()
+
+#TODO check for infinite loop
+@export_storage var parent: StringName
 
 ## References to child Things
 @export_storage var childs: Array[StringName] = []
@@ -68,7 +72,7 @@ func notify_childrens_property_value_changed(property_name: StringName, old_valu
 ## Called when a parent property value has changed.
 func _on_parent_property_value_changed(property_name: StringName, old_value: Variant):
 	if get(property_name) == old_value:
-		set(property_name, parent.get(property_name))
+		set(property_name, _parent.get(property_name))
 
 
 ## Load modules from parent and self.
@@ -78,8 +82,8 @@ func get_modules(force_refresh: bool = false) -> Dictionary[StringName, ThingMod
 		return _loaded_modules
 
 	var modules_list: Dictionary[StringName, ThingModule] = {}
-	if parent is Thing:
-		modules_list = parent.get_modules()
+	if _parent is Thing:
+		modules_list = _parent.get_modules()
 	for module in modules:
 		if not module is ThingModule:
 			continue
