@@ -19,6 +19,7 @@ signal module_changed()
 			temp_childs.append(uid)
 			parent.childs = temp_childs
 
+## References to child Things
 @export_storage var childs: Array[StringName] = []
 
 ## Reference to ThingModule scripts that could add properties
@@ -26,18 +27,17 @@ signal module_changed()
 	set(value):
 		modules = value
 		module_changed.emit()
-
 @export_group("")
 
-# TODO make this private ?
+## Stores property values
 var properties: Dictionary[StringName, Variant] = {}
 
-
+## Contains loaded modules for this Thing and its parents
 var _loaded_modules: Dictionary[StringName, ThingModule] = {}
 
 
 func _init() -> void:
-	module_changed.connect(_on_module_changed, CONNECT_APPEND_SOURCE_OBJECT)
+	module_changed.connect(_on_module_changed)
 	_on_module_changed()
 
 
@@ -47,6 +47,7 @@ func _on_module_changed():
 	notify_childrens_property_list_changed()
 
 
+## Notify childrens that their property list may have changed.
 func notify_childrens_property_list_changed() -> void:
 	for child_uid in childs:
 		var child: Resource = load(child_uid)
@@ -55,6 +56,7 @@ func notify_childrens_property_list_changed() -> void:
 			child.notify_property_list_changed()
 
 
+## Notify childrens that a property value has changed.
 func notify_childrens_property_value_changed(property_name: StringName, old_value: Variant):
 	for child_uid in childs:
 		var child: Resource = load(child_uid)
@@ -63,12 +65,14 @@ func notify_childrens_property_value_changed(property_name: StringName, old_valu
 			child._on_parent_property_value_changed(property_name, old_value)
 
 
+## Called when a parent property value has changed.
 func _on_parent_property_value_changed(property_name: StringName, old_value: Variant):
 	if get(property_name) == old_value:
 		set(property_name, parent.get(property_name))
 
 
-## Return property prefix and ThingModule
+## Load modules from parent and self.
+## The returned Dictionary contain module name and ThingModule
 func get_modules(force_refresh: bool = false) -> Dictionary[StringName, ThingModule]:
 	if not force_refresh and is_instance_valid(_loaded_modules):
 		return _loaded_modules
@@ -114,7 +118,7 @@ func _get_property_list() -> Array[Dictionary]:
 	return properties_list
 
 
-
+## Call a method on the module that handle the given property.
 func call_module_property_method(property: StringName, method: StringName, arguments: Array = [], default: Variant = null) -> Variant:
 	if not property.contains("/"):
 		return default
@@ -158,11 +162,12 @@ func _set(property: StringName, value: Variant) -> bool:
 func _get(property: StringName) -> Variant:
 	if not property.contains("/"):
 		return null
-
 	return properties.get(property)
 
-@export_tool_button("Debug") var debug_action = debug
-func debug():
-	prints("debug", parent)
-	if not is_instance_valid(parent):
-		set(&"item/name", "ID %d" % randi())
+
+
+#@export_tool_button("Debug") var debug_action = debug
+#func debug():
+	#prints("debug", parent)
+	#if not is_instance_valid(parent):
+		#set(&"item/name", "ID %d" % randi())
