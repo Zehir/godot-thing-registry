@@ -5,71 +5,58 @@ extends Resource
 signal module_changed()
 
 
-@export_custom(PROPERTY_HINT_RESOURCE_TYPE, "Thing", PROPERTY_USAGE_EDITOR) var parent: Thing:
-	get():
-		if parent_id.is_empty():
-			return null
-		return load(parent_id)
-	set(value):
-		if parent == value:
-			push_error("Nothing to change")
-			return
-		if self == value:
-			push_error("Can't set the parent of a Thing as himself.")
-			return
-		if is_instance_valid(value) and value.is_child_of(self):
-			push_error("Can't set the parent of a Thing that is currently a child of himself.")
-			return
+var parent: Thing:
+	get = get_parent, set = set_parent
 
-		prints("Start changes -----------------------")
-		if is_instance_valid(parent):
-			prints("Old parent", parent.resource_path.get_file(), parent.childs)
-		else:
-			prints("Old parent = null")
-		prints("Me", resource_path.get_file(), childs)
-		if is_instance_valid(value):
-			prints("New parent", value.resource_path.get_file(), value.childs)
-		else:
-			prints("New parent = null")
 
-		# Parent get removed or remplaced
-		if is_instance_valid(parent):
-			var temp_childs = parent.childs.duplicate()
-			temp_childs.erase(ResourceUID.path_to_uid(resource_path))
-			parent.childs = temp_childs
+func get_root_path() -> String:
+	var maybe_parent: Thing = get_parent()
+	if is_instance_valid(maybe_parent):
+		return maybe_parent.get_root_path()
+	return resource_path.get_base_dir()
 
-		# Parent get added
-		if is_instance_valid(value):
-			var temp_childs = value.childs.duplicate()
-			temp_childs.append(ResourceUID.path_to_uid(resource_path))
-			value.childs = temp_childs
 
-		prints("End changes -----------------------")
-		if is_instance_valid(parent):
-			prints("Old parent", parent.resource_path.get_file(), parent.childs)
-		else:
-			prints("Old parent = null")
-		prints("Me", resource_path.get_file(), childs)
-		if is_instance_valid(value):
-			prints("New parent", value.resource_path.get_file(), value.childs)
-		else:
-			prints("New parent = null")
+func get_parent() -> Thing:
+	var parent_path: String = resource_path.get_base_dir() + ".tres"
+	return load(parent_path) if ResourceLoader.exists(parent_path, "Thing") else null
 
-		parent = value
-		if is_instance_valid(value):
-			parent_id = ResourceUID.path_to_uid(value.resource_path)
-		else:
-			parent_id = ""
 
-		prints("set parent_id", parent_id)
-		prints("----------------- Final -----------------------")
-		notify_property_list_changed()
+func set_parent(new_parent: Thing) -> void:
+	if not Engine.is_editor_hint():
+		push_error("You can only change the parent in edit mode")
+		return
 
-#TODO check for infinite loop
-@export_storage var parent_id: StringName
+	if not is_instance_valid(new_parent):
+		var moved: PackedStringArray = []
+		var root_path: String = get_root_path()
+		var old_dir: String = resource_path.get_basename()
+		var new_dir: String = root_path.path_join(old_dir.get_file())
+		if DirAccess.dir_exists_absolute(old_dir):
+			DirAccess.rename_absolute(old_dir, new_dir)
+			moved.append(new_dir + "/")
 
-## References to child Things
-@export var childs: Array[StringName] = []
+		## Move resource
+		var new_path: String = root_path.path_join(resource_path.get_file())
+		DirAccess.rename_absolute(resource_path, new_path)
+		moved.append(new_path)
+
+		## Update resource cache for moved files
+		var old_root: String = old_dir.get_base_dir()
+		var new_root: String = new_dir.get_base_dir()
+		var current: String = ""
+		while moved.size() > 0:
+			current = moved.get(0)
+			moved.remove_at(0)
+			if current.ends_with("/"):
+				for sub_path in ResourceLoader.list_directory(current):
+					moved.append(current.path_join(sub_path))
+			else:
+				var old_path = old_root.path_join(current.trim_prefix(new_root))
+				if ResourceLoader.has_cached(old_path):
+					load(old_path).take_over_path(current)
+
+		## Maybe we can do a less brute force than a full scan but it's fast for now.
+		EditorInterface.get_resource_filesystem().scan()
 
 
 ## Reference to ThingModule scripts that could add properties
@@ -99,20 +86,22 @@ func _on_module_changed():
 
 ## Notify childrens that their property list may have changed.
 func notify_childrens_property_list_changed() -> void:
-	for child_uid in childs:
-		var child: Resource = load(child_uid)
-		if child is Thing:
-			child.notify_childrens_property_list_changed()
-			child.notify_property_list_changed()
+	pass
+	#for child_uid in childs:
+		#var child: Resource = load(child_uid)
+		#if child is Thing:
+			#child.notify_childrens_property_list_changed()
+			#child.notify_property_list_changed()
 
 
 ## Notify childrens that a property value has changed.
 func notify_childrens_property_value_changed(property_name: StringName, old_value: Variant):
-	for child_uid in childs:
-		var child: Resource = load(child_uid)
-		if child is Thing:
-			child.notify_childrens_property_value_changed(property_name, old_value)
-			child._on_parent_property_value_changed(property_name, old_value)
+	pass
+	#for child_uid in childs:
+		#var child: Resource = load(child_uid)
+		#if child is Thing:
+			#child.notify_childrens_property_value_changed(property_name, old_value)
+			#child._on_parent_property_value_changed(property_name, old_value)
 
 
 ## Called when a parent property value has changed.
@@ -223,8 +212,10 @@ func is_child_of(other: Thing) -> bool:
 		current = current.parent
 	return false
 
-#@export_tool_button("Debug") var debug_action = debug
-#func debug():
+@export_tool_button("Debug") var debug_action = debug
+func debug():
 	#prints("debug", parent)
+	set_parent(null)
+	#prints("root", get_root_path())
 	#if not is_instance_valid(parent):
 		#set(&"item/name", "ID %d" % randi())

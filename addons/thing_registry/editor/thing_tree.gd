@@ -30,9 +30,11 @@ func _enter_tree() -> void:
 	search.right_icon = EditorInterface.get_editor_theme().get_icon("Search", "EditorIcons")
 	_root_item = create_item()
 
-	open_file(load("uid://cp71dreqaus01"))
-	open_file(load("uid://bl30fbblrjeuv"))
-	open_file(load("uid://6ej7idjf3wfe"))
+
+
+	#open_file(load("uid://cp71dreqaus01"))
+	#open_file(load("uid://bl30fbblrjeuv"))
+	#open_file(load("uid://6ej7idjf3wfe"))
 #endregion
 
 
@@ -253,8 +255,8 @@ func _on_item_mouse_selected(mouse_position: Vector2, mouse_button_index: int) -
 
 	var item: TreeItem = get_item_at_position(mouse_position)
 	var metadata = item.get_metadata(Column.RESOURCE)
-	if metadata is EditedThing:
-		EditorInterface.get_inspector().edit(metadata.get_thing())
+	#if metadata is EditedThing:
+		#EditorInterface.get_inspector().edit(metadata.get_thing())
 
 
 func _on_edited_thing_dirty_changed(new_value: bool, edited: EditedThing) -> void:
