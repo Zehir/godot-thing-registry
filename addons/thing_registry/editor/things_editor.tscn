@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://bybjt46vqisvu"]
+[gd_scene load_steps=8 format=3 uid="uid://bybjt46vqisvu"]
 
 [ext_resource type="Script" uid="uid://cbgf26fkyrq4a" path="res://addons/thing_registry/editor/things_editor.gd" id="1_7p1ck"]
 [ext_resource type="Script" uid="uid://dsju3xwf6tler" path="res://addons/thing_registry/editor/top_menu.gd" id="2_ybxgq"]
@@ -18,7 +18,7 @@ bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
 corner_detail = 1
 anti_aliasing = false
 
-[node name="ThingsEditor" type="MarginContainer" unique_id=122300499]
+[node name="ThingsEditor" type="MarginContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -32,54 +32,53 @@ theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 script = ExtResource("1_7p1ck")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=550638857]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="TopMenu" type="HBoxContainer" parent="VBoxContainer" unique_id=457806576 node_paths=PackedStringArray("file_button")]
+[node name="TopMenu" type="HBoxContainer" parent="VBoxContainer" node_paths=PackedStringArray("file_button")]
 layout_mode = 2
 script = ExtResource("2_ybxgq")
 file_button = NodePath("FileButton")
 
-[node name="FileButton" type="MenuButton" parent="VBoxContainer/TopMenu" unique_id=1695886560]
+[node name="FileButton" type="MenuButton" parent="VBoxContainer/TopMenu"]
 layout_mode = 2
 button_group = SubResource("ButtonGroup_3xrmx")
 text = "File"
 flat = false
 switch_on_hover = true
 
-[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer" unique_id=28992417]
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-split_offsets = PackedInt32Array(200)
 split_offset = 200
 
-[node name="FilesystemPanel" type="VBoxContainer" parent="VBoxContainer/HSplitContainer" unique_id=300387013]
+[node name="FilesystemPanel" type="VBoxContainer" parent="VBoxContainer/HSplitContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 
-[node name="FileDialog" type="FileDialog" parent="VBoxContainer/HSplitContainer/FilesystemPanel" unique_id=12455751]
+[node name="FileDialog" type="FileDialog" parent="VBoxContainer/HSplitContainer/FilesystemPanel"]
 title = "Save Thing Registry As..."
 size = Vector2i(960, 540)
 mode_overrides_title = false
 filters = PackedStringArray("*.tres;Resource Files")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/FilesystemPanel" unique_id=1792909648]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/FilesystemPanel"]
 layout_mode = 2
 
-[node name="Search" type="LineEdit" parent="VBoxContainer/HSplitContainer/FilesystemPanel/HBoxContainer" unique_id=918020083]
+[node name="Search" type="LineEdit" parent="VBoxContainer/HSplitContainer/FilesystemPanel/HBoxContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 placeholder_text = "Filter Things"
 
-[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/FilesystemPanel/HBoxContainer" unique_id=1333639819]
+[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/FilesystemPanel/HBoxContainer"]
 layout_mode = 2
 text = "Add breadcrub here with parents things"
 
-[node name="PanelContainer" type="Panel" parent="VBoxContainer/HSplitContainer/FilesystemPanel" unique_id=621034262]
+[node name="PanelContainer" type="Panel" parent="VBoxContainer/HSplitContainer/FilesystemPanel"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Tree" type="Tree" parent="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer" unique_id=1641927617 node_paths=PackedStringArray("search", "file_dialog")]
+[node name="Tree" type="Tree" parent="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer" node_paths=PackedStringArray("search", "file_dialog")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -95,13 +94,13 @@ script = ExtResource("4_cwkf3")
 search = NodePath("../../HBoxContainer/Search")
 file_dialog = NodePath("../../FileDialog")
 
-[node name="ThingPanel" type="Panel" parent="VBoxContainer/HSplitContainer" unique_id=1095422419]
+[node name="ThingPanel" type="Panel" parent="VBoxContainer/HSplitContainer"]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_ybxgq")
 
-[node name="ThingClassEditor" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/ThingPanel" unique_id=910897736]
+[node name="ThingClassEditor" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/ThingPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

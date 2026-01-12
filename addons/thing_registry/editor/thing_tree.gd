@@ -31,7 +31,8 @@ func _enter_tree() -> void:
 	_root_item = create_item()
 
 	open_file(load("uid://cp71dreqaus01"))
-	#open_file(load("uid://6ej7idjf3wfe"))
+	open_file(load("uid://bl30fbblrjeuv"))
+	open_file(load("uid://6ej7idjf3wfe"))
 #endregion
 
 
@@ -135,6 +136,7 @@ func close_file(thing: Thing) -> void:
 
 func close_edited_file(edited_thing: EditedThing) -> void:
 	# TODO check if the thing is dirty
+	ResourceSaver.save(edited_thing.get_thing())
 	edited_thing.get_tree_node().free()
 
 
@@ -187,47 +189,37 @@ func _on_unsaved_file_found(file: Variant) -> void:
 
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 	drop_mode_flags = DROP_MODE_ON_ITEM | DROP_MODE_INBETWEEN
-
-	if _is_invalid_thing_drop(at_position, data):
-		return false
-
-	var item: TreeItem  = get_item_at_position(at_position)
-	if not is_instance_valid(item):
-		return false
-
-	var metadata: EditedThing = item.get_metadata(Column.RESOURCE)
-	var thing: Thing = metadata.get_thing()
-
-	for file: Thing in data.get("things"):
-		if thing.is_child_of(file):
-			return false
-
-	return true
+	return _is_valid_thing_drop_data(data) and is_instance_valid(get_item_at_position(at_position))
 
 
 func _drop_data(at_position: Vector2, data: Variant) -> void:
-	if _is_invalid_thing_drop(at_position, data):
-		return
-
 	var item: TreeItem  = get_item_at_position(at_position)
-	if not is_instance_valid(item):
+	# To be safe but probably need needed because it's already checked in _can_drop_data.
+	if not _is_valid_thing_drop_data(data) or not is_instance_valid(item):
 		return
 
+	var section = get_drop_section_at_position(at_position)
 	var metadata: EditedThing = item.get_metadata(Column.RESOURCE)
 	var thing: Thing = metadata.get_thing()
-	for dropped: Thing in data.get("things"):
-		dropped.parent = thing
 
-	rebuild_tree()
+	match section:
+		-1: # Before mean parent of dropped is the same as current
+			for dropped: Thing in data.get("things"):
+				dropped.parent = thing.parent
+		0, 1: # On it or below bean as child of current
+			for dropped: Thing in data.get("things"):
+				dropped.parent = thing
+
+	#TODO not rebuild the tree on thing dropped
+	rebuild_tree.call_deferred()
 
 
-func _is_invalid_thing_drop(at_position: Vector2, data: Variant) -> bool:
-	return (not data is Dictionary
-		or data.get("type") != "thing"
-		or not data.has("from")
-		or data.get("from") != self
-		or not data.has("things")
-		or get_column_at_position(at_position) != Column.RESOURCE)
+func _is_valid_thing_drop_data(data: Variant) -> bool:
+	return (data is Dictionary
+		and data.get("type") == "thing"
+		and data.get("from") == self
+		and typeof(data.get("things")) == TYPE_ARRAY
+	)
 
 
 func _get_drag_data(at_position: Vector2) -> Variant:
@@ -261,10 +253,8 @@ func _on_item_mouse_selected(mouse_position: Vector2, mouse_button_index: int) -
 
 	var item: TreeItem = get_item_at_position(mouse_position)
 	var metadata = item.get_metadata(Column.RESOURCE)
-	#if metadata is EditedThing:
-		#thing_selected.emit(metadata)
-	#elif metadata is GDScript and Thing.is_valid_child_class(metadata):
-		#thing_selected.emit(metadata)
+	if metadata is EditedThing:
+		EditorInterface.get_inspector().edit(metadata.get_thing())
 
 
 func _on_edited_thing_dirty_changed(new_value: bool, edited: EditedThing) -> void:
@@ -286,8 +276,13 @@ func rebuild_tree() -> void:
 		var metadata: EditedThing = children.get_metadata(Column.RESOURCE)
 		opened_list.append(metadata.get_thing().resource_path)
 	close_all()
+	await get_tree().create_timer(0.1).timeout
 	for opened in opened_list:
 		open_file(load(opened))
+
+	open_file(load("uid://cp71dreqaus01"))
+	open_file(load("uid://bl30fbblrjeuv"))
+	open_file(load("uid://6ej7idjf3wfe"))
 
 
 #region EditedThing

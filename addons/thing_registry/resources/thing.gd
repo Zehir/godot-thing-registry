@@ -11,20 +11,66 @@ signal module_changed()
 			return null
 		return load(parent_id)
 	set(value):
+		if parent == value:
+			push_error("Nothing to change")
+			return
+		if self == value:
+			push_error("Can't set the parent of a Thing as himself.")
+			return
+		if is_instance_valid(value) and value.is_child_of(self):
+			push_error("Can't set the parent of a Thing that is currently a child of himself.")
+			return
+
+		prints("Start changes -----------------------")
 		if is_instance_valid(parent):
-			parent.childs.erase.call_deferred(ResourceUID.path_to_uid(resource_path))
+			prints("Old parent", parent.resource_path.get_file(), parent.childs)
+		else:
+			prints("Old parent = null")
+		prints("Me", resource_path.get_file(), childs)
 		if is_instance_valid(value):
-			value.childs.append.call_deferred(ResourceUID.path_to_uid(resource_path))
+			prints("New parent", value.resource_path.get_file(), value.childs)
+		else:
+			prints("New parent = null")
+
+		# Parent get removed or remplaced
+		if is_instance_valid(parent):
+			var temp_childs = parent.childs.duplicate()
+			temp_childs.erase(ResourceUID.path_to_uid(resource_path))
+			parent.childs = temp_childs
+
+		# Parent get added
+		if is_instance_valid(value):
+			var temp_childs = value.childs.duplicate()
+			temp_childs.append(ResourceUID.path_to_uid(resource_path))
+			value.childs = temp_childs
+
+		prints("End changes -----------------------")
+		if is_instance_valid(parent):
+			prints("Old parent", parent.resource_path.get_file(), parent.childs)
+		else:
+			prints("Old parent = null")
+		prints("Me", resource_path.get_file(), childs)
+		if is_instance_valid(value):
+			prints("New parent", value.resource_path.get_file(), value.childs)
+		else:
+			prints("New parent = null")
+
+		parent = value
+		if is_instance_valid(value):
 			parent_id = ResourceUID.path_to_uid(value.resource_path)
 		else:
 			parent_id = ""
+
+		prints("set parent_id", parent_id)
+		prints("----------------- Final -----------------------")
 		notify_property_list_changed()
 
 #TODO check for infinite loop
 @export_storage var parent_id: StringName
 
 ## References to child Things
-@export_storage var childs: Array[StringName] = []
+@export var childs: Array[StringName] = []
+
 
 ## Reference to ThingModule scripts that could add properties
 @export var modules: Array[ThingModule] = []:

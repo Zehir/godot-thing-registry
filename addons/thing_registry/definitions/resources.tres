@@ -1,8 +1,7 @@
-[gd_resource type="Resource" script_class="Thing" format=3 uid="uid://bl30fbblrjeuv"]
+[gd_resource type="Resource" script_class="Thing" load_steps=3 format=3 uid="uid://bl30fbblrjeuv"]
 
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="1_es175"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_m28wx"]
 
 [resource]
 script = ExtResource("2_m28wx")
-parent_id = &"uid://6ej7idjf3wfe"
