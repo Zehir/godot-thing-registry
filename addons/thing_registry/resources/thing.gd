@@ -16,6 +16,24 @@ func get_root_path() -> String:
 	return resource_path.get_base_dir()
 
 
+func have_childs() -> bool:
+	return DirAccess.dir_exists_absolute(resource_path.get_basename())
+
+
+## Return Thing resource path that is directly the child of this Thing.
+## Return an empty array if no child if found. Does not return sub childs.
+func get_childs_paths() -> PackedStringArray:
+	var list: PackedStringArray= []
+	if not have_childs():
+		return list
+
+	for path: String in DirAccess.get_files_at(resource_path.get_basename()):
+		var child_path: String = resource_path.get_basename().path_join(path)
+		if ResourceLoader.exists(child_path, "Thing"):
+			list.append(child_path)
+	return list
+
+
 func get_parent() -> Thing:
 	var parent_path: String = resource_path.get_base_dir() + ".tres"
 	return load(parent_path) if ResourceLoader.exists(parent_path, "Thing") else null
@@ -86,22 +104,20 @@ func _on_module_changed():
 
 ## Notify childrens that their property list may have changed.
 func notify_childrens_property_list_changed() -> void:
-	pass
-	#for child_uid in childs:
-		#var child: Resource = load(child_uid)
-		#if child is Thing:
-			#child.notify_childrens_property_list_changed()
-			#child.notify_property_list_changed()
+	for child_path in get_childs_paths():
+		var child: Resource = load(child_path)
+		if child is Thing:
+			child.notify_childrens_property_list_changed()
+			child.notify_property_list_changed()
 
 
 ## Notify childrens that a property value has changed.
 func notify_childrens_property_value_changed(property_name: StringName, old_value: Variant):
-	pass
-	#for child_uid in childs:
-		#var child: Resource = load(child_uid)
-		#if child is Thing:
-			#child.notify_childrens_property_value_changed(property_name, old_value)
-			#child._on_parent_property_value_changed(property_name, old_value)
+	for child_path in get_childs_paths():
+		var child: Resource = load(child_path)
+		if child is Thing:
+			child.notify_childrens_property_value_changed(property_name, old_value)
+			child._on_parent_property_value_changed(property_name, old_value)
 
 
 ## Called when a parent property value has changed.
@@ -212,10 +228,11 @@ func is_child_of(other: Thing) -> bool:
 		current = current.parent
 	return false
 
+
 @export_tool_button("Debug") var debug_action = debug
 func debug():
-	#prints("debug", parent)
-	set_parent(null)
+	prints("debug", get_childs_paths())
+	#set_parent(null)
 	#prints("root", get_root_path())
 	#if not is_instance_valid(parent):
 		#set(&"item/name", "ID %d" % randi())
