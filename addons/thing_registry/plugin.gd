@@ -2,15 +2,12 @@
 extends EditorPlugin
 
 const ThingsEditor = preload("uid://cbgf26fkyrq4a")
-const ThingClassEditor = preload("uid://1wve8y0fjon7")
 
 var things_editor: ThingsEditor
 
 var cleanup_callables: Array[Callable] = []
 
 func _enter_tree() -> void:
-	cleanup_callables.append(ThingClassEditor.init_plugin(self))
-
 	things_editor = ThingsEditor.get_scene().instantiate()
 	EditorInterface.get_editor_main_screen().add_child(things_editor)
 	_make_visible(false)

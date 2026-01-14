@@ -24,12 +24,13 @@ var _root_item: TreeItem
 
 #region Virtual methods
 func _enter_tree() -> void:
-	if is_part_of_edited_scene():
-		return
+	if not is_part_of_edited_scene():
+		search.right_icon = EditorInterface.get_editor_theme().get_icon("Search", "EditorIcons")
 
-	search.right_icon = EditorInterface.get_editor_theme().get_icon("Search", "EditorIcons")
+
 	_root_item = create_item()
 
+	set_column_custom_minimum_width(Column.RESOURCE, 200)
 
 
 	open_file(load("uid://dvmq80fff46c7"))
@@ -252,13 +253,10 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	return {"type": "thing", "from": self, "things": [thing]}
 
 
-func _on_item_mouse_selected(mouse_position: Vector2, mouse_button_index: int) -> void:
-	pass # Replace with function body.
-
+func _on_item_mouse_selected(mouse_position: Vector2, _mouse_button_index: int) -> void:
 	var item: TreeItem = get_item_at_position(mouse_position)
-	var metadata = item.get_metadata(Column.RESOURCE)
-	#if metadata is EditedThing:
-		#EditorInterface.get_inspector().edit(metadata.get_thing())
+	var metadata: EditedThing = item.get_metadata(Column.RESOURCE)
+	EditorInterface.get_inspector().edit(metadata.get_thing())
 
 
 func _on_edited_thing_dirty_changed(new_value: bool, edited: EditedThing) -> void:
