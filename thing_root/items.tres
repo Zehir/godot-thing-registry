@@ -1,14 +1,14 @@
 [gd_resource type="Resource" script_class="Thing" format=3 uid="uid://dd6uaa4frttpn"]
 
-[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="1_78ycp"]
-[ext_resource type="Script" uid="uid://dt6m4ybqdtu6r" path="res://addons/thing_registry/modules/items_module.gd" id="2_5xrau"]
-[ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_f5rwo"]
+[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="1_w4v51"]
+[ext_resource type="Script" uid="uid://dt6m4ybqdtu6r" path="res://addons/thing_registry/modules/items_module.gd" id="2_pjj42"]
+[ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="3_7a5sf"]
 
 [sub_resource type="Resource" id="Resource_jdacy"]
-script = ExtResource("2_5xrau")
+script = ExtResource("2_pjj42")
 metadata/_custom_type_script = "uid://dt6m4ybqdtu6r"
 
 [resource]
-script = ExtResource("2_f5rwo")
-modules = Array[ExtResource("1_78ycp")]([SubResource("Resource_jdacy")])
+script = ExtResource("3_7a5sf")
+modules = Array[ExtResource("1_w4v51")]([SubResource("Resource_jdacy")])
 item/name = "Foo"

@@ -49,7 +49,7 @@ func set_parent(new_parent: Thing) -> void:
 	if current_parent == new_parent:
 		return
 
-	if is_instance_valid(current_parent) and current_parent.is_child_of(new_parent):
+	if is_instance_valid(new_parent) and new_parent.is_child_of(self):
 		push_error("Can't set the new parent because it's currrently a child of this Thing.")
 		return
 

@@ -32,9 +32,11 @@ func _enter_tree() -> void:
 
 
 
-	#open_file(load("uid://cp71dreqaus01"))
-	#open_file(load("uid://bl30fbblrjeuv"))
-	#open_file(load("uid://6ej7idjf3wfe"))
+	open_file(load("uid://dvmq80fff46c7"))
+	open_file(load("uid://djoqnndd4i3hr"))
+	open_file(load("uid://c4j3dxma82626"))
+	open_file(load("uid://dd6uaa4frttpn"))
+
 #endregion
 
 
@@ -282,9 +284,10 @@ func rebuild_tree() -> void:
 	for opened in opened_list:
 		open_file(load(opened))
 
-	open_file(load("uid://cp71dreqaus01"))
-	open_file(load("uid://bl30fbblrjeuv"))
-	open_file(load("uid://6ej7idjf3wfe"))
+	open_file(load("uid://dvmq80fff46c7"))
+	open_file(load("uid://djoqnndd4i3hr"))
+	open_file(load("uid://c4j3dxma82626"))
+	open_file(load("uid://dd6uaa4frttpn"))
 
 
 #region EditedThing
@@ -353,7 +356,7 @@ class EditedThing extends RefCounted:
 
 		_connect_signals()
 
-		for child in _thing.childs:
+		for child in _thing.get_childs_paths():
 			EditedThing.new(load(child), _tree_node)
 
 
