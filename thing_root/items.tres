@@ -12,4 +12,3 @@ metadata/_custom_type_script = "uid://dt6m4ybqdtu6r"
 script = ExtResource("2_f5rwo")
 modules = Array[ExtResource("1_78ycp")]([SubResource("Resource_jdacy")])
 item/name = "Foo"
-metadata/_custom_type_script = "uid://dirfs1dh5k0r"
