@@ -2,6 +2,7 @@
 class_name ThingModuleItem
 extends ThingModule
 
+@export var test_property: String
 
 func get_module_name() -> StringName:
 	return &"item"

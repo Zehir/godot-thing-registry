@@ -3,20 +3,10 @@
 [ext_resource type="Script" uid="uid://cbgf26fkyrq4a" path="res://addons/thing_registry/editor/things_editor.gd" id="1_7p1ck"]
 [ext_resource type="Script" uid="uid://dsju3xwf6tler" path="res://addons/thing_registry/editor/top_menu.gd" id="2_ybxgq"]
 [ext_resource type="Script" uid="uid://cao610uqi1ac6" path="res://addons/thing_registry/editor/thing_tree.gd" id="4_cwkf3"]
-[ext_resource type="Script" uid="uid://1wve8y0fjon7" path="res://addons/thing_registry/editor/thing_class_editor.gd" id="4_ybxgq"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_3xrmx"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ybxgq"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ybxgq"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
-corner_detail = 1
-anti_aliasing = false
 
 [node name="ThingsEditor" type="MarginContainer" unique_id=672459698]
 anchors_preset = 15
@@ -35,6 +25,13 @@ script = ExtResource("1_7p1ck")
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1702330685]
 layout_mode = 2
 
+[node name="FileDialog" type="FileDialog" parent="VBoxContainer" unique_id=426570856]
+oversampling_override = 1.0
+title = "Save Thing Registry As..."
+size = Vector2i(960, 540)
+mode_overrides_title = false
+filters = PackedStringArray("*.tres;Resource Files")
+
 [node name="TopMenu" type="HBoxContainer" parent="VBoxContainer" unique_id=184835150 node_paths=PackedStringArray("file_button")]
 layout_mode = 2
 script = ExtResource("2_ybxgq")
@@ -47,39 +44,23 @@ text = "File"
 flat = false
 switch_on_hover = true
 
-[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer" unique_id=1663082526]
-layout_mode = 2
-size_flags_vertical = 3
-split_offsets = PackedInt32Array(200)
-split_offset = 200
-
-[node name="FilesystemPanel" type="VBoxContainer" parent="VBoxContainer/HSplitContainer" unique_id=1773500721]
-custom_minimum_size = Vector2(100, 0)
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=98060648]
 layout_mode = 2
 
-[node name="FileDialog" type="FileDialog" parent="VBoxContainer/HSplitContainer/FilesystemPanel" unique_id=426570856]
-title = "Save Thing Registry As..."
-size = Vector2i(960, 540)
-mode_overrides_title = false
-filters = PackedStringArray("*.tres;Resource Files")
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HSplitContainer/FilesystemPanel" unique_id=98060648]
-layout_mode = 2
-
-[node name="Search" type="LineEdit" parent="VBoxContainer/HSplitContainer/FilesystemPanel/HBoxContainer" unique_id=536830325]
+[node name="Search" type="LineEdit" parent="VBoxContainer/HBoxContainer" unique_id=536830325]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 placeholder_text = "Filter Things"
 
-[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer/FilesystemPanel/HBoxContainer" unique_id=929471963]
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=929471963]
 layout_mode = 2
 text = "Add breadcrub here with parents things"
 
-[node name="PanelContainer" type="Panel" parent="VBoxContainer/HSplitContainer/FilesystemPanel" unique_id=927689657]
+[node name="PanelContainer" type="Panel" parent="VBoxContainer" unique_id=927689657]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Tree" type="Tree" parent="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer" unique_id=1191827139 node_paths=PackedStringArray("search", "file_dialog")]
+[node name="ThingTree" type="Tree" parent="VBoxContainer/PanelContainer" unique_id=1191827139 node_paths=PackedStringArray("search", "file_dialog")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -89,30 +70,14 @@ grow_vertical = 2
 size_flags_vertical = 3
 theme_override_constants/draw_guides = 0
 theme_override_styles/hovered = SubResource("StyleBoxEmpty_ybxgq")
-columns = 3
+columns = 20
+column_titles_visible = true
 hide_root = true
 script = ExtResource("4_cwkf3")
 search = NodePath("../../HBoxContainer/Search")
 file_dialog = NodePath("../../FileDialog")
 
-[node name="ThingPanel" type="Panel" parent="VBoxContainer/HSplitContainer" unique_id=352969904]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_ybxgq")
-
-[node name="ThingClassEditor" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/ThingPanel" unique_id=762140549]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-script = ExtResource("4_ybxgq")
-
-[connection signal="action_pressed" from="VBoxContainer/TopMenu" to="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" method="_on_menu_action_pressed"]
-[connection signal="canceled" from="VBoxContainer/HSplitContainer/FilesystemPanel/FileDialog" to="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" method="_on_file_dialog_canceled"]
-[connection signal="file_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel/FileDialog" to="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" method="_on_file_dialog_file_selected"]
-[connection signal="item_mouse_selected" from="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" to="VBoxContainer/HSplitContainer/FilesystemPanel/PanelContainer/Tree" method="_on_item_mouse_selected"]
+[connection signal="canceled" from="VBoxContainer/FileDialog" to="VBoxContainer/PanelContainer/ThingTree" method="_on_file_dialog_canceled"]
+[connection signal="file_selected" from="VBoxContainer/FileDialog" to="VBoxContainer/PanelContainer/ThingTree" method="_on_file_dialog_file_selected"]
+[connection signal="action_pressed" from="VBoxContainer/TopMenu" to="VBoxContainer/PanelContainer/ThingTree" method="_on_menu_action_pressed"]
+[connection signal="item_mouse_selected" from="VBoxContainer/PanelContainer/ThingTree" to="VBoxContainer/PanelContainer/ThingTree" method="_on_item_mouse_selected"]
