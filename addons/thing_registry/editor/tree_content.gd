@@ -194,11 +194,24 @@ func _on_unsaved_file_found(file: Variant) -> void:
 
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 	drop_mode_flags = DROP_MODE_ON_ITEM | DROP_MODE_INBETWEEN
-	return _is_valid_thing_drop_data(data) and is_instance_valid(get_item_at_position(at_position))
+	if not _is_valid_thing_drop_data(data):
+		return false
+	var column: int = get_column_at_position(at_position)
+	if column != Column.RESOURCE:
+		return false
+	var item: TreeItem = get_item_at_position(at_position)
+	if not is_instance_valid(item):
+		return false
+	var metadata: EditedThing = item.get_metadata(Column.RESOURCE)
+	var thing: Thing = metadata.get_thing()
+	for droped_thing in data.get("things"):
+		if thing == droped_thing:
+			return false
+	return true
 
 
 func _drop_data(at_position: Vector2, data: Variant) -> void:
-	var item: TreeItem  = get_item_at_position(at_position)
+	var item: TreeItem = get_item_at_position(at_position)
 	# To be safe but probably need needed because it's already checked in _can_drop_data.
 	if not _is_valid_thing_drop_data(data) or not is_instance_valid(item):
 		return
@@ -231,7 +244,7 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	if get_column_at_position(at_position) != Column.RESOURCE:
 		return
 
-	var item: TreeItem  = get_item_at_position(at_position)
+	var item: TreeItem = get_item_at_position(at_position)
 	var metadata: EditedThing = item.get_metadata(Column.RESOURCE)
 	var thing: Thing = metadata.get_thing()
 

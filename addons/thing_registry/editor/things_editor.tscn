@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://cbgf26fkyrq4a" path="res://addons/thing_registry/editor/things_editor.gd" id="1_7p1ck"]
 [ext_resource type="Script" uid="uid://dsju3xwf6tler" path="res://addons/thing_registry/editor/top_menu.gd" id="2_ybxgq"]
-[ext_resource type="Texture2D" uid="uid://bg6lomcmbuug8" path="res://addons/ds_inspector/node_icon/Area2D.svg" id="3_ybxgq"]
-[ext_resource type="Script" uid="uid://cao610uqi1ac6" path="res://addons/thing_registry/editor/thing_tree.gd" id="4_cwkf3"]
+[ext_resource type="Script" uid="uid://cr6aa0100ywhj" path="res://addons/thing_registry/editor/tree_columns.gd" id="3_cwkf3"]
+[ext_resource type="Script" uid="uid://cao610uqi1ac6" path="res://addons/thing_registry/editor/tree_content.gd" id="4_cwkf3"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_3xrmx"]
 
@@ -61,55 +61,49 @@ text = "Add breadcrub here with parents things"
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer" unique_id=1493376961]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/PanelContainer" unique_id=92883661]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+vertical_scroll_mode = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/VBoxContainer" unique_id=1874910959]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/ScrollContainer" unique_id=1493376961]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer" unique_id=1874910959]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="TreeColumns" type="HSplitContainer" parent="VBoxContainer/PanelContainer/VBoxContainer/MarginContainer" unique_id=133441605]
+[node name="TreeColumns" type="HSplitContainer" parent="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/MarginContainer" unique_id=133441605 node_paths=PackedStringArray("tree_content")]
+clip_contents = true
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
-split_offsets = PackedInt32Array(300, 300)
-split_offset = 300
+theme_override_constants/separation = 0
+script = ExtResource("3_cwkf3")
+tree_content = NodePath("../../TreeContent")
 
-[node name="Button" type="Button" parent="VBoxContainer/PanelContainer/VBoxContainer/MarginContainer/TreeColumns" unique_id=1141551222]
-layout_mode = 2
-text = "Button 1"
-icon = ExtResource("3_ybxgq")
-alignment = 0
-icon_alignment = 2
-expand_icon = true
-
-[node name="Button2" type="Button" parent="VBoxContainer/PanelContainer/VBoxContainer/MarginContainer/TreeColumns" unique_id=706032830]
-layout_mode = 2
-text = "Button 2"
-
-[node name="Button3" type="Button" parent="VBoxContainer/PanelContainer/VBoxContainer/MarginContainer/TreeColumns" unique_id=1474981349]
-layout_mode = 2
-text = "Button 3"
-
-[node name="TreeContent" type="Tree" parent="VBoxContainer/PanelContainer/VBoxContainer" unique_id=1191827139 node_paths=PackedStringArray("search", "file_dialog")]
+[node name="TreeContent" type="Tree" parent="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer" unique_id=1191827139 node_paths=PackedStringArray("search", "file_dialog")]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/draw_relationship_lines = 0
+theme_override_constants/draw_relationship_lines = 1
 theme_override_styles/hovered = SubResource("StyleBoxEmpty_ybxgq")
-columns = 20
+columns = 5
 hide_root = true
 script = ExtResource("4_cwkf3")
-search = NodePath("../../../HBoxContainer/Search")
-file_dialog = NodePath("../../../FileDialog")
+search = NodePath("../../../../HBoxContainer/Search")
+file_dialog = NodePath("../../../../FileDialog")
 
-[connection signal="canceled" from="VBoxContainer/FileDialog" to="VBoxContainer/PanelContainer/VBoxContainer/TreeContent" method="_on_file_dialog_canceled"]
-[connection signal="file_selected" from="VBoxContainer/FileDialog" to="VBoxContainer/PanelContainer/VBoxContainer/TreeContent" method="_on_file_dialog_file_selected"]
-[connection signal="action_pressed" from="VBoxContainer/TopMenu" to="VBoxContainer/PanelContainer/VBoxContainer/TreeContent" method="_on_menu_action_pressed"]
-[connection signal="item_mouse_selected" from="VBoxContainer/PanelContainer/VBoxContainer/TreeContent" to="VBoxContainer/PanelContainer/VBoxContainer/TreeContent" method="_on_item_mouse_selected"]
+[connection signal="canceled" from="VBoxContainer/FileDialog" to="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" method="_on_file_dialog_canceled"]
+[connection signal="file_selected" from="VBoxContainer/FileDialog" to="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" method="_on_file_dialog_file_selected"]
+[connection signal="action_pressed" from="VBoxContainer/TopMenu" to="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" method="_on_menu_action_pressed"]
+[connection signal="item_mouse_selected" from="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" to="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" method="_on_item_mouse_selected"]
