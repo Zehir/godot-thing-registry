@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://cbgf26fkyrq4a" path="res://addons/thing_registry/editor/things_editor.gd" id="1_7p1ck"]
 [ext_resource type="Script" uid="uid://dsju3xwf6tler" path="res://addons/thing_registry/editor/top_menu.gd" id="2_ybxgq"]
-[ext_resource type="Script" uid="uid://cr6aa0100ywhj" path="res://addons/thing_registry/editor/tree_columns.gd" id="3_cwkf3"]
 [ext_resource type="Script" uid="uid://cao610uqi1ac6" path="res://addons/thing_registry/editor/tree_content.gd" id="4_cwkf3"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_3xrmx"]
@@ -83,16 +82,14 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="TreeColumns" type="HSplitContainer" parent="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/MarginContainer" unique_id=133441605 node_paths=PackedStringArray("tree_content")]
+[node name="TreeColumns" type="HSplitContainer" parent="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/MarginContainer" unique_id=133441605]
 clip_contents = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
-script = ExtResource("3_cwkf3")
-tree_content = NodePath("../../TreeContent")
 
-[node name="TreeContent" type="Tree" parent="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer" unique_id=1191827139 node_paths=PackedStringArray("search", "file_dialog")]
+[node name="TreeContent" type="Tree" parent="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer" unique_id=1191827139 node_paths=PackedStringArray("search", "file_dialog", "tree_columns_container")]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/draw_relationship_lines = 1
@@ -102,6 +99,7 @@ hide_root = true
 script = ExtResource("4_cwkf3")
 search = NodePath("../../../../HBoxContainer/Search")
 file_dialog = NodePath("../../../../FileDialog")
+tree_columns_container = NodePath("../MarginContainer/TreeColumns")
 
 [connection signal="canceled" from="VBoxContainer/FileDialog" to="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" method="_on_file_dialog_canceled"]
 [connection signal="file_selected" from="VBoxContainer/FileDialog" to="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" method="_on_file_dialog_file_selected"]

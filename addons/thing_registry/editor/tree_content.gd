@@ -17,7 +17,7 @@ const Menu = preload("uid://dsju3xwf6tler")
 
 @export var search: LineEdit
 @export var file_dialog: FileDialog
-
+@export var tree_columns_container: HSplitContainer
 
 var _root_item: TreeItem
 
@@ -37,6 +37,21 @@ func _enter_tree() -> void:
 	open_file(load("uid://djoqnndd4i3hr"))
 	open_file(load("uid://c4j3dxma82626"))
 	open_file(load("uid://dd6uaa4frttpn"))
+
+
+	if not is_part_of_edited_scene():
+		for i in columns:
+			var button: Button = Button.new()
+			button.text = "Button #%d" % (i + 1)
+			button.custom_minimum_size.x = 200.0
+			tree_columns_container.add_child(button)
+			button.resized.connect(_on_button_resized.bind(i, button))
+
+
+func _on_button_resized(idx: int, button: Button) -> void:
+	set_column_custom_minimum_width(idx, roundi(button.size.x))
+
+
 
 #endregion
 
