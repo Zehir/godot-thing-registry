@@ -6,20 +6,15 @@ extends Tree
 
 signal thing_selected(thing: Thing)
 
-## Tree columns indexes
-enum Column {
-	RESOURCE,
-}
-
-
 const Menu = preload("uid://dsju3xwf6tler")
-
 
 @export var search: LineEdit
 @export var file_dialog: FileDialog
 @export var tree_columns_container: HSplitContainer
 
-var _root_item: TreeItem
+var _root_item: ThingTreeItem
+
+var headers: Dictionary[StringName, ThingTreeHeaderButton] = {}
 
 
 #region Virtual methods
@@ -28,31 +23,54 @@ func _enter_tree() -> void:
 		search.right_icon = EditorInterface.get_editor_theme().get_icon("Search", "EditorIcons")
 
 
-	_root_item = create_item()
+	var root_item: TreeItem = create_item()
+	root_item.set_script(ThingTreeItem)
+	_root_item = root_item
 
-	set_column_custom_minimum_width(Column.RESOURCE, 200)
+	open_property(&"resource_path")
+	open_property(&"resource_name")
 
-
-	open_file(load("uid://dvmq80fff46c7"))
-	open_file(load("uid://djoqnndd4i3hr"))
-	open_file(load("uid://c4j3dxma82626"))
-	open_file(load("uid://dd6uaa4frttpn"))
-
-
-	if not is_part_of_edited_scene():
-		for i in columns:
-			var button: Button = Button.new()
-			button.text = "Button #%d" % (i + 1)
-			button.custom_minimum_size.x = 200.0
-			tree_columns_container.add_child(button)
-			button.resized.connect(_on_button_resized.bind(i, button))
+	open_root_file(get_root_thing(load("uid://dvmq80fff46c7")))
+	open_root_file(get_root_thing(load("uid://djoqnndd4i3hr")))
+	open_root_file(get_root_thing(load("uid://c4j3dxma82626")))
+	open_root_file(get_root_thing(load("uid://dd6uaa4frttpn")))
+#endregion
 
 
-func _on_button_resized(idx: int, button: Button) -> void:
-	set_column_custom_minimum_width(idx, roundi(button.size.x))
+#region Header buttons
+func open_property(property: StringName, after: StringName = &"") -> void:
+	if headers.has(property):
+		return
+	var button: ThingTreeHeaderButton = ThingTreeHeaderButton.new(property)
+	if not after.is_empty() and headers.has(after):
+		headers[after].add_sibling(button)
+	else:
+		tree_columns_container.add_child(button)
+	button.resized.connect(_on_header_button_resized.bind(button))
+	headers.set(property, button)
+	columns = headers.size()
 
 
+func close_property(property: StringName) -> void:
+	if not headers.has(property):
+		return
+	if property == &"resource_path":
+		push_error("Can't close the property %s" % property)
+		return
 
+	headers[property].queue_free()
+	headers.erase(property)
+	columns = headers.size()
+
+
+func get_property_index(property: StringName) -> int:
+	if headers.has(property):
+		return headers[property].get_index()
+	return -1
+
+
+func _on_header_button_resized(button: ThingTreeHeaderButton) -> void:
+	set_column_custom_minimum_width(button.get_index(), roundi(button.size.x))
 #endregion
 
 
@@ -62,14 +80,15 @@ func _on_menu_action_pressed(action: Menu.Action) -> void:
 		Menu.Action.FILE_NEW_THING:
 			pass
 		Menu.Action.FILE_OPEN:
-			EditorInterface.popup_quick_open(open_file_from_path, ["Thing"])
+			EditorInterface.popup_quick_open(open_root_file_from_path, ["Thing"])
 		Menu.Action.FILE_RELOAD:
-			for child: TreeItem in _root_item.get_children():
-				var metadata = child.get_metadata(ThingTree.Column.RESOURCE)
-				if metadata is EditedThing:
-					var thing = metadata.get_thing()
-					close_file(thing)
-					open_file(thing)
+			pass
+			#for child: TreeItem in _root_item.get_children():
+				#var metadata = child.get_metadata(0)
+				#if metadata is EditedThing:
+					#var thing = metadata.get_thing()
+					#close_file(thing)
+					#open_root_file(thing)
 		#Menu.Action.FILE_SAVE:
 			#var selected_thing: EditedThing = get_selected_thing()
 			##if is_instance_valid(selected_thing):
@@ -83,15 +102,17 @@ func _on_menu_action_pressed(action: Menu.Action) -> void:
 			#if is_instance_valid(selected_thing):
 				#EditorInterface.get_file_system_dock().navigate_to_path(selected_thing.get_thing().resource_path)
 		Menu.Action.FILE_CLOSE:
-			var selected_thing: EditedThing = get_selected_thing()
-			if is_instance_valid(selected_thing):
-				close_file(selected_thing.get_thing())
+			pass
+			#var selected_thing: EditedThing = get_selected_thing()
+			#if is_instance_valid(selected_thing):
+				#close_file(selected_thing.get_thing())
 		Menu.Action.FILE_CLOSE_ALL:
 			close_all()
 		Menu.Action.FILE_CLOSE_OTHER:
-			var selected_thing: EditedThing = get_selected_thing()
-			if is_instance_valid(selected_thing):
-				close_others(selected_thing.get_thing())
+			pass
+			#var selected_thing: EditedThing = get_selected_thing()
+			#if is_instance_valid(selected_thing):
+				#close_others(selected_thing.get_thing())
 
 
 
@@ -115,7 +136,7 @@ func _on_file_dialog_file_selected(path: String) -> void:
 #
 	#new_thing.take_over_path(path)
 	#ResourceSaver.save(new_thing, path)
-	#open_file(load(path))
+	#open_root_file(load(path))
 	#_current_saving_thing = null
 
 
@@ -124,54 +145,63 @@ func _on_file_dialog_file_selected(path: String) -> void:
 
 
 #region Opening
-func open_file_from_path(path: String) -> void:
-	open_file(ResourceLoader.load(path))
+func open_root_file_from_path(path: String) -> void:
+	open_root_file(ResourceLoader.load(path))
 
 
-func open_file(thing: Thing) -> void:
-	if not is_instance_valid(thing):
-		return
-
-	while is_instance_valid(thing.parent):
-		thing = thing.parent
-
-	var edited_thing: EditedThing = get_opened_edited_thing(thing)
+func open_root_file(thing: Thing) -> void:
+	assert(is_instance_valid(thing), "Can't open a root file if nothing is provided.")
+	assert(not is_instance_valid(thing.parent), "Can't open a root file if he have a parent.")
+	var edited_thing: ThingTreeItem = get_root_thing_item(thing)
 	if is_instance_valid(edited_thing):
 		deselect_all()
-		set_selected(edited_thing.get_tree_node(), Column.RESOURCE)
+		set_selected(edited_thing, 0)
 		return
 
-	edited_thing = EditedThing.new(thing, _root_item)
+	edited_thing = _root_item.create_thing_child()
+	edited_thing.populate(thing)
 	edited_thing.dirty_changed.connect(_on_edited_thing_dirty_changed.bind(weakref(edited_thing)))
 	deselect_all()
-	set_selected(edited_thing.get_tree_node(), Column.RESOURCE)
+	set_selected(edited_thing, 0)
+
+
+func get_root_thing(thing: Thing) -> Thing:
+	while is_instance_valid(thing.parent):
+		thing = thing.parent
+	return thing
+
+
+func get_root_thing_item(thing: Thing) -> ThingTreeItem:
+	assert(not is_instance_valid(thing.parent), "Can't get opened root thing item if the provided thing have a parent.")
+	for tree_item: ThingTreeItem in _root_item.get_children():
+		if tree_item.get_thing() == thing:
+			return tree_item
+	return null
 #endregion
 
 #region Closing
 func close_file(thing: Thing) -> void:
-	var edited_thing: EditedThing = get_opened_edited_thing(thing)
+	var edited_thing: ThingTreeItem = get_root_thing_item(thing)
 	if is_instance_valid(edited_thing):
-		close_edited_file(edited_thing)
+		close_root_file(edited_thing)
 
 
-func close_edited_file(edited_thing: EditedThing) -> void:
-	# TODO check if the thing is dirty
-	ResourceSaver.save(edited_thing.get_thing())
-	edited_thing.get_tree_node().free()
+func close_root_file(tree_item: ThingTreeItem) -> void:
+	## TODO check if the thing is dirty
+	## TODO save childs too
+	ResourceSaver.save(tree_item.get_thing())
+	tree_item.free()
 
 
 func close_all() -> void:
-	for tree_item: TreeItem in _root_item.get_children():
-		var metadata = tree_item.get_metadata(Column.RESOURCE)
-		if metadata is EditedThing:
-			close_edited_file(metadata)
+	for tree_item: ThingTreeItem in _root_item.get_children():
+		close_root_file(tree_item)
 
 
 func close_others(thing: Thing) -> void:
-	for tree_item: TreeItem in _root_item.get_children():
-		var metadata = tree_item.get_metadata(Column.RESOURCE)
-		if metadata is EditedThing and not EditedThing.is_thing(metadata, thing):
-			close_edited_file(metadata)
+	for tree_item: ThingTreeItem in _root_item.get_children():
+		if tree_item.get_thing() != thing:
+			close_root_file(tree_item)
 #endregion
 
 #region Saving
@@ -193,16 +223,17 @@ func _start_new_thing_creation() -> void:
 
 
 func _on_file_saved(file: Variant) -> void:
-	var edited: EditedThing = get_opened_edited_thing(file)
-	if edited == null or not is_instance_valid(edited):
-		return
-	edited.set_dirty(false)
+	#var edited: EditedThing = get_opened_edited_thing(file)
+	#if edited == null or not is_instance_valid(edited):
+		#return
+	#edited.set_dirty(false)
+	pass
 
 
 func _on_unsaved_file_found(file: Variant) -> void:
 	pass
 
-	#edited.get_tree_node().set_text(Column.RESOURCE, "[unsaved]")
+	#edited.get_tree_node().set_text(get_property_index(&"resource_path, "[unsaved]")
 	#_start_save_as(file)
 #endregion
 
@@ -212,13 +243,12 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 	if not _is_valid_thing_drop_data(data):
 		return false
 	var column: int = get_column_at_position(at_position)
-	if column != Column.RESOURCE:
+	if column != 0:
 		return false
-	var item: TreeItem = get_item_at_position(at_position)
+	var item: ThingTreeItem = get_item_at_position(at_position)
 	if not is_instance_valid(item):
 		return false
-	var metadata: EditedThing = item.get_metadata(Column.RESOURCE)
-	var thing: Thing = metadata.get_thing()
+	var thing: Thing = item.get_thing()
 	for droped_thing in data.get("things"):
 		if thing == droped_thing:
 			return false
@@ -226,14 +256,13 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 
 
 func _drop_data(at_position: Vector2, data: Variant) -> void:
-	var item: TreeItem = get_item_at_position(at_position)
+	var item: ThingTreeItem = get_item_at_position(at_position)
 	# To be safe but probably need needed because it's already checked in _can_drop_data.
 	if not _is_valid_thing_drop_data(data) or not is_instance_valid(item):
 		return
 
 	var section = get_drop_section_at_position(at_position)
-	var metadata: EditedThing = item.get_metadata(Column.RESOURCE)
-	var thing: Thing = metadata.get_thing()
+	var thing: Thing = item.get_thing()
 
 	match section:
 		-1: # Before mean parent of dropped is the same as current
@@ -256,12 +285,11 @@ func _is_valid_thing_drop_data(data: Variant) -> bool:
 
 
 func _get_drag_data(at_position: Vector2) -> Variant:
-	if get_column_at_position(at_position) != Column.RESOURCE:
+	if get_column_at_position(at_position) != 0:
 		return
 
-	var item: TreeItem = get_item_at_position(at_position)
-	var metadata: EditedThing = item.get_metadata(Column.RESOURCE)
-	var thing: Thing = metadata.get_thing()
+	var item: ThingTreeItem = get_item_at_position(at_position)
+	var thing: Thing = item.get_thing()
 
 	var preview: HBoxContainer = HBoxContainer.new()
 	var icon: TextureRect = TextureRect.new()
@@ -269,7 +297,7 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	icon.custom_minimum_size = Vector2(icon_size, icon_size)
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	icon.texture = item.get_icon(Column.RESOURCE)
+	icon.texture = item.get_icon(0)
 	preview.add_child(icon)
 	var label: Label = Label.new()
 	label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
@@ -282,18 +310,17 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 
 
 func _on_item_mouse_selected(mouse_position: Vector2, _mouse_button_index: int) -> void:
-	var item: TreeItem = get_item_at_position(mouse_position)
-	var metadata: EditedThing = item.get_metadata(Column.RESOURCE)
-	EditorInterface.get_inspector().edit(metadata.get_thing())
+	var item: ThingTreeItem = get_item_at_position(mouse_position)
+	EditorInterface.get_inspector().edit(item.get_thing())
 
 
-func _on_edited_thing_dirty_changed(new_value: bool, edited: EditedThing) -> void:
+func _on_edited_thing_dirty_changed(new_value: bool, edited: Variant) -> void:
 	var root_node : TreeItem = edited.get_tree_node()
-	var text := root_node.get_text(Column.RESOURCE)
+	var text := root_node.get_text(0)
 	text = text.trim_suffix("(*)")
 	if new_value == true:
 		text += "(*)"
-	root_node.set_text(Column.RESOURCE, text)
+	root_node.set_text(0, text)
 
 
 func _on_file_dialog_canceled() -> void:
@@ -302,152 +329,9 @@ func _on_file_dialog_canceled() -> void:
 
 func rebuild_tree() -> void:
 	var opened_list: Array[String] = []
-	for children: TreeItem in _root_item.get_children():
-		var metadata: EditedThing = children.get_metadata(Column.RESOURCE)
-		opened_list.append(metadata.get_thing().resource_path)
+	for children: ThingTreeItem in _root_item.get_children():
+		opened_list.append(children.get_thing().resource_path)
 	close_all()
 	await get_tree().create_timer(0.1).timeout
 	for opened in opened_list:
-		open_file(load(opened))
-
-	open_file(load("uid://dvmq80fff46c7"))
-	open_file(load("uid://djoqnndd4i3hr"))
-	open_file(load("uid://c4j3dxma82626"))
-	open_file(load("uid://dd6uaa4frttpn"))
-
-
-#region EditedThing
-func get_opened_edited_thing(thing: Thing) -> EditedThing:
-	while is_instance_valid(thing.parent):
-		thing = thing.parent
-
-	for tree_item in _root_item.get_children():
-		var metadata = tree_item.get_metadata(Column.RESOURCE)
-		if EditedThing.is_thing(metadata, thing):
-			return metadata
-	return null
-
-
-func get_selected_thing() -> EditedThing:
-	var current_item: TreeItem = get_selected()
-	while true:
-		if current_item == null:
-			return null
-		if current_item == _root_item:
-			push_error("You should not be able to select the root node. There is something wrong in the get_selected_thing() method.")
-			return null
-		var metadata = current_item.get_metadata(Column.RESOURCE)
-		if is_instance_valid(metadata) and metadata is EditedThing:
-			return metadata
-		current_item = current_item.get_parent()
-	return null
-
-
-
-class EditedThing extends RefCounted:
-	var _thing: Thing : get = get_thing
-	var _tree_node: TreeItem : get = get_tree_node
-	var _dirty: bool = false : set = set_dirty, get = is_unsaved
-
-	signal dirty_changed(new_value: bool)
-
-	func _init(thing: Thing, root_item: TreeItem) -> void:
-		_thing = thing
-		_populate(root_item)
-
-
-	func get_thing() -> Thing:
-		return _thing
-
-
-	func get_tree_node() -> TreeItem:
-		return _tree_node
-
-
-	static func is_thing(edited_thing: EditedThing, thing: Thing) -> bool:
-		if not edited_thing is EditedThing:
-			return false
-		return edited_thing.get_thing() == thing
-
-
-	func _populate(root: TreeItem) -> void:
-		_tree_node = root.create_child()
-		_tree_node.set_metadata(Column.RESOURCE, self)
-
-		_tree_node.set_icon(Column.RESOURCE, EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"))
-		if _thing.resource_name.length() > 0:
-			_tree_node.set_text(Column.RESOURCE, _thing.resource_name)
-		else:
-			_tree_node.set_text(Column.RESOURCE, _thing.resource_path.get_file())
-
-		_connect_signals()
-
-		for child in _thing.get_childs_paths():
-			EditedThing.new(load(child), _tree_node)
-
-
-
-	#func _populate_thing_tree(root: TreeItem) -> void:
-		#var edited_root: EditedThing = _tree_node.get_metadata(Column.RESOURCE)
-		#var directory: DirAccess = DirAccess.open(path)
-
-		#if not directory:
-			#push_error("Could not open directory %s" % path)
-			#return
-
-		#for file_name in directory.get_files():
-			#if not file_name.ends_with(".gd"):
-				#continue
-
-			#var resource = ResourceLoader.load("%s/%s" % [path, file_name])
-			#if resource is GDScript and Thing.is_valid_child_class(resource, true):
-				#_add_script_in_tree(resource)
-
-		#for sub_directory in directory.get_directories():
-			#_populate_thing_tree("%s/%s" % [path, sub_directory])
-
-
-	#func _add_script_in_tree(script: GDScript) -> void:
-		#if _tree_script_map.has(script):
-			#return
-		#var base_script = script.get_base_script()
-		#if not _tree_script_map.has(base_script):
-			#_add_script_in_tree(base_script)
-		#var root: TreeItem = _tree_script_map.get(base_script)
-		## TODO sort class by names
-		#var new_item: TreeItem = root.create_child()
-
-		#var display_name = script.resource_name
-		#if display_name.is_empty():
-			#display_name = script.get_global_name()
-		#if display_name.is_empty():
-			#display_name = script.resource_path.get_file().trim_suffix(".gd").capitalize()
-		#display_name = display_name.trim_prefix("Thing")
-		#new_item.set_text(Column.RESOURCE, display_name)
-		#new_item.set_metadata(Column.RESOURCE, script)
-		#_tree_script_map.set(script, new_item)
-
-
-	func unpopulate() -> void:
-		_disconnect_signals()
-
-
-	func _connect_signals():
-		_thing.changed.connect(set_dirty.bind(true))
-
-
-	func _disconnect_signals():
-		# TODO Vérifier si ca marche bien et qu'il ne faut pas le bind(true)
-		_thing.changed.disconnect(set_dirty)
-
-
-	func set_dirty(value: bool) -> void:
-		var prev_value: bool = _dirty
-		_dirty = value
-		if prev_value != _dirty:
-			dirty_changed.emit(_dirty)
-
-
-	func is_unsaved() -> bool:
-		return _dirty
-##endregion
+		open_root_file(load(opened))
