@@ -51,11 +51,10 @@ func update_columns() -> void:
 			continue
 
 		set_text(index, value)
-		set_text_alignment(index, HORIZONTAL_ALIGNMENT_LEFT)
+		set_text_alignment(index, HORIZONTAL_ALIGNMENT_RIGHT)
 		set_editable(index, true)
-		prints("revert ?", property, _thing.property_can_revert(property), _thing.property_get_revert(property))
+
 		if _thing.property_can_revert(property):
-			prints("add button", property)
 			add_button(
 				index,
 				EditorInterface.get_editor_theme().get_icon("Reload", "EditorIcons"),
