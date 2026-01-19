@@ -21,17 +21,44 @@ func get_thing() -> Thing:
 
 func populate(thing: Thing) -> void:
 	_thing = thing
-	set_icon(0, EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"))
-	if _thing.resource_name.length() > 0:
-		set_text(0, _thing.resource_name)
-	else:
-		set_text(0, _thing.resource_path.get_file())
-
 	_connect_signals()
 
 	for child in _thing.get_childs_paths():
 		var child_thing_item: ThingTreeItem = create_thing_child()
 		child_thing_item.populate(load(child))
+
+
+func update_columns() -> void:
+	if not is_instance_valid(_thing):
+		return
+
+	var tree: ThingTree = get_tree()
+	for header: ThingTreeHeaderButton in tree.headers.values():
+		var property: StringName = header.get_property_path()
+		var index: int = header.get_index()
+		var value: Variant = _thing.get(property)
+
+		if property == &"resource_path" and value is String:
+			set_icon(index, EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"))
+			set_text(index, value.get_file())
+			set_editable(index, false)
+			continue
+
+		set_text(index, value)
+		set_editable(index, true)
+
+
+func notify_edited() -> void:
+	_on_edited()
+
+
+func _on_edited() -> void:
+	var tree: ThingTree = get_tree()
+	for header: ThingTreeHeaderButton in tree.headers.values():
+		var property: StringName = header.get_property_path()
+		var index: int = header.get_index()
+		if is_editable(index):
+			_thing.set(property, get_text(index))
 
 
 func unpopulate() -> void:

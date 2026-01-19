@@ -10,6 +10,7 @@ test_property = "Foooooo"
 metadata/_custom_type_script = "uid://dt6m4ybqdtu6r"
 
 [resource]
+resource_name = "Items"
 script = ExtResource("3_tsm5d")
 modules = Array[ExtResource("1_hr87b")]([SubResource("Resource_jdacy")])
 item/name = "Foo"

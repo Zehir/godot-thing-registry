@@ -19,9 +19,10 @@ var headers: Dictionary[StringName, ThingTreeHeaderButton] = {}
 
 #region Virtual methods
 func _enter_tree() -> void:
-	if not is_part_of_edited_scene():
-		search.right_icon = EditorInterface.get_editor_theme().get_icon("Search", "EditorIcons")
+	if is_part_of_edited_scene():
+		return
 
+	search.right_icon = EditorInterface.get_editor_theme().get_icon("Search", "EditorIcons")
 
 	var root_item: TreeItem = create_item()
 	root_item.set_script(ThingTreeItem)
@@ -30,10 +31,13 @@ func _enter_tree() -> void:
 	open_property(&"resource_path")
 	open_property(&"resource_name")
 
-	open_root_file(get_root_thing(load("uid://dvmq80fff46c7")))
-	open_root_file(get_root_thing(load("uid://djoqnndd4i3hr")))
-	open_root_file(get_root_thing(load("uid://c4j3dxma82626")))
-	open_root_file(get_root_thing(load("uid://dd6uaa4frttpn")))
+
+	open_root_file(get_root_thing(load("uid://dd6uaa4frttpn"))) # Items
+
+	_root_item.call_recursive(&"update_columns")
+	#open_root_file(get_root_thing(load("uid://dvmq80fff46c7")))
+	#open_root_file(get_root_thing(load("uid://djoqnndd4i3hr")))
+	#open_root_file(get_root_thing(load("uid://c4j3dxma82626")))
 #endregion
 
 
@@ -160,7 +164,8 @@ func open_root_file(thing: Thing) -> void:
 
 	edited_thing = _root_item.create_thing_child()
 	edited_thing.populate(thing)
-	edited_thing.dirty_changed.connect(_on_edited_thing_dirty_changed.bind(weakref(edited_thing)))
+	# TODO Fix
+	#edited_thing.dirty_changed.connect(_on_edited_thing_dirty_changed.bind(weakref(edited_thing)))
 	deselect_all()
 	set_selected(edited_thing, 0)
 
@@ -335,3 +340,7 @@ func rebuild_tree() -> void:
 	await get_tree().create_timer(0.1).timeout
 	for opened in opened_list:
 		open_root_file(load(opened))
+
+
+func _on_item_edited() -> void:
+	get_edited().notify_edited()
