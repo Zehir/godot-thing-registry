@@ -213,10 +213,14 @@ func call_module_property_method(property: StringName, method: StringName, argum
 
 
 func _property_can_revert(property: StringName) -> bool:
+	if property == &"resource_name":
+		return true
 	return call_module_property_method(property, &"thing_property_can_revert", [self], false)
 
 
 func _property_get_revert(property: StringName) -> Variant:
+	if property == &"resource_name":
+		return ""
 	return call_module_property_method(property, &"thing_property_get_revert", [self], null)
 
 

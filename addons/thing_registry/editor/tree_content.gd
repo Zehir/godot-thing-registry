@@ -30,6 +30,7 @@ func _enter_tree() -> void:
 
 	open_property(&"resource_path")
 	open_property(&"resource_name")
+	open_property(&"item/name")
 
 
 	open_root_file(get_root_thing(load("uid://dd6uaa4frttpn"))) # Items
@@ -71,6 +72,13 @@ func get_property_index(property: StringName) -> int:
 	if headers.has(property):
 		return headers[property].get_index()
 	return -1
+
+
+func get_property_by_index(index: int) -> StringName:
+	var child = tree_columns_container.get_child(index)
+	if child is ThingTreeHeaderButton:
+		return child.property_path
+	return &""
 
 
 func _on_header_button_resized(button: ThingTreeHeaderButton) -> void:
@@ -344,3 +352,7 @@ func rebuild_tree() -> void:
 
 func _on_item_edited() -> void:
 	get_edited().notify_edited()
+
+
+func _on_button_clicked(item: ThingTreeItem, column: int, id: int, mouse_button_index: int) -> void:
+	item.notify_button_clicked(column, id, mouse_button_index)

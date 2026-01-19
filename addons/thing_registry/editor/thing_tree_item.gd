@@ -2,6 +2,10 @@
 class_name ThingTreeItem
 extends TreeItem
 
+enum Buttons {
+	REVERT
+}
+
 
 var _thing: Thing : get = get_thing
 var _dirty: bool = false : set = set_dirty, get = is_unsaved
@@ -32,6 +36,7 @@ func update_columns() -> void:
 	if not is_instance_valid(_thing):
 		return
 
+	clear_buttons()
 	var tree: ThingTree = get_tree()
 	for header: ThingTreeHeaderButton in tree.headers.values():
 		var property: StringName = header.get_property_path()
@@ -41,11 +46,37 @@ func update_columns() -> void:
 		if property == &"resource_path" and value is String:
 			set_icon(index, EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"))
 			set_text(index, value.get_file())
+			set_text_alignment(index, HORIZONTAL_ALIGNMENT_LEFT)
 			set_editable(index, false)
 			continue
 
 		set_text(index, value)
+		set_text_alignment(index, HORIZONTAL_ALIGNMENT_LEFT)
 		set_editable(index, true)
+		prints("revert ?", property, _thing.property_can_revert(property), _thing.property_get_revert(property))
+		if _thing.property_can_revert(property):
+			prints("add button", property)
+			add_button(
+				index,
+				EditorInterface.get_editor_theme().get_icon("Reload", "EditorIcons"),
+				Buttons.REVERT,
+				false,
+				"Revert value"
+			)
+
+
+func notify_button_clicked(column: int, id: int, mouse_button_index: int) -> void:
+	_on_button_clicked(column, id, mouse_button_index)
+
+
+func _on_button_clicked(column: int, id: int, mouse_button_index: int) -> void:
+	if mouse_button_index != MouseButton.MOUSE_BUTTON_LEFT:
+		return
+	if id == Buttons.REVERT:
+		var tree: ThingTree = get_tree()
+		var property = tree.get_property_by_index(column)
+		set_text(column, _thing.property_get_revert(property))
+		_thing.set(property, _thing.property_get_revert(property))
 
 
 func notify_edited() -> void:
