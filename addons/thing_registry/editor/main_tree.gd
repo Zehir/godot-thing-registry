@@ -29,8 +29,7 @@ func _enter_tree() -> void:
 	root_item.set_script(ThingTreeItem)
 	_root_item = root_item
 
-	open_property(&"resource_path")
-	open_property(&"resource_name")
+	open_property(&"resource")
 	open_property(&"item/name")
 
 	rebuild_tree()
@@ -369,3 +368,7 @@ func _on_tree_columns_dragged(offset: int) -> void:
 	if delta > 5:
 		tree_container.custom_minimum_size.x += delta
 		tree_container.split_offsets[0] += delta
+
+
+func _on_debug_button_pressed() -> void:
+	rebuild_tree()

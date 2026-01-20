@@ -47,21 +47,18 @@ func update_columns() -> void:
 		var property: StringName = header.get_property_path()
 		var index: int = header.get_index()
 
+		if property == &"resource":
+			update_resource_column(index)
+			continue
+
+
 		if not properties.has(property):
 			set_custom_bg_color(index, Color.DIM_GRAY)
 			continue
 
 		var value: Variant = _thing.get(property)
-
-		if property == &"resource_path" and value is String:
-			set_icon(index, EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"))
-			set_text(index, value.get_file())
-			set_text_alignment(index, HORIZONTAL_ALIGNMENT_LEFT)
-			set_editable(index, false)
-			continue
-
 		set_text(index, value)
-		set_text_alignment(index, HORIZONTAL_ALIGNMENT_RIGHT)
+		set_text_alignment(index, HORIZONTAL_ALIGNMENT_LEFT)
 		set_editable(index, true)
 
 		if _thing.property_can_revert(property):
@@ -72,6 +69,8 @@ func update_columns() -> void:
 				false,
 				"Revert value"
 			)
+
+
 
 
 func notify_button_clicked(column: int, id: int, mouse_button_index: int) -> void:
@@ -97,8 +96,28 @@ func _on_edited() -> void:
 	for header: ThingTreeHeaderButton in tree.headers.values():
 		var property: StringName = header.get_property_path()
 		var index: int = header.get_index()
+		if property == &"resource":
+			_on_resource_edited(index)
+			continue
+
 		if is_editable(index):
 			_thing.set(property, get_text(index))
+
+
+
+func update_resource_column(index: int) -> void:
+	set_icon(index, EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"))
+	if not _thing.resource_name.is_empty():
+		set_text(index, _thing.resource_name)
+	else:
+		set_text(index, _thing.resource_path.get_file().trim_suffix(".tres").capitalize())
+	set_editable(index, true)
+
+
+func _on_resource_edited(index: int) -> void:
+	_thing.rename(get_text(index))
+	update_resource_column(index)
+	pass
 
 
 func unpopulate() -> void:

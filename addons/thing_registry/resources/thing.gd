@@ -35,6 +35,23 @@ func get_childs_paths() -> PackedStringArray:
 	return list
 
 
+func rename(new_name: String) -> bool:
+	var new_path = resource_path.get_base_dir().path_join(new_name.to_snake_case()) + "." + resource_path.get_extension()
+	if FileAccess.file_exists(new_path):
+		return false
+
+	resource_name = new_name
+
+	if resource_path == new_path:
+		return true
+
+	_move_to(new_path)
+
+	## Maybe we can do a less brute force than a full scan but it's fast for now.
+	EditorInterface.get_resource_filesystem().scan()
+	return true
+
+
 func get_parent() -> Thing:
 	var parent_path: String = resource_path.get_base_dir() + ".tres"
 	return load(parent_path) if ResourceLoader.exists(parent_path, "Thing") else null
@@ -53,39 +70,10 @@ func set_parent(new_parent: Thing) -> void:
 		push_error("Can't set the new parent because it's currrently a child of this Thing.")
 		return
 
-	var target_dir: String = new_parent.resource_path.get_basename() if is_instance_valid(new_parent) else get_root_path()
-	var old_dir: String = resource_path.get_basename()
-	var new_dir: String = target_dir.path_join(old_dir.get_file())
-	var moved: PackedStringArray = []
-
-	## Make sure new parent have a directory for childs.
-	if not DirAccess.dir_exists_absolute(new_dir):
-		DirAccess.make_dir_recursive_absolute(new_dir.get_base_dir())
-
-	## Move existing childs Thing.
-	if DirAccess.dir_exists_absolute(old_dir):
-		DirAccess.rename_absolute(old_dir, new_dir)
-		moved.append(new_dir + "/")
-
-	## Move Thing.
-	var new_path: String = target_dir.path_join(resource_path.get_file())
-	DirAccess.rename_absolute(resource_path, new_path)
-	moved.append(new_path)
-
-	## Update resource cache for moved files.
-	var old_root: String = old_dir.get_base_dir()
-	var new_root: String = new_dir.get_base_dir()
-	var current: String = ""
-	while moved.size() > 0:
-		current = moved.get(0)
-		moved.remove_at(0)
-		if current.ends_with("/"):
-			for sub_path in ResourceLoader.list_directory(current):
-				moved.append(current.path_join(sub_path))
-		else:
-			var old_path = old_root.path_join(current.trim_prefix(new_root))
-			if ResourceLoader.has_cached(old_path):
-				load(old_path).take_over_path(current)
+	if is_instance_valid(new_parent):
+		_move_to(new_parent.resource_path.get_basename().path_join(resource_path.get_file()))
+	else:
+		_move_to(get_root_path().path_join(resource_path.get_file()))
 
 	## Cleaup old directory if empty.
 	if is_instance_valid(current_parent):
@@ -99,6 +87,42 @@ func set_parent(new_parent: Thing) -> void:
 
 	## Maybe we can do a less brute force than a full scan but it's fast for now.
 	EditorInterface.get_resource_filesystem().scan()
+
+
+func _move_to(target_path: String) -> void:
+	var old_thing_dir: String = resource_path.get_base_dir()
+	var new_thing_dir: String = target_path.get_base_dir()
+	var old_child_dir: String = resource_path.get_basename()
+	var new_child_dir: String = target_path.get_basename()
+	var moved: PackedStringArray = []
+
+	## Make sure new parent have a directory for childs.
+	if not DirAccess.dir_exists_absolute(new_thing_dir):
+		DirAccess.make_dir_recursive_absolute(new_thing_dir)
+
+	## Move existing childs Thing.
+	if DirAccess.dir_exists_absolute(old_child_dir):
+		DirAccess.rename_absolute(old_child_dir, new_child_dir)
+		moved.append(new_child_dir + "/")
+
+	## Move Thing.
+	DirAccess.rename_absolute(resource_path, target_path)
+	moved.append(target_path)
+
+	## Update resource cache and resource_path for moved files.
+	var moved_path: String = ""
+	var moved_resource: Resource
+	while moved.size() > 0:
+		moved_path = moved.get(0)
+		moved.remove_at(0)
+		if moved_path.ends_with("/"):
+			for sub_path in ResourceLoader.list_directory(moved_path):
+				moved.append(moved_path.path_join(sub_path))
+		else:
+			var old_path = old_child_dir + moved_path.trim_prefix(new_child_dir)
+			if ResourceLoader.has_cached(old_path):
+				moved_resource = ResourceLoader.load(old_path, "", ResourceLoader.CACHE_MODE_REUSE)
+				moved_resource.resource_path = moved_path
 
 
 ## Reference to ThingModule scripts that could add properties
