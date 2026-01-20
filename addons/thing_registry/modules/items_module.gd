@@ -10,7 +10,11 @@ func get_module_name() -> StringName:
 
 func get_thing_property_list() -> Array[Dictionary]:
 	return [
-		make_property(&"name", TYPE_STRING),
+		make_property(&"name1", TYPE_STRING),
+		make_property(&"name2", TYPE_STRING),
+		make_property(&"name3", TYPE_STRING),
+		make_property(&"name4", TYPE_STRING),
+		make_property(&"name5", TYPE_STRING),
 		make_resource_property(&"icon", "Texture2D")
 	]
 

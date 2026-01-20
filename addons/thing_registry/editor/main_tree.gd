@@ -2,16 +2,16 @@
 class_name ThingTree
 extends Tree
 
-
-
+@warning_ignore("unused_signal")
 signal thing_selected(thing: Thing)
 
 const Menu = preload("uid://dsju3xwf6tler")
 
 @export var search: LineEdit
 @export var file_dialog: FileDialog
-@export var tree_container: HSplitContainer
 @export var tree_columns_container: HSplitContainer
+@export var expand_control: Control
+@export var tree_container: VBoxContainer
 
 var _root_item: ThingTreeItem
 
@@ -30,7 +30,11 @@ func _enter_tree() -> void:
 	_root_item = root_item
 
 	open_property(&"resource")
-	open_property(&"item/name")
+	open_property(&"item/name1")
+	open_property(&"item/name2")
+	open_property(&"item/name3")
+	open_property(&"item/name4")
+	open_property(&"item/name5")
 
 	rebuild_tree()
 #endregion
@@ -45,9 +49,11 @@ func open_property(property: StringName, after: StringName = &"") -> void:
 		headers[after].add_sibling(button)
 	else:
 		tree_columns_container.add_child(button)
+	expand_control.move_to_front()
 	button.resized.connect(_on_header_button_resized.bind(button))
 	headers.set(property, button)
 	columns = headers.size()
+	set_column_expand(headers.size() - 1, false)
 
 
 func close_property(property: StringName) -> void:
@@ -76,7 +82,13 @@ func get_property_by_index(index: int) -> StringName:
 
 
 func _on_header_button_resized(button: ThingTreeHeaderButton) -> void:
-	set_column_custom_minimum_width(button.get_index(), roundi(button.size.x))
+	custom_minimum_size.x = tree_columns_container.size.x - expand_control.size.x
+	var index: int = button.get_index()
+	# Not sure why theses magic offset are needed but that works.
+	if index == 0:
+		set_column_custom_minimum_width(index, roundi(button.size.x) - 1)
+	else:
+		set_column_custom_minimum_width(index, roundi(button.size.x) + 2)
 #endregion
 
 
@@ -229,6 +241,7 @@ func _start_new_thing_creation() -> void:
 	file_dialog.popup_centered()
 
 
+@warning_ignore("unused_parameter")
 func _on_file_saved(file: Variant) -> void:
 	#var edited: EditedThing = get_opened_edited_thing(file)
 	#if edited == null or not is_instance_valid(edited):
@@ -237,6 +250,7 @@ func _on_file_saved(file: Variant) -> void:
 	pass
 
 
+@warning_ignore("unused_parameter")
 func _on_unsaved_file_found(file: Variant) -> void:
 	pass
 
@@ -353,21 +367,6 @@ func _on_item_edited() -> void:
 
 func _on_button_clicked(item: ThingTreeItem, column: int, id: int, mouse_button_index: int) -> void:
 	item.notify_button_clicked(column, id, mouse_button_index)
-
-
-func _on_tree_limit_dragged(offset: int) -> void:
-	var mouse_position: Vector2 = tree_container.get_local_mouse_position()
-	if offset < tree_container.custom_minimum_size.x:
-		tree_container.custom_minimum_size.x = offset
-	if mouse_position.x > tree_container.custom_minimum_size.x:
-		tree_container.custom_minimum_size.x += mouse_position.x - offset
-
-
-func _on_tree_columns_dragged(offset: int) -> void:
-	var delta: int = roundi(tree_columns_container.get_local_mouse_position().x) - offset
-	if delta > 5:
-		tree_container.custom_minimum_size.x += delta
-		tree_container.split_offsets[0] += delta
 
 
 func _on_debug_button_pressed() -> void:

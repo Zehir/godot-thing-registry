@@ -6,3 +6,8 @@
 [resource]
 resource_name = "Axe 9"
 script = ExtResource("2_lfhk4")
+item/name1 = ""
+item/name2 = ""
+item/name3 = ""
+item/name4 = ""
+item/name5 = ""

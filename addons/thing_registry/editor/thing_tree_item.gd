@@ -57,7 +57,10 @@ func update_columns() -> void:
 			continue
 
 		var value: Variant = _thing.get(property)
-		set_text(index, value)
+		if value == null:
+			set_text(index, "")
+		else:
+			set_text(index, value)
 		set_text_alignment(index, HORIZONTAL_ALIGNMENT_LEFT)
 		set_editable(index, true)
 
@@ -130,7 +133,8 @@ func _connect_signals():
 
 func _disconnect_signals():
 	# TODO Vérifier si ca marche bien et qu'il ne faut pas le bind(true)
-	_thing.changed.disconnect(set_dirty)
+	if _thing.changed.is_connected(set_dirty):
+		_thing.changed.disconnect(set_dirty)
 
 
 func set_dirty(value: bool) -> void:
