@@ -38,9 +38,19 @@ func update_columns() -> void:
 
 	clear_buttons()
 	var tree: ThingTree = get_tree()
+
+	var properties: Array[StringName] = []
+	for property in _thing.get_property_list():
+		properties.append(property.name)
+
 	for header: ThingTreeHeaderButton in tree.headers.values():
 		var property: StringName = header.get_property_path()
 		var index: int = header.get_index()
+
+		if not properties.has(property):
+			set_custom_bg_color(index, Color.DIM_GRAY)
+			continue
+
 		var value: Variant = _thing.get(property)
 
 		if property == &"resource_path" and value is String:

@@ -10,6 +10,7 @@ const Menu = preload("uid://dsju3xwf6tler")
 
 @export var search: LineEdit
 @export var file_dialog: FileDialog
+@export var tree_container: HSplitContainer
 @export var tree_columns_container: HSplitContainer
 
 var _root_item: ThingTreeItem
@@ -32,13 +33,7 @@ func _enter_tree() -> void:
 	open_property(&"resource_name")
 	open_property(&"item/name")
 
-
-	open_root_file(get_root_thing(load("uid://dd6uaa4frttpn"))) # Items
-
-	_root_item.call_recursive(&"update_columns")
-	#open_root_file(get_root_thing(load("uid://dvmq80fff46c7")))
-	#open_root_file(get_root_thing(load("uid://djoqnndd4i3hr")))
-	#open_root_file(get_root_thing(load("uid://c4j3dxma82626")))
+	rebuild_tree()
 #endregion
 
 
@@ -341,13 +336,16 @@ func _on_file_dialog_canceled() -> void:
 
 
 func rebuild_tree() -> void:
-	var opened_list: Array[String] = []
-	for children: ThingTreeItem in _root_item.get_children():
-		opened_list.append(children.get_thing().resource_path)
 	close_all()
-	await get_tree().create_timer(0.1).timeout
-	for opened in opened_list:
-		open_root_file(load(opened))
+	var root = DirAccess.open("res://thing_root/")
+	for file in root.get_files():
+		if not file.ends_with(".tres"):
+			continue
+		var loaded: Resource = load(root.get_current_dir().path_join(file))
+		if loaded is Thing:
+			open_root_file(loaded)
+
+	_root_item.call_recursive(&"update_columns")
 
 
 func _on_item_edited() -> void:
@@ -356,3 +354,18 @@ func _on_item_edited() -> void:
 
 func _on_button_clicked(item: ThingTreeItem, column: int, id: int, mouse_button_index: int) -> void:
 	item.notify_button_clicked(column, id, mouse_button_index)
+
+
+func _on_tree_limit_dragged(offset: int) -> void:
+	var mouse_position: Vector2 = tree_container.get_local_mouse_position()
+	if offset < tree_container.custom_minimum_size.x:
+		tree_container.custom_minimum_size.x = offset
+	if mouse_position.x > tree_container.custom_minimum_size.x:
+		tree_container.custom_minimum_size.x += mouse_position.x - offset
+
+
+func _on_tree_columns_dragged(offset: int) -> void:
+	var delta: int = roundi(tree_columns_container.get_local_mouse_position().x) - offset
+	if delta > 5:
+		tree_container.custom_minimum_size.x += delta
+		tree_container.split_offsets[0] += delta

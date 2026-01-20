@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cbgf26fkyrq4a" path="res://addons/thing_registry/editor/things_editor.gd" id="1_7p1ck"]
 [ext_resource type="Script" uid="uid://dsju3xwf6tler" path="res://addons/thing_registry/editor/top_menu.gd" id="2_ybxgq"]
-[ext_resource type="Script" uid="uid://cao610uqi1ac6" path="res://addons/thing_registry/editor/tree_content.gd" id="4_cwkf3"]
+[ext_resource type="Script" uid="uid://cao610uqi1ac6" path="res://addons/thing_registry/editor/main_tree.gd" id="4_cwkf3"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_3xrmx"]
 
@@ -69,27 +69,32 @@ grow_horizontal = 2
 grow_vertical = 2
 vertical_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/ScrollContainer" unique_id=1493376961]
+[node name="TreeContainer" type="HSplitContainer" parent="VBoxContainer/PanelContainer/ScrollContainer" unique_id=625804293]
+custom_minimum_size = Vector2(800, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer" unique_id=1493376961]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer" unique_id=1874910959]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/VBoxContainer" unique_id=1874910959]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="TreeColumns" type="HSplitContainer" parent="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/MarginContainer" unique_id=133441605]
+[node name="TreeColumns" type="HSplitContainer" parent="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/VBoxContainer/MarginContainer" unique_id=133441605]
 clip_contents = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="TreeContent" type="Tree" parent="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer" unique_id=1191827139 node_paths=PackedStringArray("search", "file_dialog", "tree_columns_container")]
+[node name="MainTree" type="Tree" parent="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/VBoxContainer" unique_id=1191827139 node_paths=PackedStringArray("search", "file_dialog", "tree_container", "tree_columns_container")]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/draw_relationship_lines = 1
@@ -97,13 +102,19 @@ theme_override_styles/hovered = SubResource("StyleBoxEmpty_ybxgq")
 columns = 2
 hide_root = true
 script = ExtResource("4_cwkf3")
-search = NodePath("../../../../HBoxContainer/Search")
-file_dialog = NodePath("../../../../FileDialog")
+search = NodePath("../../../../../HBoxContainer/Search")
+file_dialog = NodePath("../../../../../FileDialog")
+tree_container = NodePath("../..")
 tree_columns_container = NodePath("../MarginContainer/TreeColumns")
 
-[connection signal="canceled" from="VBoxContainer/FileDialog" to="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" method="_on_file_dialog_canceled"]
-[connection signal="file_selected" from="VBoxContainer/FileDialog" to="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" method="_on_file_dialog_file_selected"]
-[connection signal="action_pressed" from="VBoxContainer/TopMenu" to="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" method="_on_menu_action_pressed"]
-[connection signal="button_clicked" from="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" to="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" method="_on_button_clicked"]
-[connection signal="item_edited" from="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" to="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" method="_on_item_edited"]
-[connection signal="item_mouse_selected" from="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" to="VBoxContainer/PanelContainer/ScrollContainer/VBoxContainer/TreeContent" method="_on_item_mouse_selected"]
+[node name="Control" type="Control" parent="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer" unique_id=1057945501]
+layout_mode = 2
+
+[connection signal="canceled" from="VBoxContainer/FileDialog" to="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/VBoxContainer/MainTree" method="_on_file_dialog_canceled"]
+[connection signal="file_selected" from="VBoxContainer/FileDialog" to="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/VBoxContainer/MainTree" method="_on_file_dialog_file_selected"]
+[connection signal="action_pressed" from="VBoxContainer/TopMenu" to="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/VBoxContainer/MainTree" method="_on_menu_action_pressed"]
+[connection signal="dragged" from="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer" to="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/VBoxContainer/MainTree" method="_on_tree_limit_dragged"]
+[connection signal="dragged" from="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/VBoxContainer/MarginContainer/TreeColumns" to="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/VBoxContainer/MainTree" method="_on_tree_columns_dragged"]
+[connection signal="button_clicked" from="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/VBoxContainer/MainTree" to="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/VBoxContainer/MainTree" method="_on_button_clicked"]
+[connection signal="item_edited" from="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/VBoxContainer/MainTree" to="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/VBoxContainer/MainTree" method="_on_item_edited"]
+[connection signal="item_mouse_selected" from="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/VBoxContainer/MainTree" to="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/VBoxContainer/MainTree" method="_on_item_mouse_selected"]
