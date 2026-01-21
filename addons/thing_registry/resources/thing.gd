@@ -87,23 +87,23 @@ func set_parent(new_parent: Thing) -> void:
 
 	## Maybe we can do a less brute force than a full scan but it's fast for now.
 	EditorInterface.get_resource_filesystem().scan()
+	_update_modules_list()
 
 
 func _move_to(target_path: String) -> void:
-	var old_thing_dir: String = resource_path.get_base_dir()
-	var new_thing_dir: String = target_path.get_base_dir()
-	var old_child_dir: String = resource_path.get_basename()
-	var new_child_dir: String = target_path.get_basename()
+	var old_thing_path: String = resource_path.get_basename()
+	var new_thing_path: String = target_path.get_basename()
 	var moved: PackedStringArray = []
 
 	## Make sure new parent have a directory for childs.
+	var new_thing_dir: String = target_path.get_base_dir()
 	if not DirAccess.dir_exists_absolute(new_thing_dir):
 		DirAccess.make_dir_recursive_absolute(new_thing_dir)
 
 	## Move existing childs Thing.
-	if DirAccess.dir_exists_absolute(old_child_dir):
-		DirAccess.rename_absolute(old_child_dir, new_child_dir)
-		moved.append(new_child_dir + "/")
+	if DirAccess.dir_exists_absolute(old_thing_path):
+		DirAccess.rename_absolute(old_thing_path, new_thing_path)
+		moved.append(new_thing_path + "/")
 
 	## Move Thing.
 	DirAccess.rename_absolute(resource_path, target_path)
@@ -119,7 +119,7 @@ func _move_to(target_path: String) -> void:
 			for sub_path in ResourceLoader.list_directory(moved_path):
 				moved.append(moved_path.path_join(sub_path))
 		else:
-			var old_path = old_child_dir + moved_path.trim_prefix(new_child_dir)
+			var old_path = old_thing_path + moved_path.trim_prefix(new_thing_path)
 			if ResourceLoader.has_cached(old_path):
 				moved_resource = ResourceLoader.load(old_path, "", ResourceLoader.CACHE_MODE_REUSE)
 				moved_resource.resource_path = moved_path
@@ -130,10 +130,15 @@ func _move_to(target_path: String) -> void:
 	set(value):
 		modules = value
 		module_changed.emit()
+		for module in modules:
+			if not module.property_list_changed.is_connected(module_changed.emit):
+				module.property_list_changed.connect(module_changed.emit)
 @export_group("")
 
 ## Stores property values
 var properties: Dictionary[StringName, Variant] = {}
+
+var _is_loaded_modules_valid: bool = false
 
 ## Contains loaded modules for this Thing and its parents
 var _loaded_modules: Dictionary[StringName, ThingModule] = {}
@@ -141,11 +146,10 @@ var _loaded_modules: Dictionary[StringName, ThingModule] = {}
 
 func _init() -> void:
 	module_changed.connect(_on_module_changed)
-	_on_module_changed()
 
 
 func _on_module_changed():
-	_loaded_modules = get_modules(true)
+	_update_modules_list()
 	notify_property_list_changed()
 	notify_childrens_property_list_changed()
 
@@ -177,25 +181,35 @@ func _on_parent_property_value_changed(property_name: StringName, old_value: Var
 ## Load modules from parent and self.
 ## The returned Dictionary contain module name and ThingModule
 func get_modules(force_refresh: bool = false) -> Dictionary[StringName, ThingModule]:
-	if not force_refresh and is_instance_valid(_loaded_modules):
-		return _loaded_modules
+	if force_refresh or not _is_loaded_modules_valid:
+		_update_modules_list()
+	return _loaded_modules
 
-	var modules_list: Dictionary[StringName, ThingModule] = {}
+
+func _update_modules_list() -> void:
+	_loaded_modules.clear()
 	if parent is Thing:
-		modules_list = parent.get_modules()
+		_loaded_modules.assign(parent.get_modules())
 	for module in modules:
 		if not module is ThingModule:
 			continue
 		var name: String = module.get_module_name()
-		if modules_list.has(name):
+		if _loaded_modules.has(name):
+			#TODO allow multiple modules if they can be, need to add a flag on the module to allow duplicates
 			push_error("The thing '%s' already have the module '%s'." % [
 				resource_path,
 				module.get_script().get_global_name() if module.get_script() is GDScript else "Invalid script"
 			])
 			continue
-		modules_list.set(name, module)
+		_loaded_modules.set(name, module)
+	_is_loaded_modules_valid = true
 
-	return modules_list
+
+func has_module(module: StringName) -> bool:
+	#TODO optimise by looking parent if modules are not loaded ?
+	if not _is_loaded_modules_valid:
+		_update_modules_list()
+	return _loaded_modules.has(module)
 
 
 func _get_property_list() -> Array[Dictionary]:

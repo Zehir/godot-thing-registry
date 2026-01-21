@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Thing" format=3 uid="uid://dtdw88s5e4kfp"]
+
+[ext_resource type="Texture2D" uid="uid://brj0kk3ud5q6v" path="res://icon.svg" id="1_w5268"]
+[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="2_dac6j"]
+[ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="3_ygq84"]
+
+[resource]
+resource_name = "Godot coin"
+script = ExtResource("3_ygq84")
+item/name = "Godot coin"
+item/icon = ExtResource("1_w5268")

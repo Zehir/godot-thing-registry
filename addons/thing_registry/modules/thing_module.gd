@@ -3,16 +3,60 @@
 class_name ThingModule
 extends Resource
 
-@abstract
-func get_module_name() -> StringName
+
+signal childrens_property_list_changed
 
 
 @abstract
-func get_thing_property_list() -> Array[Dictionary]
+func _get_module_name() -> StringName
 
+
+func get_module_name() -> StringName:
+	return _get_module_name()
+
+
+func _allow_duplicate() -> bool:
+	return false
+
+
+func _get_instance_name() -> String:
+	return "default"
+
+
+
+@abstract
+func _get_module_icon() -> Texture2D
+
+
+func get_module_icon() -> Texture2D:
+	return _get_module_icon()
+
+
+@abstract
+func _get_module_description() -> String
+
+
+func get_module_description() -> String:
+	return _get_module_description()
+
+
+func notify_childrens_property_list_changed() -> void:
+	childrens_property_list_changed.emit()
+
+
+@abstract
+func _get_thing_property_list() -> Array[Dictionary]
+
+
+func get_thing_property_list() -> Array[Dictionary]:
+	return _get_thing_property_list()
 
 
 func make_property(name: StringName, type: Variant.Type, hint: PropertyHint = PROPERTY_HINT_NONE, hint_string: String = "", usage: PropertyUsageFlags = 6 as PropertyUsageFlags) -> Dictionary:
+
+	if _allow_duplicate():
+		name = &"%s/%s" % [_get_instance_name(), name]
+	# TODO change usage to editor for property name serialization
 	return {
 		"name": name,
 		"type": type,

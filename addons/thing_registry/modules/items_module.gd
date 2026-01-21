@@ -4,29 +4,30 @@ extends ThingModule
 
 @export var test_property: String
 
-func get_module_name() -> StringName:
+func _get_module_name() -> StringName:
 	return &"item"
 
 
-func get_thing_property_list() -> Array[Dictionary]:
+func _get_module_icon() -> Texture2D:
+	return EditorInterface.get_editor_theme().get_icon("ItemList", "EditorIcons")
+
+
+func _get_module_description() -> String:
+	return "Properties for inventory system."
+
+
+func _get_thing_property_list() -> Array[Dictionary]:
 	return [
-		make_property(&"name1", TYPE_STRING),
-		make_property(&"name2", TYPE_STRING),
-		make_property(&"name3", TYPE_STRING),
-		make_property(&"name4", TYPE_STRING),
-		make_property(&"name5", TYPE_STRING),
+		make_property(&"name", TYPE_STRING),
 		make_resource_property(&"icon", "Texture2D")
 	]
-
 
 
 func _thing_property_can_revert(property: StringName) -> bool:
 	return property == &"name"
 
 
-
 func _thing_property_get_revert(property: StringName, _thing: Thing) -> Variant:
-	match property:
-		&"name":
-			return ""
+	if property == &"name":
+		return ""
 	return null

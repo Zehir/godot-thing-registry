@@ -1,5 +1,5 @@
 @tool
-class_name ThingTreeHeaderButton
+class_name ThingTreeHeaderAttribute
 extends Button
 
 enum SortMethod {
@@ -15,9 +15,9 @@ var property_path: StringName: get = get_property_path, set = set_property_path
 var sort: SortMethod = SortMethod.NONE
 
 
-@warning_ignore("shadowed_variable")
-func _init(property_path: StringName) -> void:
-	set_property_path(property_path)
+
+func _init(property: StringName) -> void:
+	set_property_path(property)
 	custom_minimum_size.x = 200.0
 
 

@@ -15,8 +15,8 @@ const Menu = preload("uid://dsju3xwf6tler")
 
 var _root_item: ThingTreeItem
 
-var headers: Dictionary[StringName, ThingTreeHeaderButton] = {}
-
+var headers: Dictionary[StringName, Control] = {}
+var modules: Array[ThingModule] = []
 
 #region Virtual methods
 func _enter_tree() -> void:
@@ -29,29 +29,37 @@ func _enter_tree() -> void:
 	root_item.set_script(ThingTreeItem)
 	_root_item = root_item
 
-	open_property(&"resource")
-	open_property(&"item/name1")
-	open_property(&"item/name2")
-	open_property(&"item/name3")
-	open_property(&"item/name4")
-	open_property(&"item/name5")
+	_add_header(&"resource", ThingTreeHeaderResource.new())
 
 	rebuild_tree()
 #endregion
 
 
 #region Header buttons
+func open_module(module: ThingModule) -> void:
+	if modules.has(module):
+		push_error("Was trying to open an already opened module.")
+		return
+
+	modules.append(module)
+	var module_path = "module::%s" % (modules.size() - 1)
+	_add_header(module_path, ThingTreeHeaderModule.new(module))
+
+
 func open_property(property: StringName, after: StringName = &"") -> void:
 	if headers.has(property):
 		return
-	var button: ThingTreeHeaderButton = ThingTreeHeaderButton.new(property)
+	_add_header(property, ThingTreeHeaderAttribute.new(property), after)
+
+
+func _add_header(key: StringName, control: Control, after: StringName = &"") -> void:
 	if not after.is_empty() and headers.has(after):
-		headers[after].add_sibling(button)
+		headers[after].add_sibling(control)
 	else:
-		tree_columns_container.add_child(button)
+		tree_columns_container.add_child(control)
 	expand_control.move_to_front()
-	button.resized.connect(_on_header_button_resized.bind(button))
-	headers.set(property, button)
+	control.resized.connect(_on_header_resized.bind(control))
+	headers.set(key, control)
 	columns = headers.size()
 	set_column_expand(headers.size() - 1, false)
 
@@ -76,12 +84,12 @@ func get_property_index(property: StringName) -> int:
 
 func get_property_by_index(index: int) -> StringName:
 	var child = tree_columns_container.get_child(index)
-	if child is ThingTreeHeaderButton:
+	if child is ThingTreeHeaderAttribute:
 		return child.property_path
 	return &""
 
 
-func _on_header_button_resized(button: ThingTreeHeaderButton) -> void:
+func _on_header_resized(button: Control) -> void:
 	custom_minimum_size.x = tree_columns_container.size.x - expand_control.size.x
 	var index: int = button.get_index()
 	# Not sure why theses magic offset are needed but that works.

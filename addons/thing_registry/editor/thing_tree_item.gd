@@ -27,6 +27,11 @@ func populate(thing: Thing) -> void:
 	_thing = thing
 	_connect_signals()
 
+	for module in _thing.modules:
+		var tree: Tree = get_tree()
+		if tree is ThingTree:
+			tree.open_module(module)
+
 	for child in _thing.get_childs_paths():
 		var child_thing_item: ThingTreeItem = create_thing_child()
 		child_thing_item.populate(load(child))
@@ -43,37 +48,14 @@ func update_columns() -> void:
 	for property in _thing.get_property_list():
 		properties.append(property.name)
 
-	for header: ThingTreeHeaderButton in tree.headers.values():
-		var property: StringName = header.get_property_path()
+	for header: Control in tree.headers.values():
 		var index: int = header.get_index()
-
-		if property == &"resource":
+		if header is ThingTreeHeaderAttribute:
+			update_attribute_column(index, header, properties)
+		elif header is ThingTreeHeaderModule:
+			update_module_column(index, header)
+		elif header is ThingTreeHeaderResource:
 			update_resource_column(index)
-			continue
-
-
-		if not properties.has(property):
-			set_custom_bg_color(index, Color.DIM_GRAY)
-			continue
-
-		var value: Variant = _thing.get(property)
-		if value == null:
-			set_text(index, "")
-		else:
-			set_text(index, value)
-		set_text_alignment(index, HORIZONTAL_ALIGNMENT_LEFT)
-		set_editable(index, true)
-
-		if _thing.property_can_revert(property):
-			add_button(
-				index,
-				EditorInterface.get_editor_theme().get_icon("Reload", "EditorIcons"),
-				Buttons.REVERT,
-				false,
-				"Revert value"
-			)
-
-
 
 
 func notify_button_clicked(column: int, id: int, mouse_button_index: int) -> void:
@@ -83,9 +65,13 @@ func notify_button_clicked(column: int, id: int, mouse_button_index: int) -> voi
 func _on_button_clicked(column: int, id: int, mouse_button_index: int) -> void:
 	if mouse_button_index != MouseButton.MOUSE_BUTTON_LEFT:
 		return
-	if id == Buttons.REVERT:
-		var tree: ThingTree = get_tree()
-		var property = tree.get_property_by_index(column)
+
+	var tree: ThingTree = get_tree()
+	var property = tree.get_property_by_index(column)
+	if property == &"resource":
+		return
+
+	if id == Buttons.REVERT and _thing.property_can_revert(property):
 		set_text(column, _thing.property_get_revert(property))
 		_thing.set(property, _thing.property_get_revert(property))
 
@@ -96,16 +82,16 @@ func notify_edited() -> void:
 
 func _on_edited() -> void:
 	var tree: ThingTree = get_tree()
-	for header: ThingTreeHeaderButton in tree.headers.values():
-		var property: StringName = header.get_property_path()
-		var index: int = header.get_index()
-		if property == &"resource":
-			_on_resource_edited(index)
-			continue
+	for header: Control in tree.headers.values():
+		if header is ThingTreeHeaderAttribute:
+			var property: StringName = header.get_property_path()
+			var index: int = header.get_index()
+			if property == &"resource":
+				_on_resource_edited(index)
+				continue
 
-		if is_editable(index):
-			_thing.set(property, get_text(index))
-
+			if is_editable(index):
+				_thing.set(property, get_text(index))
 
 
 func update_resource_column(index: int) -> void:
@@ -115,6 +101,45 @@ func update_resource_column(index: int) -> void:
 	else:
 		set_text(index, _thing.resource_path.get_file().trim_suffix(".tres").capitalize())
 	set_editable(index, true)
+
+
+func update_module_column(index: int, header: ThingTreeHeaderModule) -> void:
+	var module: ThingModule = header.get_module()
+	if _thing.modules.has(module):
+		set_icon(index, module.get_module_icon())
+		set_text(index, "D")
+		set_tooltip_text(index, "This module is Defined on this Thing.")
+	elif _thing.has_module(module.get_module_name()):
+		set_icon(index, module.get_module_icon())
+		set_text(index, "H")
+		set_tooltip_text(index, "This module is Herited from a parent Thing.")
+
+
+func update_attribute_column(index: int, header: ThingTreeHeaderAttribute, properties: Array[StringName]) -> void:
+	var property: StringName = header.get_property_path()
+
+	if not properties.has(property):
+		set_custom_bg_color(index, Color.DIM_GRAY)
+		return
+
+	var value: Variant = _thing.get(property)
+	if value == null:
+		set_text(index, "")
+	else:
+		set_text(index, value)
+	set_text_alignment(index, HORIZONTAL_ALIGNMENT_LEFT)
+	set_editable(index, true)
+
+	if _thing.property_can_revert(property):
+		add_button(
+			index,
+			EditorInterface.get_editor_theme().get_icon("Reload", "EditorIcons"),
+			Buttons.REVERT,
+			false,
+			"Revert value"
+		)
+
+
 
 
 func _on_resource_edited(index: int) -> void:

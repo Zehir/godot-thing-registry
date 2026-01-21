@@ -1,7 +1,15 @@
 [gd_resource type="Resource" script_class="Thing" format=3 uid="uid://djoqnndd4i3hr"]
 
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="1_elm5b"]
+[ext_resource type="Script" uid="uid://c18u018kmoa80" path="res://addons/thing_registry/modules/price_module.gd" id="2_m44sm"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_mnpwi"]
+[ext_resource type="Resource" uid="uid://dtdw88s5e4kfp" path="res://thing_root/items/currency/godot_coin.tres" id="2_nnmf5"]
+
+[sub_resource type="Resource" id="Resource_nnmf5"]
+script = ExtResource("2_m44sm")
+currency = ExtResource("2_nnmf5")
+metadata/_custom_type_script = "uid://c18u018kmoa80"
 
 [resource]
 script = ExtResource("2_mnpwi")
+modules = Array[ExtResource("1_elm5b")]([SubResource("Resource_nnmf5")])
