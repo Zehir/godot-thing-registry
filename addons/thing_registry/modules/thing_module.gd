@@ -4,9 +4,6 @@ class_name ThingModule
 extends Resource
 
 
-signal childrens_property_list_changed
-
-
 @abstract
 func _get_module_name() -> StringName
 
@@ -23,7 +20,6 @@ func _get_instance_name() -> String:
 	return "default"
 
 
-
 @abstract
 func _get_module_icon() -> Texture2D
 
@@ -38,10 +34,6 @@ func _get_module_description() -> String
 
 func get_module_description() -> String:
 	return _get_module_description()
-
-
-func notify_childrens_property_list_changed() -> void:
-	childrens_property_list_changed.emit()
 
 
 @abstract

@@ -1,6 +1,5 @@
 [gd_scene format=3 uid="uid://bybjt46vqisvu"]
 
-[ext_resource type="Script" uid="uid://cbgf26fkyrq4a" path="res://addons/thing_registry/editor/things_editor.gd" id="1_7p1ck"]
 [ext_resource type="Script" uid="uid://dsju3xwf6tler" path="res://addons/thing_registry/editor/top_menu.gd" id="2_ybxgq"]
 [ext_resource type="Script" uid="uid://cao610uqi1ac6" path="res://addons/thing_registry/editor/main_tree.gd" id="4_cwkf3"]
 
@@ -20,7 +19,6 @@ theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = -4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
-script = ExtResource("1_7p1ck")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1702330685]
 layout_mode = 2
