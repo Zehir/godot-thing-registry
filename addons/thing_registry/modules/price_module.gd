@@ -33,7 +33,6 @@ func _get_instance_name() -> StringName:
 
 
 func _get_thing_property_list() -> Array[Dictionary]:
-	prints("p", make_property(&"value", TYPE_FLOAT))
 	return [make_property(&"value", TYPE_FLOAT)]
 
 

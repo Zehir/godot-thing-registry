@@ -1,15 +1,15 @@
-[gd_resource type="Resource" script_class="Thing" format=3 uid="uid://dd6uaa4frttpn"]
+[gd_resource type="Resource" script_class="Thing" format=3 uid="uid://dyghcwvt62rb7"]
 
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="1_hr87b"]
 [ext_resource type="Script" uid="uid://dt6m4ybqdtu6r" path="res://addons/thing_registry/modules/items_module.gd" id="2_1xmvu"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="3_tsm5d"]
 
-[sub_resource type="Resource" id="Resource_jdacy"]
+[sub_resource type="Resource" id="Resource_f5rwo"]
 script = ExtResource("2_1xmvu")
-test_property = "Foooooo"
+test_property = "Fooooo"
 metadata/_custom_type_script = "uid://dt6m4ybqdtu6r"
 
 [resource]
 resource_name = "Items"
 script = ExtResource("3_tsm5d")
-modules = Array[ExtResource("1_hr87b")]([SubResource("Resource_jdacy")])
+modules = Array[ExtResource("1_hr87b")]([SubResource("Resource_f5rwo")])

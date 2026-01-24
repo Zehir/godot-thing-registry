@@ -146,7 +146,8 @@ var _loaded_modules: Dictionary[StringName, ThingModule] = {}
 
 
 func _init() -> void:
-	module_changed.connect(_on_module_changed)
+	# Deferred call because "resource_path" it not always defined at that time.
+	module_changed.connect.call_deferred(_on_module_changed)
 
 
 func _on_module_changed():
