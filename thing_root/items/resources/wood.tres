@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="Thing" format=3 uid="uid://krp1xr8f17m8"]
+
+[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="1_gvgo0"]
+[ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_q8ur2"]
+
+[resource]
+script = ExtResource("2_q8ur2")
+metadata/_custom_type_script = "uid://dirfs1dh5k0r"

@@ -106,11 +106,11 @@ func update_resource_column(index: int) -> void:
 func update_module_column(index: int, header: ThingTreeHeaderModule) -> void:
 	var module: ThingModule = header.get_module()
 	if _thing.modules.has(module):
-		set_icon(index, module.get_module_icon())
+		set_icon(index, module.get_icon())
 		set_text(index, "D")
 		set_tooltip_text(index, "This module is Defined on this Thing.")
-	elif _thing.has_module(module.get_module_name()):
-		set_icon(index, module.get_module_icon())
+	elif _thing.has_module(module.get_instance_name()):
+		set_icon(index, module.get_icon())
 		set_text(index, "H")
 		set_tooltip_text(index, "This module is Herited from a parent Thing.")
 

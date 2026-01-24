@@ -3,49 +3,47 @@
 class_name ThingModule
 extends Resource
 
+#region Module info
+@abstract
+func _get_display_name() -> String
 
+
+func get_display_name() -> String:
+	return _get_display_name()
 
 
 @abstract
-func _get_module_instance_id() -> StringName
+func _get_icon() -> Texture2D
 
 
-func get_module_instance_id() -> StringName:
-	return _get_module_instance_id()
+func get_icon() -> Texture2D:
+	return _get_icon()
 
 
 @abstract
-func _get_module_name() -> StringName
+func _get_description() -> String
 
 
-func get_module_name() -> StringName:
-	return _get_module_name()
+func get_description() -> String:
+	return _get_description()
+#endregion
 
 
+#region Duplicate module
 func _allow_duplicate() -> bool:
 	return false
 
 
-func _get_instance_name() -> String:
-	return "default"
+func _get_instance_name() -> StringName:
+	return StringName(_get_display_name().to_snake_case())
 
 
-@abstract
-func _get_module_icon() -> Texture2D
+func get_instance_name() -> StringName:
+	return _get_instance_name()
+#endregion
 
 
-func get_module_icon() -> Texture2D:
-	return _get_module_icon()
-
-
-@abstract
-func _get_module_description() -> String
-
-
-func get_module_description() -> String:
-	return _get_module_description()
-
-
+#region Properties
 @abstract
 func _get_thing_property_list() -> Array[Dictionary]
 
@@ -54,11 +52,15 @@ func get_thing_property_list() -> Array[Dictionary]:
 	return _get_thing_property_list()
 
 
-func make_property(name: StringName, type: Variant.Type, hint: PropertyHint = PROPERTY_HINT_NONE, hint_string: String = "", usage: PropertyUsageFlags = 6 as PropertyUsageFlags) -> Dictionary:
+func get_property_fullname(property: StringName) -> StringName:
+	return _get_property_fullname(property)
 
-	if _allow_duplicate():
-		name = &"%s/%s" % [_get_instance_name(), name]
-	# TODO change usage to editor for property name serialization
+
+func _get_property_fullname(property: StringName) -> StringName:
+	return StringName("%s/%s" % [_get_instance_name(), property])
+
+
+func make_property(name: StringName, type: Variant.Type, hint: PropertyHint = PROPERTY_HINT_NONE, hint_string: String = "", usage: PropertyUsageFlags = 6 as PropertyUsageFlags) -> Dictionary:
 	return {
 		"name": name,
 		"type": type,
@@ -72,7 +74,6 @@ func make_resource_property(name: StringName, resource_type: String) -> Dictiona
 	return make_property(name, TYPE_OBJECT, PROPERTY_HINT_RESOURCE_TYPE, resource_type)
 
 
-
 func thing_property_can_revert(property: StringName, _thing: Thing) -> bool:
 	return _thing_property_can_revert(property)
 
@@ -81,7 +82,7 @@ func thing_property_get_revert(property: StringName, thing: Thing) -> Variant:
 	if not thing.parent is Thing:
 		return _thing_property_get_revert(property, thing)
 
-	var full_name: StringName = StringName(get_module_name() + "/" + property)
+	var full_name: StringName = _get_property_fullname(property)
 	if thing.parent.properties.has(full_name):
 		return thing.parent.properties.get(full_name)
 
@@ -97,3 +98,4 @@ func _thing_property_can_revert(property: StringName) -> bool:
 @warning_ignore("unused_parameter")
 func _thing_property_get_revert(property: StringName, thing: Thing) -> Variant:
 	return null
+#endregion

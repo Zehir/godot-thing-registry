@@ -8,34 +8,32 @@ extends ThingModule
 		notify_property_list_changed()
 
 
-func _get_module_instance_id():
-	return &"price"
+func _get_display_name() -> String:
+	if is_instance_valid(currency):
+		return "Price (%s)" % currency.resource_path.get_basename().get_file().capitalize()
+	return "Price"
 
 
-func _get_module_name() -> StringName:
-	return &"price"
+func _get_icon() -> Texture2D:
+	return EditorInterface.get_editor_theme().get_icon("ItemList", "EditorIcons")
+
+
+func _get_description() -> String:
+	return "Properties for inventory system."
 
 
 func _allow_duplicate() -> bool:
 	return true
 
 
-func _get_instance_name() -> String:
-	if is_instance_valid(currency) and currency.has_module(&"item"):
-		#TODO use UID here and display the name in the editor
-		return currency.get("item/name").to_snake_case()
-	return super()
-
-
-func _get_module_icon() -> Texture2D:
-	return EditorInterface.get_editor_theme().get_icon("ItemList", "EditorIcons")
-
-
-func _get_module_description() -> String:
-	return "Properties for inventory system."
+func _get_instance_name() -> StringName:
+	if is_instance_valid(currency):
+		return "price_%s" % ResourceUID.path_to_uid(currency.resource_path).trim_prefix("uid://")
+	return &"price"
 
 
 func _get_thing_property_list() -> Array[Dictionary]:
+	prints("p", make_property(&"value", TYPE_FLOAT))
 	return [make_property(&"value", TYPE_FLOAT)]
 
 

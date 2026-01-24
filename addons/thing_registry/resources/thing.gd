@@ -194,46 +194,44 @@ func _update_modules_list() -> void:
 	for module in modules:
 		if not module is ThingModule:
 			continue
-		var name: String = module.get_module_name()
-		if _loaded_modules.has(name):
+		var instance_name: StringName = module.get_instance_name()
+		if _loaded_modules.has(instance_name):
 			#TODO allow multiple modules if they can be, need to add a flag on the module to allow duplicates
 			push_error("The thing '%s' already have the module '%s'." % [
 				resource_path,
 				module.get_script().get_global_name() if module.get_script() is GDScript else "Invalid script"
 			])
 			continue
-		_loaded_modules.set(name, module)
+		_loaded_modules.set(instance_name, module)
 	_is_loaded_modules_valid = true
 
 
-func has_module(module: StringName) -> bool:
+func has_module(instance_name: StringName) -> bool:
 	#TODO optimise by looking parent if modules are not loaded ?
 	if not _is_loaded_modules_valid:
 		_update_modules_list()
-	return _loaded_modules.has(module)
+	return _loaded_modules.has(instance_name)
 
 
 func _get_property_list() -> Array[Dictionary]:
 	var properties_list: Array[Dictionary] = []
 	var modules_list: Dictionary[StringName, ThingModule] = get_modules()
-	for module_name: StringName in modules_list.keys():
+	var module_ids: Array[StringName] = modules_list.keys()
+	module_ids.sort()
+	for module_name: StringName in module_ids:
 		var module: ThingModule = modules_list.get(module_name)
-		var instance_id: StringName = module.get_module_instance_id()
 		var module_properties: Array = module.get_thing_property_list()
 		for property in module_properties:
-			property.name = &"%s/%s" % [instance_id, property.name]
+			property.name = module.get_property_fullname(property.name)
 			if not properties.has(property.name) and property_can_revert(property.name):
 				properties.set(property.name, property_get_revert(property.name))
 
 		if module_properties.size() > 0:
-			var display_name: String = module.get_module_name()
-			if display_name != instance_id:
-				display_name += " (%s)" % instance_id
 			properties_list.append({
-				"name": display_name,
+				"name": module.get_display_name(),
 				"type": TYPE_NIL,
 				"hint": PROPERTY_HINT_NONE,
-				"hint_string": "ThingModuleGroup",
+				"hint_string": module.get_property_fullname(""),
 				"usage": PROPERTY_USAGE_GROUP
 			})
 			properties_list.append_array(module_properties)
