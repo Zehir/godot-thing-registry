@@ -6,8 +6,3 @@
 [resource]
 resource_name = "Axe 1"
 script = ExtResource("2_n6r6w")
-item/name1 = ""
-item/name2 = ""
-item/name3 = ""
-item/name4 = ""
-item/name5 = ""
