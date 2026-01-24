@@ -7,7 +7,7 @@ signal module_changed()
 
 @export_custom(PROPERTY_HINT_RESOURCE_TYPE, "Thing", PROPERTY_USAGE_EDITOR)
 var parent: Thing:
-	get = get_parent, set = set_parent
+	get = get_parent
 
 
 func get_root_path() -> String:
@@ -35,95 +35,9 @@ func get_childs_paths() -> PackedStringArray:
 	return list
 
 
-func rename(new_name: String) -> bool:
-	var new_path = resource_path.get_base_dir().path_join(new_name.to_snake_case()) + "." + resource_path.get_extension()
-	if FileAccess.file_exists(new_path):
-		return false
-
-	resource_name = new_name
-
-	if resource_path == new_path:
-		return true
-
-	_move_to(new_path)
-
-	## Maybe we can do a less brute force than a full scan but it's fast for now.
-	EditorInterface.get_resource_filesystem().scan()
-	return true
-
-
 func get_parent() -> Thing:
 	var parent_path: String = resource_path.get_base_dir() + ".tres"
 	return load(parent_path) if ResourceLoader.exists(parent_path, "Thing") else null
-
-
-func set_parent(new_parent: Thing) -> void:
-	if not Engine.is_editor_hint():
-		push_error("You can only change the parent in edit mode")
-		return
-
-	var current_parent: Thing = parent
-	if current_parent == new_parent:
-		return
-
-	if is_instance_valid(new_parent) and new_parent.is_child_of(self):
-		push_error("Can't set the new parent because it's currrently a child of this Thing.")
-		return
-
-	if is_instance_valid(new_parent):
-		_move_to(new_parent.resource_path.get_basename().path_join(resource_path.get_file()))
-	else:
-		_move_to(get_root_path().path_join(resource_path.get_file()))
-
-	## Cleaup old directory if empty.
-	if is_instance_valid(current_parent):
-		var old_parent_dir: String = current_parent.resource_path.get_basename()
-		if DirAccess.dir_exists_absolute(old_parent_dir):
-			var old_parent: DirAccess = DirAccess.open(old_parent_dir)
-			old_parent.include_hidden = true
-			old_parent.include_navigational = false
-			if old_parent.get_files().size() == 0 and old_parent.get_directories().size() == 0:
-				DirAccess.remove_absolute(old_parent_dir)
-
-	## Maybe we can do a less brute force than a full scan but it's fast for now.
-	EditorInterface.get_resource_filesystem().scan()
-	_update_modules_list()
-
-
-## TODO move this to a dedicated static class ThingUtils.move_to(thing, path)
-func _move_to(target_path: String) -> void:
-	var old_thing_path: String = resource_path.get_basename()
-	var new_thing_path: String = target_path.get_basename()
-	var moved: PackedStringArray = []
-
-	## Make sure new parent have a directory for childs.
-	var new_thing_dir: String = target_path.get_base_dir()
-	if not DirAccess.dir_exists_absolute(new_thing_dir):
-		DirAccess.make_dir_recursive_absolute(new_thing_dir)
-
-	## Move existing childs Thing.
-	if DirAccess.dir_exists_absolute(old_thing_path):
-		DirAccess.rename_absolute(old_thing_path, new_thing_path)
-		moved.append(new_thing_path + "/")
-
-	## Move Thing.
-	DirAccess.rename_absolute(resource_path, target_path)
-	moved.append(target_path)
-
-	## Update resource cache and resource_path for moved files.
-	var moved_path: String = ""
-	var moved_resource: Resource
-	while moved.size() > 0:
-		moved_path = moved.get(0)
-		moved.remove_at(0)
-		if moved_path.ends_with("/"):
-			for sub_path in ResourceLoader.list_directory(moved_path):
-				moved.append(moved_path.path_join(sub_path))
-		else:
-			var old_path = old_thing_path + moved_path.trim_prefix(new_thing_path)
-			if ResourceLoader.has_cached(old_path):
-				moved_resource = ResourceLoader.load(old_path, "", ResourceLoader.CACHE_MODE_REUSE)
-				moved_resource.resource_path = moved_path
 
 
 ## Reference to ThingModule scripts that could add properties
@@ -302,7 +216,7 @@ func is_child_of(other: Thing) -> bool:
 #@export_tool_button("Debug") var debug_action = debug
 #func debug():
 	#var items: Thing = load("uid://dd6uaa4frttpn")
-	#parent = items
+	#ThingUtils.set_parent(self, items)
 	#set_parent(null)
 	#prints("root", get_root_path())
 	#if not is_instance_valid(parent):

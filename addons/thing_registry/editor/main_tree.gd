@@ -296,10 +296,10 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 	match section:
 		-1: # Before mean parent of dropped is the same as current
 			for dropped: Thing in data.get("things"):
-				dropped.parent = thing.parent
+				ThingUtils.set_parent(dropped, thing.parent)
 		0, 1: # On it or below bean as child of current
 			for dropped: Thing in data.get("things"):
-				dropped.parent = thing
+				ThingUtils.set_parent(dropped, thing)
 
 	#TODO not rebuild the tree on thing dropped
 	rebuild_tree.call_deferred()
