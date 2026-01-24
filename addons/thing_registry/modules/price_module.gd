@@ -8,6 +8,10 @@ extends ThingModule
 		notify_property_list_changed()
 
 
+func _get_module_instance_id():
+	return &"price"
+
+
 func _get_module_name() -> StringName:
 	return &"price"
 

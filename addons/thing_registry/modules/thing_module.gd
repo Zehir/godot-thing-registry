@@ -4,6 +4,16 @@ class_name ThingModule
 extends Resource
 
 
+
+
+@abstract
+func _get_module_instance_id() -> StringName
+
+
+func get_module_instance_id() -> StringName:
+	return _get_module_instance_id()
+
+
 @abstract
 func _get_module_name() -> StringName
 

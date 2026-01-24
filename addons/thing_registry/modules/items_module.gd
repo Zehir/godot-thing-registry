@@ -4,6 +4,11 @@ extends ThingModule
 
 @export var test_property: String
 
+
+func _get_module_instance_id():
+	return &"item"
+
+
 func _get_module_name() -> StringName:
 	return &"item"
 

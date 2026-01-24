@@ -13,7 +13,7 @@ func _enter_tree() -> void:
 	things_editor = load("uid://bybjt46vqisvu").instantiate()
 	EditorInterface.get_editor_main_screen().add_child(things_editor)
 	cleanup_callables.append(things_editor.queue_free)
-	_make_visible(false)
+	things_editor.hide()
 
 	# Inspector plugin
 	var inspector_plugin = load("uid://cekcax7tk6g3n").new()
@@ -35,7 +35,7 @@ func _has_main_screen():
 
 
 func _make_visible(visible):
-	if things_editor:
+	if is_instance_valid(things_editor):
 		things_editor.visible = visible
 
 

@@ -90,6 +90,7 @@ func set_parent(new_parent: Thing) -> void:
 	_update_modules_list()
 
 
+## TODO move this to a dedicated static class ThingUtils.move_to(thing, path)
 func _move_to(target_path: String) -> void:
 	var old_thing_path: String = resource_path.get_basename()
 	var new_thing_path: String = target_path.get_basename()
@@ -216,19 +217,23 @@ func _get_property_list() -> Array[Dictionary]:
 	var properties_list: Array[Dictionary] = []
 	var modules_list: Dictionary[StringName, ThingModule] = get_modules()
 	for module_name: StringName in modules_list.keys():
-		var module_properties: Array = modules_list.get(module_name).get_thing_property_list()
+		var module: ThingModule = modules_list.get(module_name)
+		var instance_id: StringName = module.get_module_instance_id()
+		var module_properties: Array = module.get_thing_property_list()
 		for property in module_properties:
-			property.name = module_name + "/" + property.name
+			property.name = &"%s/%s" % [instance_id, property.name]
 			if not properties.has(property.name) and property_can_revert(property.name):
 				properties.set(property.name, property_get_revert(property.name))
 
 		if module_properties.size() > 0:
+			var display_name: String = module.get_module_name()
+			if display_name != instance_id:
+				display_name += " (%s)" % instance_id
 			properties_list.append({
-				"name": module_name.capitalize(),
-				"class_name": &"",
-				"type": 0,
-				"hint": 0,
-				"hint_string": module_name + "/",
+				"name": display_name,
+				"type": TYPE_NIL,
+				"hint": PROPERTY_HINT_NONE,
+				"hint_string": "ThingModuleGroup",
 				"usage": PROPERTY_USAGE_GROUP
 			})
 			properties_list.append_array(module_properties)
@@ -302,4 +307,4 @@ func is_child_of(other: Thing) -> bool:
 	#set_parent(null)
 	#prints("root", get_root_path())
 	#if not is_instance_valid(parent):
-		#set(&"item/name", "ID %d" % randi())
+		#set(&"item:name", "ID %d" % randi())
