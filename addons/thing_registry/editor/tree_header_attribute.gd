@@ -19,6 +19,7 @@ var sort: SortMethod = SortMethod.NONE
 func _init(property: StringName) -> void:
 	set_property_path(property)
 	custom_minimum_size.x = 200.0
+	icon = EditorInterface.get_editor_theme().get_icon("MemberProperty", "EditorIcons")
 
 
 func get_property_path() -> StringName:

@@ -82,7 +82,6 @@ func notify_edited() -> void:
 
 func _on_edited() -> void:
 	var tree: ThingTree = get_tree()
-	prints("_on_edited", tree.headers.values())
 	for header: Control in tree.headers.values():
 		var index: int = header.get_index()
 		if header is ThingTreeHeaderResource:
@@ -142,7 +141,6 @@ func update_attribute_column(index: int, header: ThingTreeHeaderAttribute, prope
 
 
 func _on_resource_edited(index: int) -> void:
-	prints("_on_resource_edited", index)
 	ThingUtils.rename(_thing, get_text(index))
 	update_resource_column(index)
 

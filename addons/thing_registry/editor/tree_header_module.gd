@@ -11,6 +11,7 @@ func _init(module: ThingModule) -> void:
 	_module = module
 	custom_minimum_size.x = 50.0
 	text = _module.get_display_name()
+	icon = _module.get_icon()
 
 
 func get_module() -> ThingModule:

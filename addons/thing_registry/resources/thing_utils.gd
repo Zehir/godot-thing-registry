@@ -1,6 +1,8 @@
 @tool
+## This class can only be used in editor
 class_name ThingUtils
 extends RefCounted
+
 
 
 static func set_parent(thing: Thing, new_parent: Thing) -> void:
