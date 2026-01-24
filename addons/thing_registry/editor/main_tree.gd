@@ -15,6 +15,8 @@ const Menu = preload("uid://dsju3xwf6tler")
 
 var _root_item: ThingTreeItem
 
+#TODO not sure it's a good idea to keep track of headers and module here,
+# maybe just loop the tree if needed. There will be not that many columns.
 var headers: Dictionary[StringName, Control] = {}
 var modules: Array[ThingModule] = []
 
@@ -38,12 +40,12 @@ func _enter_tree() -> void:
 #region Header buttons
 func open_module(module: ThingModule) -> void:
 	if modules.has(module):
-		push_error("Was trying to open an already opened module.")
+		#push_error("Was trying to open an already opened module.")
 		return
 
 	modules.append(module)
-	var module_path = "module::%s" % (modules.size() - 1)
-	_add_header(module_path, ThingTreeHeaderModule.new(module))
+	var module_path: StringName = StringName("module::%s" % (modules.size() - 1))
+	_add_header(module_path, ThingTreeHeaderModule.new(module, module_path))
 
 
 func open_property(property: StringName, after: StringName = &"") -> void:
