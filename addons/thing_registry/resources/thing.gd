@@ -3,10 +3,10 @@ class_name Thing
 extends Resource
 
 signal module_changed()
-
+signal parent_changed()
 
 ## Parent thing
-@export_custom(PROPERTY_HINT_RESOURCE_TYPE, "Thing", PROPERTY_USAGE_EDITOR)
+#@export_custom(PROPERTY_HINT_RESOURCE_TYPE, "Thing", PROPERTY_USAGE_EDITOR)
 var parent: Thing:
 	get = get_parent
 
@@ -49,14 +49,15 @@ func get_parent() -> Thing:
 
 
 ## Reference to ThingModule scripts that could add properties
-@export var modules: Array[ThingModule] = []:
+@export_custom(PROPERTY_HINT_ARRAY_TYPE, "ThingModule", PROPERTY_USAGE_DEFAULT) var modules: Array[ThingModule] = []:
 	set(value):
 		modules = value
 		module_changed.emit()
 		for module in modules:
+			if not is_instance_valid(module):
+				continue
 			if not module.property_list_changed.is_connected(module_changed.emit):
 				module.property_list_changed.connect(module_changed.emit)
-@export_group("")
 
 ## Stores property values
 var properties: Dictionary[StringName, Variant] = {}
@@ -95,6 +96,11 @@ func notify_childrens_property_value_changed(property_name: StringName, old_valu
 			child.notify_childrens_property_value_changed(property_name, old_value)
 			child._on_parent_property_value_changed(property_name, old_value)
 
+
+func notify_parent_changed():
+	prints("notify_parent_changed")
+	_update_modules_list()
+	parent_changed.emit()
 
 ## Called when a parent property value has changed.
 func _on_parent_property_value_changed(property_name: StringName, old_value: Variant):

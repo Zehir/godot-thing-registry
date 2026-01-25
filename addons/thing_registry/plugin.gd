@@ -18,6 +18,9 @@ func _enter_tree() -> void:
 	add_inspector_plugin(inspector_plugin)
 	tree_exiting.connect(remove_inspector_plugin.bind(inspector_plugin), CONNECT_ONE_SHOT)
 
+	var filesystem: FileSystemDock = EditorInterface.get_file_system_dock()
+	filesystem.files_moved.connect(_on_files_moved)
+
 
 func _has_main_screen():
 	return true
@@ -45,3 +48,12 @@ func _handles(object: Object) -> bool:
 #func _edit(object: Object) -> void:
 	#if object is ThingRegistry:
 		#things_editor.filesystem_panel.open_file(object)
+
+
+func _on_files_moved(old_file: String, _new_file: String):
+	# TODO what about not edited Things ?
+	# TODO notify MainTree ?
+	var edited_object = EditorInterface.get_inspector().get_edited_object()
+	if edited_object is Thing:
+		if edited_object.resource_path == old_file:
+			edited_object.notify_parent_changed.call_deferred()

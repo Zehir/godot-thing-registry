@@ -17,14 +17,16 @@ func _parse_begin(object: Object) -> void:
 
 @warning_ignore("unused_parameter")
 func _parse_category(object: Object, category: String) -> void:
-	pass
-	#prints("_parse_category", object, category)
+	if category == Thing.resource_path.get_file():
+		add_custom_control(ThingBreadcrumb.new(object, ThingBreadcrumb.Mode.INHERITS))
+		add_custom_control(ThingBreadcrumb.new(object, ThingBreadcrumb.Mode.INHERITED_BY))
+
 
 
 @warning_ignore("unused_parameter")
 func _parse_end(object: Object) -> void:
 	pass
-	#prints("_parse_end", object)
+	prints("_parse_end", object)
 
 
 
@@ -43,14 +45,11 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 	if grabbing_default:
 		return false
 
+	prints("parse_property", object, type, name, hint_type, hint_string, usage_flags, wide)
 	if object is Thing:
-
-		if name == "parent":
-			add_custom_control(ThingBreadcrumb.new(object, ThingBreadcrumb.Mode.THING_PATH))
-
 		if hint_string == "ThingModuleHeader":
 			add_custom_control(HSeparator.new())
-			add_custom_control(ThingBreadcrumb.new(object, ThingBreadcrumb.Mode.MODULE_ORIGIN, name))
+			add_custom_control(ThingBreadcrumb.new(object, ThingBreadcrumb.Mode.MODULE, name))
 			return true
 
 		if name.contains(":"):
@@ -73,48 +72,45 @@ func _get_inspector(object: Object, type: Variant.Type, path: String, hint: Prop
 class ThingBreadcrumb extends MarginContainer:
 	var label: RichTextLabel
 
+	enum Mode {
+		MODULE,
+		INHERITS,
+		INHERITED_BY,
+	}
+
+	var _mode: Mode
 	var _thing: Thing
 	var _module: ThingModule
-
-	enum Mode {
-		THING_PATH,
-		MODULE_ORIGIN,
-	}
+	var _module_instance_name: String
+	const inherit_tooltip: String = "Path of the thing in the tree structure. Use the filesystem dock to change the structure.\nA Thing is a child when placed in a directory named after its parent.\n\nExample:\nthing.tres\nthing/child.tres"
 
 	func _init(thing: Thing, mode: Mode, module_instance_name: String = "") -> void:
 		_thing = thing
+		_mode = mode
+		_module_instance_name = module_instance_name
 
 		label = RichTextLabel.new()
 		label.fit_content = true
 		label.meta_clicked.connect(_on_rich_text_label_meta_clicked)
 		add_child(label)
+		update_breadcrumb()
 
-		match mode:
-			Mode.THING_PATH:
-				var things: Array[Thing] = [thing]
-				while is_instance_valid(things[-1].parent):
-					things.append(things[-1].parent)
+		_thing.parent_changed.connect(update_breadcrumb)
 
-				things.reverse()
-				for current_thing in things:
-					_add_thing(current_thing)
-					if current_thing != things[-1]:
-						_add_arrow()
 
-			Mode.MODULE_ORIGIN:
-				_module = thing.get_modules().get(module_instance_name)
+	func update_breadcrumb() -> void:
+		label.clear()
+		label.add_text(String(Mode.find_key(_mode)).capitalize())
+		label.add_text(" : ")
+		match _mode:
+			Mode.MODULE:
+				_module = _thing.get_modules().get(_module_instance_name)
 				if not is_instance_valid(_module):
-					push_error("Could not find module that have the instance '%s'" % module_instance_name)
+					push_error("Could not find module that have the instance '%s'" % _module_instance_name)
 					queue_free.call_deferred()
 					return
 
-				if not thing.modules.has(_module):
-					var module_owner: Thing = thing.parent
-					while not module_owner.modules.has(_module):
-						module_owner = module_owner.parent
-
-					_add_thing(module_owner)
-					_add_arrow()
+				label.tooltip_text = _module.get_description()
 
 				label.add_image(_module.get_icon(), 16, 16)
 				label.add_text(" ")
@@ -122,7 +118,38 @@ class ThingBreadcrumb extends MarginContainer:
 				label.add_text(_module.get_display_name())
 				label.pop()
 
-				label.tooltip_text = _module.get_description()
+				if not _thing.modules.has(_module):
+					var module_owner: Thing = _thing.parent
+					while not module_owner.modules.has(_module):
+						module_owner = module_owner.parent
+					_add_left_arrow()
+					_add_thing(module_owner)
+			Mode.INHERITS:
+				label.tooltip_text = inherit_tooltip
+				var things: Array[Thing] = [_thing]
+				while is_instance_valid(things[-1].parent):
+					things.append(things[-1].parent)
+
+				things.pop_front()
+				visible = things.size() > 0
+				for current_thing in things:
+					_add_thing(current_thing)
+					if current_thing != things[-1]:
+						_add_left_arrow()
+			Mode.INHERITED_BY:
+				label.tooltip_text = inherit_tooltip
+
+				var things: Array[Thing] = []
+
+				for path: String in _thing.get_childs_paths():
+					var maybe: Thing = Thing.load_thing_at(path)
+					if is_instance_valid(maybe):
+						things.append(maybe)
+				visible = things.size() > 0
+				for current_thing in things:
+					_add_thing(current_thing)
+					if current_thing != things[-1]:
+						label.add_text(", ")
 
 
 	func _add_thing(thing: Thing) -> void:
@@ -135,7 +162,12 @@ class ThingBreadcrumb extends MarginContainer:
 		label.pop()
 
 
-	func _add_arrow() -> void:
+	func _add_left_arrow() -> void:
+		label.add_text(" ")
+		label.add_image(EditorInterface.get_editor_theme().get_icon("PagePrevious", "EditorIcons"), 16, 16)
+		label.add_text(" ")
+
+	func _add_right_arrow() -> void:
 		label.add_text(" ")
 		label.add_image(EditorInterface.get_editor_theme().get_icon("PageNext", "EditorIcons"), 16, 16)
 		label.add_text(" ")
