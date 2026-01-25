@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ThingModulePrice" format=3 uid="uid://cl2oj6mu37o4g"]
+
+[ext_resource type="Resource" uid="uid://dtdw88s5e4kfp" path="res://thing_root/items/currency/godot_coin.tres" id="1_q2u0n"]
+[ext_resource type="Script" uid="uid://c18u018kmoa80" path="res://addons/thing_registry/modules/price_module.gd" id="2_quepp"]
+
+[resource]
+script = ExtResource("2_quepp")
+currency = ExtResource("1_q2u0n")
+metadata/_custom_type_script = "uid://c18u018kmoa80"

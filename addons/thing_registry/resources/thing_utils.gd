@@ -91,5 +91,6 @@ static func move_to(thing: Thing, target_path: String) -> void:
 		else:
 			var old_path = old_thing_path + moved_path.trim_prefix(new_thing_path)
 			if ResourceLoader.has_cached(old_path):
-				moved_resource = ResourceLoader.load(old_path, "", ResourceLoader.CACHE_MODE_REUSE)
+				moved_resource = ResourceLoader.get_cached_ref(old_path)
+				#moved_resource = ResourceLoader.load(old_path, "", ResourceLoader.CACHE_MODE_REUSE)
 				moved_resource.resource_path = moved_path

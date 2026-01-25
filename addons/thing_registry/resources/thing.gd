@@ -21,6 +21,13 @@ func have_child_directory() -> bool:
 	return DirAccess.dir_exists_absolute(resource_path.get_basename())
 
 
+static func load_thing_at(path: String) -> Thing:
+	var resource: Resource = load(path)
+	if resource is Thing:
+		return resource
+	return null
+
+
 ## Return Thing resource path that is directly the child of this Thing.
 ## Return an empty array if no child if found. Does not return sub childs.
 func get_childs_paths() -> PackedStringArray:
@@ -30,14 +37,13 @@ func get_childs_paths() -> PackedStringArray:
 
 	for path: String in DirAccess.get_files_at(resource_path.get_basename()):
 		var child_path: String = resource_path.get_basename().path_join(path)
-		if ResourceLoader.exists(child_path, "Thing"):
+		if load_thing_at(child_path) != null:
 			list.append(child_path)
 	return list
 
 
 func get_parent() -> Thing:
-	var parent_path: String = resource_path.get_base_dir() + ".tres"
-	return load(parent_path) if ResourceLoader.exists(parent_path, "Thing") else null
+	return load_thing_at(resource_path.get_base_dir() + ".tres")
 
 
 ## Reference to ThingModule scripts that could add properties
@@ -73,8 +79,8 @@ func _on_module_changed():
 ## Notify childrens that their property list may have changed.
 func notify_childrens_property_list_changed() -> void:
 	for child_path in get_childs_paths():
-		var child: Resource = load(child_path)
-		if child is Thing:
+		var child: Thing = load_thing_at(child_path)
+		if child != null:
 			child.notify_childrens_property_list_changed()
 			child.notify_property_list_changed()
 
@@ -82,8 +88,8 @@ func notify_childrens_property_list_changed() -> void:
 ## Notify childrens that a property value has changed.
 func notify_childrens_property_value_changed(property_name: StringName, old_value: Variant):
 	for child_path in get_childs_paths():
-		var child: Resource = load(child_path)
-		if child is Thing:
+		var child: Thing = load_thing_at(child_path)
+		if child != null:
 			child.notify_childrens_property_value_changed(property_name, old_value)
 			child._on_parent_property_value_changed(property_name, old_value)
 

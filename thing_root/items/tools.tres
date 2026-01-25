@@ -1,7 +1,9 @@
 [gd_resource type="Resource" script_class="Thing" format=3 uid="uid://c4j3dxma82626"]
 
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="1_kvnt2"]
+[ext_resource type="Resource" uid="uid://cl2oj6mu37o4g" path="res://thing_root/items/currency/godot_coin_module.tres" id="2_ckwp7"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_oxtan"]
 
 [resource]
 script = ExtResource("2_oxtan")
+modules = Array[ExtResource("1_kvnt2")]([ExtResource("2_ckwp7")])

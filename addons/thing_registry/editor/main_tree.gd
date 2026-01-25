@@ -174,7 +174,7 @@ func _on_file_dialog_file_selected(path: String) -> void:
 
 #region Opening
 func open_root_file_from_path(path: String) -> void:
-	open_root_file(ResourceLoader.load(path))
+	open_root_file(Thing.load_thing_at(path))
 
 
 func open_root_file(thing: Thing) -> void:
@@ -364,8 +364,8 @@ func rebuild_tree() -> void:
 	for file in root.get_files():
 		if not file.ends_with(".tres"):
 			continue
-		var loaded: Resource = load(root.get_current_dir().path_join(file))
-		if loaded is Thing:
+		var loaded: Thing = Thing.load_thing_at(root.get_current_dir().path_join(file))
+		if loaded != null:
 			open_root_file(loaded)
 
 	_root_item.call_recursive(&"update_columns")

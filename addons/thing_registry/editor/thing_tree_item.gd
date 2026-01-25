@@ -33,8 +33,9 @@ func populate(thing: Thing) -> void:
 			tree.open_module(module)
 
 	for child in _thing.get_childs_paths():
-		var child_thing_item: ThingTreeItem = create_thing_child()
-		child_thing_item.populate(load(child))
+		var loaded: Thing = Thing.load_thing_at(child)
+		if loaded != null:
+			create_thing_child().populate(loaded)
 
 
 func update_columns() -> void:
