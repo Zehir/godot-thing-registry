@@ -5,6 +5,7 @@ extends Resource
 signal module_changed()
 
 
+## Parent thing
 @export_custom(PROPERTY_HINT_RESOURCE_TYPE, "Thing", PROPERTY_USAGE_EDITOR)
 var parent: Thing:
 	get = get_parent
@@ -151,11 +152,11 @@ func _get_property_list() -> Array[Dictionary]:
 
 		if module_properties.size() > 0:
 			properties_list.append({
-				"name": module.get_display_name(),
+				"name": module.get_instance_name(),
 				"type": TYPE_NIL,
 				"hint": PROPERTY_HINT_NONE,
-				"hint_string": module.get_property_fullname(""),
-				"usage": PROPERTY_USAGE_GROUP
+				"hint_string": "ThingModuleHeader",
+				"usage": PROPERTY_USAGE_EDITOR
 			})
 			properties_list.append_array(module_properties)
 	return properties_list
@@ -163,9 +164,9 @@ func _get_property_list() -> Array[Dictionary]:
 
 ## Call a method on the module that handle the given property.
 func call_module_property_method(property: StringName, method: StringName, arguments: Array = [], default: Variant = null) -> Variant:
-	if not property.contains("/"):
+	if not property.contains(":"):
 		return default
-	var parts: PackedStringArray = property.split("/", true, 1)
+	var parts: PackedStringArray = property.split(":", true, 1)
 	var module: ThingModule = get_modules().get(parts[0])
 	if not is_instance_valid(module):
 		return default
@@ -189,7 +190,7 @@ func _property_get_revert(property: StringName) -> Variant:
 
 
 func _validate_property(property: Dictionary) -> void:
-	if not property.name.contains("/"):
+	if not property.name.contains(":"):
 		return
 
 	if property_can_revert(property.name):
@@ -198,7 +199,7 @@ func _validate_property(property: Dictionary) -> void:
 
 
 func _set(property: StringName, value: Variant) -> bool:
-	if not property.contains("/"):
+	if not property.contains(":"):
 		return false
 	var old_value = properties.get(property)
 	properties.set(property, value)
@@ -207,9 +208,16 @@ func _set(property: StringName, value: Variant) -> bool:
 
 
 func _get(property: StringName) -> Variant:
-	if not property.contains("/"):
+	if not property.contains(":"):
 		return null
 	return properties.get(property)
+
+
+func get_display_name() -> String:
+	if not resource_name.is_empty():
+		return resource_name
+	else:
+		return resource_path.get_file().trim_suffix(".tres").capitalize()
 
 
 func is_child_of(other: Thing) -> bool:

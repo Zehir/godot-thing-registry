@@ -57,7 +57,7 @@ func get_property_fullname(property: StringName) -> StringName:
 
 
 func _get_property_fullname(property: StringName) -> StringName:
-	return StringName("%s/%s" % [_get_instance_name(), property])
+	return StringName("%s:%s" % [_get_instance_name(), property])
 
 
 func make_property(name: StringName, type: Variant.Type, hint: PropertyHint = PROPERTY_HINT_NONE, hint_string: String = "", usage: PropertyUsageFlags = 6 as PropertyUsageFlags) -> Dictionary:

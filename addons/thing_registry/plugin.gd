@@ -3,8 +3,6 @@ extends EditorPlugin
 
 var things_editor: CanvasItem
 
-var cleanup_callables: Array[Callable] = []
-
 func _enter_tree() -> void:
 	if not Engine.is_editor_hint():
 		return
@@ -12,22 +10,13 @@ func _enter_tree() -> void:
 	# Main panel
 	things_editor = load("uid://bybjt46vqisvu").instantiate()
 	EditorInterface.get_editor_main_screen().add_child(things_editor)
-	cleanup_callables.append(things_editor.queue_free)
+	tree_exiting.connect(things_editor.queue_free, CONNECT_ONE_SHOT)
 	things_editor.hide()
 
 	# Inspector plugin
 	var inspector_plugin = load("uid://cekcax7tk6g3n").new()
 	add_inspector_plugin(inspector_plugin)
-	cleanup_callables.append(remove_inspector_plugin.bind(inspector_plugin))
-
-
-func _exit_tree() -> void:
-	if not cleanup_callables.is_empty():
-		cleanup_callables.reverse()
-		for callable in cleanup_callables:
-			if is_instance_valid(callable) and callable.is_valid():
-				callable.call()
-		cleanup_callables.clear()
+	tree_exiting.connect(remove_inspector_plugin.bind(inspector_plugin), CONNECT_ONE_SHOT)
 
 
 func _has_main_screen():

@@ -95,10 +95,7 @@ func _on_edited() -> void:
 
 func update_resource_column(index: int) -> void:
 	set_icon(index, EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"))
-	if not _thing.resource_name.is_empty():
-		set_text(index, _thing.resource_name)
-	else:
-		set_text(index, _thing.resource_path.get_file().trim_suffix(".tres").capitalize())
+	set_text(index, _thing.get_display_name())
 	set_editable(index, true)
 
 
