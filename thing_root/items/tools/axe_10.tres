@@ -1,8 +1,0 @@
-[gd_resource type="Resource" script_class="Thing" format=3 uid="uid://djcx6420dkahm"]
-
-[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="1_e0ubc"]
-[ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_8d6lj"]
-
-[resource]
-resource_name = "Axe 10"
-script = ExtResource("2_8d6lj")

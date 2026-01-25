@@ -11,13 +11,15 @@ func _can_handle(object: Object) -> bool:
 
 func _parse_begin(object: Object) -> void:
 	if object is Thing:
-		prints("_parse_begin", object.get_modules())
+		pass
+		#prints("_parse_begin", object.get_modules())
 	pass
 
 
 @warning_ignore("unused_parameter")
 func _parse_category(object: Object, category: String) -> void:
 	if category == Thing.resource_path.get_file():
+		add_custom_control(ThingBreadcrumb.new(object, ThingBreadcrumb.Mode.THING))
 		add_custom_control(ThingBreadcrumb.new(object, ThingBreadcrumb.Mode.INHERITS))
 		add_custom_control(ThingBreadcrumb.new(object, ThingBreadcrumb.Mode.INHERITED_BY))
 
@@ -26,7 +28,7 @@ func _parse_category(object: Object, category: String) -> void:
 @warning_ignore("unused_parameter")
 func _parse_end(object: Object) -> void:
 	pass
-	prints("_parse_end", object)
+	#prints("_parse_end", object)
 
 
 
@@ -45,7 +47,7 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 	if grabbing_default:
 		return false
 
-	prints("parse_property", object, type, name, hint_type, hint_string, usage_flags, wide)
+	#prints("parse_property", object, type, name, hint_type, hint_string, usage_flags, wide)
 	if object is Thing:
 		if hint_string == "ThingModuleHeader":
 			add_custom_control(HSeparator.new())
@@ -73,9 +75,10 @@ class ThingBreadcrumb extends MarginContainer:
 	var label: RichTextLabel
 
 	enum Mode {
-		MODULE,
+		THING,
 		INHERITS,
 		INHERITED_BY,
+		MODULE,
 	}
 
 	var _mode: Mode
@@ -103,27 +106,8 @@ class ThingBreadcrumb extends MarginContainer:
 		label.add_text(String(Mode.find_key(_mode)).capitalize())
 		label.add_text(" : ")
 		match _mode:
-			Mode.MODULE:
-				_module = _thing.get_modules().get(_module_instance_name)
-				if not is_instance_valid(_module):
-					push_error("Could not find module that have the instance '%s'" % _module_instance_name)
-					queue_free.call_deferred()
-					return
-
-				label.tooltip_text = _module.get_description()
-
-				label.add_image(_module.get_icon(), 16, 16)
-				label.add_text(" ")
-				label.push_meta(_module, RichTextLabel.META_UNDERLINE_ON_HOVER, "Edit module\n%s" % _module.resource_path)
-				label.add_text(_module.get_display_name())
-				label.pop()
-
-				if not _thing.modules.has(_module):
-					var module_owner: Thing = _thing.parent
-					while not module_owner.modules.has(_module):
-						module_owner = module_owner.parent
-					_add_left_arrow()
-					_add_thing(module_owner)
+			Mode.THING:
+				_add_thing(_thing)
 			Mode.INHERITS:
 				label.tooltip_text = inherit_tooltip
 				var things: Array[Thing] = [_thing]
@@ -150,6 +134,27 @@ class ThingBreadcrumb extends MarginContainer:
 					_add_thing(current_thing)
 					if current_thing != things[-1]:
 						label.add_text(", ")
+			Mode.MODULE:
+				_module = _thing.get_modules().get(_module_instance_name)
+				if not is_instance_valid(_module):
+					push_error("Could not find module that have the instance '%s'" % _module_instance_name)
+					queue_free.call_deferred()
+					return
+
+				label.tooltip_text = _module.get_description()
+
+				label.add_image(_module.get_icon(), 16, 16)
+				label.add_text(" ")
+				label.push_meta(_module, RichTextLabel.META_UNDERLINE_ON_HOVER, "Edit module\n%s" % _module.resource_path)
+				label.add_text(_module.get_display_name())
+				label.pop()
+
+				if not _thing.modules.has(_module):
+					var module_owner: Thing = _thing.parent
+					while not module_owner.modules.has(_module):
+						module_owner = module_owner.parent
+					_add_left_arrow()
+					_add_thing(module_owner)
 
 
 	func _add_thing(thing: Thing) -> void:

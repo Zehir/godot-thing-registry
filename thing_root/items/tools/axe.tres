@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Thing" format=3 uid="uid://dvmq80fff46c7"]
+
+[ext_resource type="Texture2D" uid="uid://5xdg78wcvbe2" path="res://thing_root/assets/tools_crafting_woodcutting_axe_hatchet_lumberjack.png" id="1_6jve7"]
+[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="2_o6v4m"]
+[ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="3_tcmec"]
+
+[resource]
+resource_name = "Axe"
+script = ExtResource("3_tcmec")
+item:name = "Axe"
+item:icon = ExtResource("1_6jve7")
+price_dtdw88s5e4kfp:value = 150.0

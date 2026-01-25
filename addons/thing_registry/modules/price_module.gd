@@ -10,11 +10,15 @@ extends ThingModule
 
 func _get_display_name() -> String:
 	if is_instance_valid(currency):
-		return "Price (%s)" % currency.resource_path.get_basename().get_file().capitalize()
+		return "Price (%s)" % currency.get_display_name()
 	return "Price"
 
 
 func _get_icon() -> Texture2D:
+	if is_instance_valid(currency):
+		var icon: Texture2D = currency.get("item:icon")
+		if is_instance_valid(icon):
+			return icon
 	return EditorInterface.get_editor_theme().get_icon("ItemList", "EditorIcons")
 
 
@@ -34,10 +38,6 @@ func _get_instance_name() -> StringName:
 
 func _get_thing_property_list() -> Array[Dictionary]:
 	return [make_property(&"value", TYPE_FLOAT)]
-
-
-func _thing_property_can_revert(_property: StringName) -> bool:
-	return true
 
 
 func _thing_property_get_revert(_property: StringName, _thing: Thing) -> Variant:

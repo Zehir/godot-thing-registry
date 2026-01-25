@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="Thing" format=3 uid="uid://djoqnndd4i3hr"]
 
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="1_elm5b"]
+[ext_resource type="Texture2D" uid="uid://stx5kvxta43q" path="res://thing_root/assets/unused/tools_crafting_profession_woodcutting_lumber_trees_wood_chopping_axe_hatchet.png" id="1_m44sm"]
 [ext_resource type="Resource" uid="uid://cl2oj6mu37o4g" path="res://thing_root/items/currency/godot_coin_module.tres" id="2_m44sm"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_mnpwi"]
 
@@ -8,3 +9,4 @@
 resource_name = "Resources"
 script = ExtResource("2_mnpwi")
 modules = Array[ExtResource("1_elm5b")]([ExtResource("2_m44sm")])
+item:icon = ExtResource("1_m44sm")

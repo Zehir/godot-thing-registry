@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Thing" format=3 uid="uid://cj7cvhx0fu6mc"]
+
+[ext_resource type="Texture2D" uid="uid://dkk2p756e34ph" path="res://thing_root/assets/tools_crafting_bucket.png" id="1_r18m1"]
+[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="2_afcne"]
+[ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="3_2xweg"]
+
+[resource]
+resource_name = "Bucket"
+script = ExtResource("3_2xweg")
+item:name = "Bucket"
+item:icon = ExtResource("1_r18m1")
+price_dtdw88s5e4kfp:value = 200.0
+metadata/_custom_type_script = "uid://dirfs1dh5k0r"
