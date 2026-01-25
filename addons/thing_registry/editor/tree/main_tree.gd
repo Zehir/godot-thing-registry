@@ -15,10 +15,7 @@ const Menu = preload("uid://dsju3xwf6tler")
 
 var _root_item: ThingTreeItem
 
-#TODO not sure it's a good idea to keep track of headers and module here,
-# maybe just loop the tree if needed. There will be not that many columns.
-var headers: Dictionary[StringName, Control] = {}
-var modules: Array[ThingModule] = []
+var tree_columns: Dictionary[StringName, ThingTreeColumn] = {}
 
 #region Virtual methods
 func _enter_tree() -> void:
@@ -31,62 +28,64 @@ func _enter_tree() -> void:
 	root_item.set_script(ThingTreeItem)
 	_root_item = root_item
 
-	_add_header(&"resource", ThingTreeHeaderResource.new())
-
 	rebuild_tree()
 #endregion
 
 
 #region Header buttons
 func open_module(module: ThingModule) -> void:
-	if modules.has(module):
+	var module_path: StringName = StringName("module::%s" % module.resource_path)
+	#if headers.has(module_path):
 		#push_error("Was trying to open an already opened module.")
-		return
+		#return
 
-	modules.append(module)
-	var module_path: StringName = StringName("module::%s" % (modules.size() - 1))
-	_add_header(module_path, ThingTreeHeaderModule.new(module, module_path))
+	#_add_header(module_path, ThingTreeColumnModule.new(module))
+
+	#for property in module.get_thing_property_list():
+		#open_property(module, property)
 
 
-func open_property(property: StringName, after: StringName = &"") -> void:
-	if headers.has(property):
-		return
-	_add_header(property, ThingTreeHeaderAttribute.new(property), after)
+func open_property(module: ThingModule, property: Dictionary, after: StringName = &"") -> void:
+	var fullname: StringName = module.get_property_fullname(property.name)
+	#if headers.has(fullname):
+		#return
+	#_add_header(fullname, ThingTreeColumnAttribute.new(module, property), after)
 
 
 func _add_header(key: StringName, control: Control, after: StringName = &"") -> void:
-	if not after.is_empty() and headers.has(after):
-		headers[after].add_sibling(control)
+	if not after.is_empty() and tree_columns.has(after):
+		tree_columns[after].add_sibling(control)
 	else:
 		tree_columns_container.add_child(control)
 	expand_control.move_to_front()
 	control.resized.connect(_on_header_resized.bind(control))
-	headers.set(key, control)
-	columns = headers.size()
-	set_column_expand(headers.size() - 1, false)
+	tree_columns.set(key, control)
+	columns = tree_columns.size()
+	set_column_expand(tree_columns.size() - 1, false)
 
 
 func close_property(property: StringName) -> void:
-	if not headers.has(property):
-		return
-	if property == &"resource_path":
-		push_error("Can't close the property %s" % property)
-		return
+	pass
+	#if not headers.has(property):
+		#return
+	#if property == &"resource_path":
+		#push_error("Can't close the property %s" % property)
+		#return
+#
+	#headers[property].queue_free()
+	#headers.erase(property)
+	#columns = headers.size()
 
-	headers[property].queue_free()
-	headers.erase(property)
-	columns = headers.size()
 
-
-func get_property_index(property: StringName) -> int:
-	if headers.has(property):
-		return headers[property].get_index()
-	return -1
+#func get_property_index(property: StringName) -> int:
+	#if headers.has(property):
+		#return headers[property].get_index()
+	#return -1
 
 
 func get_property_by_index(index: int) -> StringName:
 	var child = tree_columns_container.get_child(index)
-	if child is ThingTreeHeaderAttribute:
+	if child is ThingTreeColumnAttribute:
 		return child.property_path
 	return &""
 
@@ -269,77 +268,6 @@ func _on_unsaved_file_found(file: Variant) -> void:
 #endregion
 
 
-func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
-	drop_mode_flags = DROP_MODE_ON_ITEM | DROP_MODE_INBETWEEN
-	if not _is_valid_thing_drop_data(data):
-		return false
-	var column: int = get_column_at_position(at_position)
-	if column != 0:
-		return false
-	var item: ThingTreeItem = get_item_at_position(at_position)
-	if not is_instance_valid(item):
-		return false
-	var thing: Thing = item.get_thing()
-	for droped_thing in data.get("things"):
-		if thing == droped_thing:
-			return false
-	return true
-
-
-func _drop_data(at_position: Vector2, data: Variant) -> void:
-	var item: ThingTreeItem = get_item_at_position(at_position)
-	# To be safe but probably need needed because it's already checked in _can_drop_data.
-	if not _is_valid_thing_drop_data(data) or not is_instance_valid(item):
-		return
-
-	var section = get_drop_section_at_position(at_position)
-	var thing: Thing = item.get_thing()
-
-	match section:
-		-1: # Before mean parent of dropped is the same as current
-			for dropped: Thing in data.get("things"):
-				ThingUtils.set_parent(dropped, thing.parent)
-		0, 1: # On it or below bean as child of current
-			for dropped: Thing in data.get("things"):
-				ThingUtils.set_parent(dropped, thing)
-
-	#TODO not rebuild the tree on thing dropped
-	rebuild_tree.call_deferred()
-
-
-func _is_valid_thing_drop_data(data: Variant) -> bool:
-	return (data is Dictionary
-		and data.get("type") == "thing"
-		and data.get("from") == self
-		and typeof(data.get("things")) == TYPE_ARRAY
-	)
-
-
-func _get_drag_data(at_position: Vector2) -> Variant:
-	if get_column_at_position(at_position) != 0:
-		return
-
-	var item: ThingTreeItem = get_item_at_position(at_position)
-	var thing: Thing = item.get_thing()
-
-	var preview: HBoxContainer = HBoxContainer.new()
-	var icon: TextureRect = TextureRect.new()
-	var icon_size: int = EditorInterface.get_editor_theme().get_constant("class_icon_size", "Editor")
-	icon.custom_minimum_size = Vector2(icon_size, icon_size)
-	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	icon.texture = item.get_icon(0)
-	preview.add_child(icon)
-	var label: Label = Label.new()
-	label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	label.text = thing.resource_path.get_file()
-	preview.add_child(label)
-
-	set_drag_preview(preview)
-
-	return {"type": "thing", "from": self, "things": [thing]}
-
-
 func _on_item_mouse_selected(mouse_position: Vector2, _mouse_button_index: int) -> void:
 	var item: ThingTreeItem = get_item_at_position(mouse_position)
 	EditorInterface.get_inspector().edit(item.get_thing())
@@ -360,6 +288,15 @@ func _on_file_dialog_canceled() -> void:
 
 func rebuild_tree() -> void:
 	close_all()
+
+	for tree_column: ThingTreeColumn in tree_columns.values():
+		tree_column.free()
+	columns = 1
+
+	tree_columns.clear()
+
+	_add_header(&"resource", ThingTreeColumnResource.new())
+
 	var root = DirAccess.open("res://thing_root/")
 	for file in root.get_files():
 		if not file.ends_with(".tres"):
@@ -368,15 +305,55 @@ func rebuild_tree() -> void:
 		if loaded != null:
 			open_root_file(loaded)
 
-	_root_item.call_recursive(&"update_columns")
+	for tree_column: ThingTreeColumn in tree_columns.values():
+		var index: int = tree_column.get_index()
+		for item: ThingTreeItem in _root_item.get_children():
+			item.call_recursive(&"call_adapter", tree_column, &"update_column", [index])
+
+
+
+#region Adapter calls
+func _get_drag_data(at_position: Vector2) -> Variant:
+	var column_index: int = get_column_at_position(at_position)
+	if column_index == -1:
+		return null
+
+	for tree_column: ThingTreeColumn in tree_columns.values():
+		if column_index == tree_column.get_index():
+			return get_item_at_position(at_position).call_adapter(tree_column, &"get_drag_data", [column_index])
+	return null
+
+
+func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
+	var column_index: int = get_column_at_position(at_position)
+	for tree_column: ThingTreeColumn in tree_columns.values():
+		if column_index == tree_column.get_index():
+			return get_item_at_position(at_position).call_adapter(tree_column, &"can_drop_data", [column_index, data])
+	return false
+
+
+func _drop_data(at_position: Vector2, data: Variant) -> void:
+	var item: ThingTreeItem = get_item_at_position(at_position)
+	var section = get_drop_section_at_position(at_position)
+	var column_index = get_column_at_position(at_position)
+	for tree_column: ThingTreeColumn in tree_columns.values():
+		if column_index == tree_column.get_index():
+			item.call_adapter(tree_column, &"notify_drop_data", [column_index, section, data])
+			return
 
 
 func _on_item_edited() -> void:
-	get_edited().notify_edited()
+	for tree_column: ThingTreeColumn in tree_columns.values():
+		var column_index: int = tree_column.get_index()
+		(get_edited() as ThingTreeItem).call_adapter(tree_column, &"notify_edited", [column_index])
 
 
-func _on_button_clicked(item: ThingTreeItem, column: int, id: int, mouse_button_index: int) -> void:
-	item.notify_button_clicked(column, id, mouse_button_index)
+func _on_button_clicked(item: ThingTreeItem, column_index: int, id: int, mouse_button_index: int) -> void:
+	for tree_column: ThingTreeColumn in tree_columns.values():
+		if column_index == tree_column.get_index():
+			item.call_adapter(tree_column, &"notify_button_clicked", [column_index, id, mouse_button_index])
+			return
+#endregion
 
 
 func _on_debug_button_pressed() -> void:

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Thing" format=3 uid="uid://bp1mkkr8jrs1e"]
+
+[ext_resource type="Texture2D" uid="uid://e76wjbwm1gns" path="res://thing_root/assets/tools_crafting_tailoring_knitting_wool_thread_materials.png" id="1_x5vba"]
+[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="2_4pyue"]
+[ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="3_wqcnr"]
+
+[resource]
+resource_name = "Wool"
+script = ExtResource("3_wqcnr")
+item:name = "Wool"
+item:icon = ExtResource("1_x5vba")
+price_dtdw88s5e4kfp:value = 10.0

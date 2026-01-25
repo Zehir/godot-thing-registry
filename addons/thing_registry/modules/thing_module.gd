@@ -53,10 +53,6 @@ func get_thing_property_list() -> Array[Dictionary]:
 
 
 func get_property_fullname(property: StringName) -> StringName:
-	return _get_property_fullname(property)
-
-
-func _get_property_fullname(property: StringName) -> StringName:
 	return StringName("%s:%s" % [_get_instance_name(), property])
 
 
@@ -78,7 +74,7 @@ func thing_property_get_revert(property: StringName, thing: Thing) -> Variant:
 	if not thing.parent is Thing:
 		return _thing_property_get_revert(property, thing)
 
-	var full_name: StringName = _get_property_fullname(property)
+	var full_name: StringName = get_property_fullname(property)
 	if thing.parent.properties.has(full_name):
 		return thing.parent.properties.get(full_name)
 
