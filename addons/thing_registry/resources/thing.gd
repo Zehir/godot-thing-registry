@@ -33,15 +33,14 @@ static func load_thing_at(path: String) -> Thing:
 
 ## Return Thing resource path that is directly the child of this Thing.
 ## Return an empty array if no child if found. Does not return sub childs.
+## The returned path might not be a Thing, you should use [method load_thing_at] to validate it.
 func get_childs_paths() -> PackedStringArray:
 	var list: PackedStringArray= []
 	if not have_child_directory():
 		return list
 
 	for path: String in DirAccess.get_files_at(resource_path.get_basename()):
-		var child_path: String = resource_path.get_basename().path_join(path)
-		if load_thing_at(child_path) != null:
-			list.append(child_path)
+		list.append(resource_path.get_basename().path_join(path))
 	return list
 
 
