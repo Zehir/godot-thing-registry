@@ -5,5 +5,6 @@
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_oxtan"]
 
 [resource]
+resource_name = "Tools"
 script = ExtResource("2_oxtan")
 modules = Array[ExtResource("1_kvnt2")]([ExtResource("2_ckwp7")])

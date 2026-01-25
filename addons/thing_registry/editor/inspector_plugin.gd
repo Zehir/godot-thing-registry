@@ -45,9 +45,12 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 
 	if object is Thing:
 
+		if name == "parent":
+			add_custom_control(ThingBreadcrumb.new(object, ThingBreadcrumb.Mode.THING_PATH))
+
 		if hint_string == "ThingModuleHeader":
 			add_custom_control(HSeparator.new())
-			add_custom_control(ThingHeader.new(object, name))
+			add_custom_control(ThingBreadcrumb.new(object, ThingBreadcrumb.Mode.MODULE_ORIGIN, name))
 			return true
 
 		if name.contains(":"):
@@ -67,55 +70,76 @@ func _get_inspector(object: Object, type: Variant.Type, path: String, hint: Prop
 
 
 
-class ThingHeader extends MarginContainer:
+class ThingBreadcrumb extends MarginContainer:
 	var label: RichTextLabel
 
 	var _thing: Thing
 	var _module: ThingModule
 
-	func _init(thing: Thing, module_instance_name: String) -> void:
+	enum Mode {
+		THING_PATH,
+		MODULE_ORIGIN,
+	}
+
+	func _init(thing: Thing, mode: Mode, module_instance_name: String = "") -> void:
 		_thing = thing
-		_module = thing.get_modules().get(module_instance_name)
-		if not is_instance_valid(_module):
-			push_error("Could not find module that have the instance %s" % module_instance_name)
-			queue_free.call_deferred()
-			return
 
 		label = RichTextLabel.new()
 		label.fit_content = true
-		#label.meta_clicked.connect(_on_rich_text_label_meta_clicked)
+		label.meta_clicked.connect(_on_rich_text_label_meta_clicked)
 		add_child(label)
 
+		match mode:
+			Mode.THING_PATH:
+				var things: Array[Thing] = [thing]
+				while is_instance_valid(things[-1].parent):
+					things.append(things[-1].parent)
+
+				things.reverse()
+				for current_thing in things:
+					_add_thing(current_thing)
+					if current_thing != things[-1]:
+						_add_arrow()
+
+			Mode.MODULE_ORIGIN:
+				_module = thing.get_modules().get(module_instance_name)
+				if not is_instance_valid(_module):
+					push_error("Could not find module that have the instance '%s'" % module_instance_name)
+					queue_free.call_deferred()
+					return
+
+				if not thing.modules.has(_module):
+					var module_owner: Thing = thing.parent
+					while not module_owner.modules.has(_module):
+						module_owner = module_owner.parent
+
+					_add_thing(module_owner)
+					_add_arrow()
+
+				label.add_image(_module.get_icon(), 16, 16)
+				label.add_text(" ")
+				label.push_meta(_module, RichTextLabel.META_UNDERLINE_ON_HOVER, "Edit module\n%s" % _module.resource_path)
+				label.add_text(_module.get_display_name())
+				label.pop()
+
+				label.tooltip_text = _module.get_description()
 
 
-		label.clear()
-
-
-		if not thing.modules.has(_module):
-			var module_owner: Thing = thing.parent
-			while not module_owner.modules.has(_module):
-				module_owner = module_owner.parent
-
-			label.add_text(" ")
-			label.add_image(EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"), 16, 16)
-			label.add_text(" ")
-
-			label.push_meta(module_owner, RichTextLabel.META_UNDERLINE_ON_HOVER, "Edit thing")
-			label.add_text(module_owner.get_display_name())
-			label.pop()
-
-			label.add_text(" ")
-			label.add_image(EditorInterface.get_editor_theme().get_icon("PageNext", "EditorIcons"), 16, 16)
-			label.add_text(" ")
-
-		label.add_image(_module.get_icon(), 16, 16)
+	func _add_thing(thing: Thing) -> void:
 		label.add_text(" ")
-		label.push_meta(_module, RichTextLabel.META_UNDERLINE_ON_HOVER, "Edit module\n%s" % _module.resource_path)
-		label.add_text(_module.get_display_name())
+		label.add_image(EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"), 16, 16)
+		label.add_text(" ")
+
+		label.push_meta(thing, RichTextLabel.META_UNDERLINE_ON_HOVER, "Edit thing")
+		label.add_text(thing.get_display_name())
 		label.pop()
 
 
-		label.tooltip_text = _module.get_description()
+	func _add_arrow() -> void:
+		label.add_text(" ")
+		label.add_image(EditorInterface.get_editor_theme().get_icon("PageNext", "EditorIcons"), 16, 16)
+		label.add_text(" ")
+
 
 
 	func _on_rich_text_label_meta_clicked(meta: Variant) -> void:

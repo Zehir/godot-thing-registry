@@ -1,8 +1,14 @@
 [gd_resource type="Resource" script_class="Thing" format=3 uid="uid://dvmq80fff46c7"]
 
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="1_aq1vb"]
+[ext_resource type="Script" uid="uid://c18u018kmoa80" path="res://addons/thing_registry/modules/price_module.gd" id="2_6l4ou"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_n6r6w"]
+
+[sub_resource type="Resource" id="Resource_60mjq"]
+script = ExtResource("2_6l4ou")
+metadata/_custom_type_script = "uid://c18u018kmoa80"
 
 [resource]
 resource_name = "Axe 1"
 script = ExtResource("2_n6r6w")
+modules = Array[ExtResource("1_aq1vb")]([SubResource("Resource_60mjq")])
