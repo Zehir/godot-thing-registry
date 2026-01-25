@@ -34,13 +34,15 @@ static func load_thing_at(path: String) -> Thing:
 ## Return Thing resource path that is directly the child of this Thing.
 ## Return an empty array if no child if found. Does not return sub childs.
 ## The returned path might not be a Thing, you should use [method load_thing_at] to validate it.
-func get_childs_paths() -> PackedStringArray:
-	var list: PackedStringArray= []
+func get_childs_paths() -> Array[String]:
+	var list: Array[String] = []
 	if not have_child_directory():
 		return list
 
 	for path: String in DirAccess.get_files_at(resource_path.get_basename()):
 		list.append(resource_path.get_basename().path_join(path))
+
+	list.sort_custom(func(a, b): return a.naturalnocasecmp_to(b) < 0)
 	return list
 
 
@@ -81,7 +83,7 @@ func _on_module_changed():
 
 ## Notify childrens that their property list may have changed.
 func notify_childrens_property_list_changed() -> void:
-	for child_path in get_childs_paths():
+	for child_path: String in get_childs_paths():
 		var child: Thing = load_thing_at(child_path)
 		if child != null:
 			child.notify_childrens_property_list_changed()
@@ -90,7 +92,7 @@ func notify_childrens_property_list_changed() -> void:
 
 ## Notify childrens that a property value has changed.
 func notify_childrens_property_value_changed(property_name: StringName, old_value: Variant):
-	for child_path in get_childs_paths():
+	for child_path: String in get_childs_paths():
 		var child: Thing = load_thing_at(child_path)
 		if child != null:
 			child.notify_childrens_property_value_changed(property_name, old_value)
@@ -130,6 +132,7 @@ func _update_modules_list() -> void:
 				resource_path,
 				module.get_script().get_global_name() if module.get_script() is GDScript else "Invalid script"
 			])
+			# TODO display error in the inspector
 			continue
 		_loaded_modules.set(instance_name, module)
 	_is_loaded_modules_valid = true
