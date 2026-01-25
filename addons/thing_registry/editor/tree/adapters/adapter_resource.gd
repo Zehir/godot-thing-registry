@@ -5,6 +5,8 @@ extends TreeValueAdapter
 
 func _init(header: ThingTreeColumn) -> void:
 	super(header)
+
+	_header.custom_minimum_size.x = 200.0
 	_header.text = "Resource"
 	_header.icon = EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons")
 
@@ -67,7 +69,6 @@ func _on_drop_data(tree_item: ThingTreeItem, _column_index: int, section: int, d
 
 	#TODO not rebuild the tree on thing dropped
 	(tree_item.get_tree() as ThingTree).rebuild_tree.call_deferred()
-
 
 
 func _is_valid_thing_drop_data(data: Variant) -> bool:

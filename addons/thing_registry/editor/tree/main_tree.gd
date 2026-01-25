@@ -35,21 +35,21 @@ func _enter_tree() -> void:
 #region Header buttons
 func open_module(module: ThingModule) -> void:
 	var module_path: StringName = StringName("module::%s" % module.resource_path)
-	#if headers.has(module_path):
+	if tree_columns.has(module_path):
 		#push_error("Was trying to open an already opened module.")
-		#return
+		return
 
-	#_add_header(module_path, ThingTreeColumnModule.new(module))
+	_add_header(module_path, ThingTreeColumnModule.new(module))
 
-	#for property in module.get_thing_property_list():
-		#open_property(module, property)
+	for property in module.get_thing_property_list():
+		open_property(module, property)
 
 
 func open_property(module: ThingModule, property: Dictionary, after: StringName = &"") -> void:
 	var fullname: StringName = module.get_property_fullname(property.name)
-	#if headers.has(fullname):
-		#return
-	#_add_header(fullname, ThingTreeColumnAttribute.new(module, property), after)
+	if tree_columns.has(fullname):
+		return
+	_add_header(fullname, ThingTreeColumnAttribute.new(module, property), after)
 
 
 func _add_header(key: StringName, control: Control, after: StringName = &"") -> void:
@@ -62,6 +62,7 @@ func _add_header(key: StringName, control: Control, after: StringName = &"") -> 
 	tree_columns.set(key, control)
 	columns = tree_columns.size()
 	set_column_expand(tree_columns.size() - 1, false)
+	_on_header_resized.bind(control).call_deferred()
 
 
 func close_property(property: StringName) -> void:

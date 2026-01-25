@@ -8,7 +8,6 @@ var _header: ThingTreeColumn
 
 func _init(header: ThingTreeColumn) -> void:
 	_header = header
-	_header.custom_minimum_size.x = 200.0
 
 
 func tree_item_callv(method: StringName, tree_item: ThingTreeItem, args: Array = []) -> Variant:

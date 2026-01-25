@@ -38,8 +38,6 @@ func populate(thing: Thing) -> void:
 			create_thing_child().populate(loaded)
 
 
-
-
 func call_adapter(column: ThingTreeColumn, method: StringName, args: Array = []) -> Variant:
 	return column.adapter.tree_item_callv(method, self, args)
 
@@ -56,20 +54,6 @@ func _on_button_clicked(column: int, id: int, mouse_button_index: int) -> void:
 	if id == Buttons.REVERT and _thing.property_can_revert(property):
 		set_text(column, _thing.property_get_revert(property))
 		_thing.set(property, _thing.property_get_revert(property))
-
-
-
-
-func update_module_column(index: int, header: ThingTreeColumnModule) -> void:
-	var module: ThingModule = header.get_module()
-	if _thing.modules.has(module):
-		set_icon(index, module.get_icon())
-		set_text(index, "D")
-		set_tooltip_text(index, "This module is Defined on this Thing.")
-	elif _thing.has_module(module.get_instance_name()):
-		set_icon(index, module.get_icon())
-		set_text(index, "H")
-		set_tooltip_text(index, "This module is Herited from a parent Thing.")
 
 
 func update_attribute_column(index: int, header: ThingTreeColumnAttribute, properties: Array[StringName]) -> void:
