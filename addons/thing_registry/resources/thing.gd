@@ -22,6 +22,8 @@ func have_child_directory() -> bool:
 
 
 static func load_thing_at(path: String) -> Thing:
+	if not ResourceLoader.exists(path):
+		return null
 	var resource: Resource = load(path)
 	if resource is Thing:
 		return resource
