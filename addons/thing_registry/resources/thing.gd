@@ -9,6 +9,7 @@ signal parent_changed()
 
 ## Parent thing
 #@export_custom(PROPERTY_HINT_RESOURCE_TYPE, "Thing", PROPERTY_USAGE_EDITOR)
+var _parent: Thing
 var parent: Thing:
 	get = get_parent
 
@@ -16,16 +17,15 @@ var parent: Thing:
 static func load_thing_at(path: String) -> Thing:
 	if not ResourceLoader.exists(path):
 		return null
-	var resource: Resource = load(path)
+	var resource: Resource = ResourceLoader.load(path)
 	if resource is Thing:
 		return resource
 	return null
 
 
 func get_root_path() -> String:
-	var maybe_parent: Thing = get_parent()
-	if is_instance_valid(maybe_parent):
-		return maybe_parent.get_root_path()
+	if is_instance_valid(parent):
+		return parent.get_root_path()
 	return resource_path.get_base_dir()
 
 
@@ -48,7 +48,14 @@ func get_childs_paths() -> Array[String]:
 
 
 func get_parent() -> Thing:
-	return load_thing_at(resource_path.get_base_dir() + ".tres")
+	# Storing a reference to the parent to make sure it's keep in memory.
+	# It's a workaround about the connect error:
+	# ERROR: Parameter "obj" is null.
+	# at: connect (core/variant/callable.cpp:544)
+	var expected_parent_path: String = resource_path.get_base_dir() + ".tres"
+	if not is_instance_valid(_parent) or _parent.resource_path != expected_parent_path:
+		_parent = load_thing_at(expected_parent_path)
+	return _parent
 
 
 ## Reference to ThingModule scripts that could add properties

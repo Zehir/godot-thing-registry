@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Thing" format=3 uid="uid://c68im33v8tvqa"]
 
-[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/thing_module.gd" id="1_h5ndb"]
+[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/module.gd" id="1_h5ndb"]
 [ext_resource type="Texture2D" uid="uid://cukbwb0ga0lau" path="res://thing_root/assets/tools_crafting_woodcutting_plank_materials.png" id="1_uk0hf"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_uk0hf"]
 
