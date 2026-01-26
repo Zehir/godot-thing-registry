@@ -92,7 +92,7 @@ func has_thing_property(property: StringName) -> bool:
 
 
 func get_property_full_name(property: StringName) -> StringName:
-	return StringName("%s:%s" % [_get_instance_name(), property])
+	return StringName("".join([_get_instance_name(), Thing.SEPERATOR, property]))
 
 
 func thing_property_get_revert(property: StringName) -> Variant:

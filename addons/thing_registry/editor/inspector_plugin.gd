@@ -54,10 +54,10 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 			add_custom_control(ThingBreadcrumb.new(object, ThingBreadcrumb.Mode.MODULE, name))
 			return true
 
-		if name.contains(":"):
+		if name.contains(Thing.SEPERATOR):
 			var default_property_editor := _get_inspector(object, type, name, hint_type, hint_string, usage_flags, wide)
 			# Waiting for this PR for tooltip : https://github.com/godotengine/godot/pull/115182
-			add_property_editor(name, default_property_editor, false, name.split(":", false, 1)[1].capitalize())
+			add_property_editor(name, default_property_editor, false, name.split(Thing.SEPERATOR, false, 1)[1].capitalize())
 			return true
 
 	return false

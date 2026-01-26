@@ -2,6 +2,8 @@
 class_name Thing
 extends Resource
 
+const SEPERATOR: String = ":"
+
 signal module_changed()
 signal parent_changed()
 
@@ -171,9 +173,9 @@ func _get_property_list() -> Array[Dictionary]:
 
 ## Call a method on the module that handle the given property.
 func call_module_property_method(property: StringName, method: StringName, arguments: Array = [], default: Variant = null) -> Variant:
-	if not property.contains(":"):
+	if not property.contains(SEPERATOR):
 		return default
-	var parts: PackedStringArray = property.split(":", true, 1)
+	var parts: PackedStringArray = property.split(SEPERATOR, true, 1)
 	var module: ThingModule = get_modules().get(parts[0])
 	if not is_instance_valid(module):
 		return default
@@ -187,13 +189,13 @@ func call_module_property_method(property: StringName, method: StringName, argum
 func _property_can_revert(property: StringName) -> bool:
 	if property == &"resource_name":
 		return true
-	return property.contains(":")
+	return property.contains(SEPERATOR)
 
 
 func _property_get_revert(property: StringName) -> Variant:
 	if property == &"resource_name":
 		return ""
-	if not property.contains(":"):
+	if not property.contains(SEPERATOR):
 		return null
 	if is_instance_valid(parent):
 		return parent._property_get_revert(property)
@@ -201,14 +203,14 @@ func _property_get_revert(property: StringName) -> Variant:
 
 
 func _validate_property(property: Dictionary) -> void:
-	if not property.name.contains(":"):
+	if not property.name.contains(SEPERATOR):
 		return
 	if get(property.name) == property_get_revert(property.name):
 		property.usage &= ~PROPERTY_USAGE_STORAGE
 
 
 func _set(property: StringName, value: Variant) -> bool:
-	if not property.contains(":"):
+	if not property.contains(SEPERATOR):
 		return false
 	var old_value = properties.get(property)
 	properties.set(property, value)
@@ -218,7 +220,7 @@ func _set(property: StringName, value: Variant) -> bool:
 
 
 func _get(property: StringName) -> Variant:
-	if not property.contains(":"):
+	if not property.contains(SEPERATOR):
 		return null
 
 	if properties.has(property):
@@ -231,13 +233,13 @@ func has_property_direct(property: StringName) -> bool:
 
 
 func has_property_inherited(property: StringName) -> bool:
-	if not property.contains(":"):
+	if not property.contains(SEPERATOR):
 		return false
 	return properties.has(property)
 
 
 func get_direct(property: StringName, default: Variant = null) -> Variant:
-	if not property.contains(":"):
+	if not property.contains(SEPERATOR):
 		return null
 	if properties.has(property):
 		return properties.get(property)
@@ -245,7 +247,7 @@ func get_direct(property: StringName, default: Variant = null) -> Variant:
 
 
 func get_inherited(property: StringName, default: Variant = null) -> Variant:
-	if not property.contains(":"):
+	if not property.contains(SEPERATOR):
 		return null
 	if properties.has(property):
 		return properties.get(property)
