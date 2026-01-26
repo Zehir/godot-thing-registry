@@ -12,5 +12,5 @@ func _init(header: ThingTreeColumn) -> void:
 
 
 @warning_ignore("unused_parameter")
-func update_column(tree_item: ThingTreeItem, column_index: int) -> void:
+func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 	pass

@@ -13,6 +13,13 @@ func _init(header: ThingTreeColumnAttribute) -> void:
 	_header.text = property.name.capitalize()
 
 
+func update_column(tree_item: ThingTreeItem, column_index: int) -> void:
+	if not has_module(tree_item):
+		set_disabled(tree_item, column_index)
+		return
+	super(tree_item, column_index)
+
+
 func has_module(tree_item: ThingTreeItem) -> bool:
 	return tree_item.get_thing().has_module(_header.get_module().get_instance_name())
 

@@ -23,7 +23,11 @@ func set_disabled(tree_item: ThingTreeItem, column_index: int) -> void:
 
 
 @abstract
-func update_column(tree_item: ThingTreeItem, column_index: int) -> void
+func _update_column(tree_item: ThingTreeItem, column_index: int) -> void
+
+
+func update_column(tree_item: ThingTreeItem, column_index: int) -> void:
+	_update_column(tree_item, column_index)
 
 
 func notify_edited(tree_item: ThingTreeItem, column_index: int) -> void:

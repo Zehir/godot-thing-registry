@@ -12,7 +12,7 @@ func _init(header: ThingTreeColumnModule) -> void:
 	_header.icon = module.get_icon()
 
 
-func update_column(tree_item: ThingTreeItem, column_index: int) -> void:
+func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 	var module: ThingModule = _header.get_module()
 	var thing = tree_item.get_thing()
 	if thing.modules.has(module):

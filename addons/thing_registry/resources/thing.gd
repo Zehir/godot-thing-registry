@@ -196,7 +196,7 @@ func _property_get_revert(property: StringName) -> Variant:
 	if not property.contains(":"):
 		return null
 	if is_instance_valid(parent):
-		return parent.property_get_revert(property)
+		return parent._property_get_revert(property)
 	return call_module_property_method(property, &"thing_property_get_revert")
 
 
