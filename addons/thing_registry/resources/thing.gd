@@ -11,6 +11,15 @@ var parent: Thing:
 	get = get_parent
 
 
+static func load_thing_at(path: String) -> Thing:
+	if not ResourceLoader.exists(path):
+		return null
+	var resource: Resource = load(path)
+	if resource is Thing:
+		return resource
+	return null
+
+
 func get_root_path() -> String:
 	var maybe_parent: Thing = get_parent()
 	if is_instance_valid(maybe_parent):
@@ -20,16 +29,6 @@ func get_root_path() -> String:
 
 func have_child_directory() -> bool:
 	return DirAccess.dir_exists_absolute(resource_path.get_basename())
-
-
-static func load_thing_at(path: String) -> Thing:
-	if not ResourceLoader.exists(path):
-		return null
-	var resource: Resource = load(path)
-	if resource is Thing:
-		return resource
-	return null
-
 
 ## Return Thing resource path that is directly the child of this Thing.
 ## Return an empty array if no child if found. Does not return sub childs.
@@ -152,9 +151,9 @@ func _get_property_list() -> Array[Dictionary]:
 	module_ids.sort()
 	for module_name: StringName in module_ids:
 		var module: ThingModule = modules_list.get(module_name)
-		var module_properties: Array = module.get_thing_property_list()
+		var module_properties: Array = module.get_thing_property_list().duplicate_deep()
 		for property in module_properties:
-			property.name = module.get_property_fullname(property.name)
+			property.name = module.get_property_full_name(property.name)
 			if not properties.has(property.name) and property_can_revert(property.name):
 				properties.set(property.name, property_get_revert(property.name))
 
@@ -194,16 +193,18 @@ func _property_can_revert(property: StringName) -> bool:
 func _property_get_revert(property: StringName) -> Variant:
 	if property == &"resource_name":
 		return ""
-	return call_module_property_method(property, &"thing_property_get_revert", [self], null)
+	if not property.contains(":"):
+		return null
+	if is_instance_valid(parent):
+		return parent.property_get_revert(property)
+	return call_module_property_method(property, &"thing_property_get_revert")
 
 
 func _validate_property(property: Dictionary) -> void:
 	if not property.name.contains(":"):
 		return
-
-	if property_can_revert(property.name):
-		if get(property.name) == property_get_revert(property.name):
-			property.usage &= ~PROPERTY_USAGE_STORAGE
+	if get(property.name) == property_get_revert(property.name):
+		property.usage &= ~PROPERTY_USAGE_STORAGE
 
 
 func _set(property: StringName, value: Variant) -> bool:
@@ -212,13 +213,45 @@ func _set(property: StringName, value: Variant) -> bool:
 	var old_value = properties.get(property)
 	properties.set(property, value)
 	notify_childrens_property_value_changed(property, old_value)
+	emit_changed()
 	return true
 
 
 func _get(property: StringName) -> Variant:
 	if not property.contains(":"):
 		return null
-	return properties.get(property)
+
+	if properties.has(property):
+		return properties.get(property)
+	return null
+
+
+func has_property_direct(property: StringName) -> bool:
+	return properties.has(property)
+
+
+func has_property_inherited(property: StringName) -> bool:
+	if not property.contains(":"):
+		return false
+	return properties.has(property)
+
+
+func get_direct(property: StringName, default: Variant = null) -> Variant:
+	if not property.contains(":"):
+		return null
+	if properties.has(property):
+		return properties.get(property)
+	return call_module_property_method(property, &"thing_property_get_revert", [], default)
+
+
+func get_inherited(property: StringName, default: Variant = null) -> Variant:
+	if not property.contains(":"):
+		return null
+	if properties.has(property):
+		return properties.get(property)
+	if is_instance_valid(parent):
+		return parent.get_property_with_inheritance(property)
+	return call_module_property_method(property, &"thing_property_get_revert", [], default)
 
 
 func get_display_name() -> String:

@@ -28,6 +28,8 @@ func _enter_tree() -> void:
 	root_item.set_script(ThingTreeItem)
 	_root_item = root_item
 
+	_add_header(&"resource", ThingTreeColumnResource.new())
+
 	rebuild_tree()
 #endregion
 
@@ -46,7 +48,7 @@ func open_module(module: ThingModule) -> void:
 
 
 func open_property(module: ThingModule, property: Dictionary, after: StringName = &"") -> void:
-	var fullname: StringName = module.get_property_fullname(property.name)
+	var fullname: StringName = module.get_property_full_name(property.name)
 	if tree_columns.has(fullname):
 		return
 	_add_header(fullname, ThingTreeColumnAttribute.new(module, property), after)
@@ -290,13 +292,12 @@ func _on_file_dialog_canceled() -> void:
 func rebuild_tree() -> void:
 	close_all()
 
-	for tree_column: ThingTreeColumn in tree_columns.values():
-		tree_column.free()
+	for tree_column_name: StringName in tree_columns.keys():
+		var tree_column: ThingTreeColumn = tree_columns.get(tree_column_name)
+		if not tree_column is ThingTreeColumnResource:
+			tree_column.free()
+			tree_columns.erase(tree_column_name)
 	columns = 1
-
-	tree_columns.clear()
-
-	_add_header(&"resource", ThingTreeColumnResource.new())
 
 	var root = DirAccess.open("res://thing_root/")
 	for file in root.get_files():

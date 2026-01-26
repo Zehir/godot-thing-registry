@@ -40,5 +40,5 @@ func _get_thing_property_list() -> Array[Dictionary]:
 	return [make_property(&"value", TYPE_FLOAT)]
 
 
-func _thing_property_get_revert(_property: StringName, _thing: Thing) -> Variant:
+func _thing_property_get_revert(_property: StringName) -> Variant:
 	return 0.0

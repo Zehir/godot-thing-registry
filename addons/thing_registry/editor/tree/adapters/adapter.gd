@@ -15,12 +15,19 @@ func tree_item_callv(method: StringName, tree_item: ThingTreeItem, args: Array =
 		return (get(method) as Callable).bindv(args).call(tree_item)
 	return null
 
+
+func set_disabled(tree_item: ThingTreeItem, column_index: int) -> void:
+	tree_item.set_custom_bg_color(column_index, Color.DIM_GRAY)
+	tree_item.set_editable(column_index, false)
+	tree_item.set_text(column_index, "")
+
+
 @abstract
 func update_column(tree_item: ThingTreeItem, column_index: int) -> void
 
 
-func notify_edited(tree_item: ThingTreeItem, index: int) -> void:
-	_on_edited(tree_item, index)
+func notify_edited(tree_item: ThingTreeItem, column_index: int) -> void:
+	_on_edited(tree_item, column_index)
 
 
 @warning_ignore("unused_parameter")
@@ -30,6 +37,7 @@ func _on_edited(tree_item: ThingTreeItem, column_index: int) -> void:
 
 func notify_button_clicked(tree_item: ThingTreeItem, column_index: int, id: int, mouse_button_index: int):
 	_on_button_clicked(tree_item, column_index, id, mouse_button_index)
+
 
 @warning_ignore("unused_parameter")
 func _on_button_clicked(tree_item: ThingTreeItem, column_index: int, id: int, mouse_button_index: int):

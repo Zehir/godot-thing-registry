@@ -26,7 +26,7 @@ func _get_thing_property_list() -> Array[Dictionary]:
 	]
 
 
-func _thing_property_get_revert(property: StringName, _thing: Thing) -> Variant:
+func _thing_property_get_revert(property: StringName) -> Variant:
 	if property == PROPERTY_NAME:
 		return ""
 	return null
