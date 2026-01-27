@@ -31,6 +31,8 @@ func _init(header: ThingTreeColumnAttribute) -> void:
 
 		prints(fake_script.can_instantiate(), fake_script.is_tool(), fake_script.get_base_script().resource_path)
 
+	#TODO remove icon system and use this to get icons for custom resources
+	prints(ProjectSettings.get_global_class_list())
 
 
 func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
