@@ -20,10 +20,18 @@ func _get_description() -> String:
 
 
 func _get_thing_property_list() -> Array[Dictionary]:
-	return [
+	var list: Array[Dictionary] = [
 		make_property(PROPERTY_NAME, TYPE_STRING),
-		make_resource_property(PROPERTY_ICON, "Texture2D")
+		make_resource_property(PROPERTY_ICON, "Texture2D"),
 	]
+	for i in range(TYPE_MAX):
+		if i in INVALID_TYPES:
+			continue
+
+		list.append(make_property(type_string(i), i))
+	prints("list", list)
+	return list
+
 
 
 func _thing_property_get_revert(property: StringName) -> Variant:

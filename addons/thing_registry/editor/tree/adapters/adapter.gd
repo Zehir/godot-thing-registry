@@ -32,7 +32,7 @@ func update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 
 func notify_edited(tree_item: ThingTreeItem, column_index: int) -> void:
 	_on_edited(tree_item, column_index)
-	_update_column(tree_item, column_index)
+	update_column(tree_item, column_index)
 	tree_item.get_thing().emit_changed()
 
 

@@ -12,15 +12,22 @@ func _init(module: ThingModule, property: Dictionary) -> void:
 	_module = module
 	_property = property
 
-	if _property.get("type") in [TYPE_BOOL, TYPE_INT, TYPE_FLOAT, TYPE_STRING, TYPE_STRING_NAME]:
+	match [_property.get("type"), _property.get("hint"), _property.get("hint_string")]:
+		[TYPE_BOOL, _, _]:
+			adapter = TreeValueAdapterAttributeBool.new(self)
+		[TYPE_COLOR, _, _]:
+			adapter = TreeValueAdapterAttributeColor.new(self)
+		[TYPE_OBJECT, PROPERTY_HINT_RESOURCE_TYPE, "Texture2D"]:
+			adapter = TreeValueAdapterAttributeTexture2D.new(self)
+
+	if is_instance_valid(adapter):
+		return
+
+	if _property.get("type") in TreeValueAdapterAttributeTextCast.VALID_TYPES:
 		adapter = TreeValueAdapterAttributeTextCast.new(self)
 		return
 
-	match [_property.get("type"), _property.get("hint"), _property.get("hint_string")]:
-		[TYPE_OBJECT, PROPERTY_HINT_RESOURCE_TYPE, "Texture2D"]:
-			adapter = TreeValueAdapterAttributeTexture2D.new(self)
-		[_, _, _]:
-			adapter = TreeValueAdapterMissing.new(self)
+	adapter = TreeValueAdapterMissing.new(self)
 
 
 func get_module() -> ThingModule:

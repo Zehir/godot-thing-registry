@@ -5,6 +5,13 @@ extends Resource
 
 signal thing_property_list_changed
 
+const INVALID_TYPES: Array[Variant.Type] = [
+	TYPE_NIL,
+	TYPE_NODE_PATH,
+	TYPE_RID,
+	TYPE_CALLABLE,
+	TYPE_SIGNAL,
+]
 
 var _thing_property_list_invalid: bool = true
 var _thing_property_list: Array[Dictionary] = []
@@ -52,6 +59,9 @@ func get_instance_name() -> StringName:
 
 #region Properties helper
 func make_property(name: StringName, type: Variant.Type, hint: PropertyHint = PROPERTY_HINT_NONE, hint_string: String = "", usage: PropertyUsageFlags = PROPERTY_USAGE_DEFAULT) -> Dictionary:
+	if type in INVALID_TYPES:
+		push_error("Invalid type '%s' provided for property '%s', switching type to string." % [type_string(type), name])
+		type = TYPE_STRING
 	return {
 		"name": name,
 		"type": type,
