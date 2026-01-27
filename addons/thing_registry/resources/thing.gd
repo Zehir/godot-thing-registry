@@ -49,13 +49,12 @@ func get_childs_paths() -> Array[String]:
 
 func get_parent() -> Thing:
 	# Storing a reference to the parent to make sure it's keep in memory.
-	# It's a workaround about the connect error:
-	# ERROR: Parameter "obj" is null.
-	# at: connect (core/variant/callable.cpp:544)
+	# TODO invalidate this if the parent moved
 	var expected_parent_path: String = resource_path.get_base_dir() + ".tres"
 	if not is_instance_valid(_parent) or _parent.resource_path != expected_parent_path:
 		_parent = load_thing_at(expected_parent_path)
 	return _parent
+	#return load_thing_at(expected_parent_path)
 
 
 ## Reference to ThingModule scripts that could add properties
@@ -80,7 +79,7 @@ var _loaded_modules: Dictionary[StringName, ThingModule] = {}
 
 func _init() -> void:
 	# Deferred call because "resource_path" it not always defined at that time.
-	module_changed.connect.call_deferred(_on_module_changed)
+	module_changed.connect(_on_module_changed, CONNECT_DEFERRED)
 
 
 func _on_module_changed():
