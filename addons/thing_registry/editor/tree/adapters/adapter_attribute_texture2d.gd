@@ -22,8 +22,8 @@ func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 		tree_item.set_cell_mode(column_index, TreeItem.CELL_MODE_STRING)
 		tree_item.set_text(column_index, "")
 
-
-func _on_edited(tree_item: ThingTreeItem, column_index: int) -> void:
-	var thing: Thing = tree_item.get_thing()
-	var property: StringName = get_property_path()
-	thing.set(property, tree_item.get_text(column_index))
+#
+#func _on_edited(tree_item: ThingTreeItem, column_index: int) -> void:
+	#var thing: Thing = tree_item.get_thing()
+	#var property: StringName = get_property_path()
+	#thing.set(property, tree_item.get_text(column_index))

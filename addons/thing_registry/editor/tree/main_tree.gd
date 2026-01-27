@@ -30,7 +30,7 @@ func _enter_tree() -> void:
 
 	_add_header(&"resource", ThingTreeColumnResource.new())
 
-	#rebuild_tree()
+	rebuild_tree()
 #endregion
 
 
