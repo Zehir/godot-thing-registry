@@ -4,9 +4,6 @@
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/module.gd" id="2_dac6j"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="3_ygq84"]
 
-[sub_resource type="JSON" id="JSON_w5268"]
-data = ["foo", "bar"]
-
 [resource]
 resource_name = "Godot coin"
 script = ExtResource("3_ygq84")
@@ -32,7 +29,6 @@ item:Transform3D = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item:Projection = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 item:Color = Color(0.78431374, 0.78431374, 0.78431374, 1)
 item:StringName = &"string_name"
-item:Object = SubResource("JSON_w5268")
 item:Array = ["Coucou"]
 item:PackedByteArray = PackedByteArray("AA==")
 item:PackedInt32Array = PackedInt32Array(0)

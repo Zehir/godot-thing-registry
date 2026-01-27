@@ -4,9 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://cukbwb0ga0lau" path="res://thing_root/assets/tools_crafting_woodcutting_plank_materials.png" id="1_uk0hf"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_uk0hf"]
 
-[sub_resource type="JSON" id="JSON_uk0hf"]
-data = ["foo", "bar"]
-
 [resource]
 resource_name = "Wood Plank"
 script = ExtResource("2_uk0hf")
@@ -33,7 +30,7 @@ item:Transform3D = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item:Projection = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 item:Color = Color(0.34895357, 0.27284628, 0.785569, 1)
 item:StringName = &"string_name"
-item:Object = SubResource("JSON_uk0hf")
+item:Dictionary = {}
 item:Array = ["Coucou"]
 item:PackedByteArray = PackedByteArray("AA==")
 item:PackedInt32Array = PackedInt32Array(0)

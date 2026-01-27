@@ -4,9 +4,6 @@
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/module.gd" id="2_o6v4m"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="3_tcmec"]
 
-[sub_resource type="JSON" id="JSON_6jve7"]
-data = ["foo", "bar"]
-
 [resource]
 resource_name = "Axe"
 script = ExtResource("3_tcmec")
@@ -31,8 +28,9 @@ item:AABB = AABB(0, 0, 0, 0, 0, 0)
 item:Basis = Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
 item:Transform3D = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item:Projection = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+item:Color = Color(0.52693886, 0.40081006, 0.32442138, 1)
 item:StringName = &"string_name"
-item:Object = SubResource("JSON_6jve7")
+item:Dictionary = {}
 item:Array = ["Coucou"]
 item:PackedByteArray = PackedByteArray("AA==")
 item:PackedInt32Array = PackedInt32Array(0)

@@ -4,9 +4,6 @@
 [ext_resource type="Resource" uid="uid://cl2oj6mu37o4g" path="res://thing_root/items/currency/godot_coin_module.tres" id="2_ckwp7"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_oxtan"]
 
-[sub_resource type="JSON" id="JSON_oxtan"]
-data = ["foo", "bar"]
-
 [resource]
 resource_name = "Tools"
 script = ExtResource("2_oxtan")
@@ -33,7 +30,6 @@ item:Transform3D = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item:Projection = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 item:Color = Color(0.10644531, 0.25779724, 0.8515625, 1)
 item:StringName = &"string_name"
-item:Object = SubResource("JSON_oxtan")
 item:Array = ["Coucou"]
 item:PackedByteArray = PackedByteArray("AA==")
 item:PackedInt32Array = PackedInt32Array(0)

@@ -30,7 +30,10 @@ func _init(header: ThingTreeColumnAttribute) -> void:
 
 func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 	var stylebox: StyleBoxFlat = base_stylebox.duplicate()
-	stylebox.bg_color = tree_item.get_thing().get_direct(get_property_path(), Color.BLACK)
+	var value: Variant = tree_item.get_thing().get_direct(get_property_path())
+	if not value is Color:
+		value = Color.BLACK
+	stylebox.bg_color = value
 	stylebox.border_color = stylebox.bg_color
 	stylebox.border_color.a = 0.0
 	tree_item.set_custom_stylebox(column_index, stylebox)

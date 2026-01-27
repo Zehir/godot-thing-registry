@@ -6,6 +6,9 @@ extends TreeValueAdapterAttribute
 func _init(header: ThingTreeColumnAttribute) -> void:
 	super(header)
 	_header.custom_minimum_size.x = 20.0
+	_header.icon = EditorInterface.get_editor_theme().get_icon("Texture2D", "EditorIcons")
+
+
 
 
 func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:

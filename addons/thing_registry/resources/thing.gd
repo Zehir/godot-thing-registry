@@ -246,7 +246,7 @@ func has_property_inherited(property: StringName) -> bool:
 
 func get_direct(property: StringName, default: Variant = null) -> Variant:
 	if not property.contains(SEPERATOR):
-		return null
+		return default
 	if properties.has(property):
 		return properties.get(property)
 	return call_module_property_method(property, &"thing_property_get_revert", [], default)
@@ -254,7 +254,7 @@ func get_direct(property: StringName, default: Variant = null) -> Variant:
 
 func get_inherited(property: StringName, default: Variant = null) -> Variant:
 	if not property.contains(SEPERATOR):
-		return null
+		return default
 	if properties.has(property):
 		return properties.get(property)
 	if is_instance_valid(parent):

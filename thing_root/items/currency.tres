@@ -4,9 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://840krd1iprw6" path="res://thing_root/assets/rpg_coin_gold_currency_money_gp.png" id="1_vdaed"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_vdaed"]
 
-[sub_resource type="JSON" id="JSON_vdaed"]
-data = ["foo", "bar"]
-
 [resource]
 script = ExtResource("2_vdaed")
 item:icon = ExtResource("1_vdaed")
@@ -31,7 +28,6 @@ item:Transform3D = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item:Projection = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 item:Color = Color(0.785569, 0.42091712, 0.2728463, 1)
 item:StringName = &"string_name"
-item:Object = SubResource("JSON_vdaed")
 item:Array = ["Coucou"]
 item:PackedByteArray = PackedByteArray("AA==")
 item:PackedInt32Array = PackedInt32Array(0)

@@ -23,13 +23,14 @@ func _get_thing_property_list() -> Array[Dictionary]:
 	var list: Array[Dictionary] = [
 		make_property(PROPERTY_NAME, TYPE_STRING),
 		make_resource_property(PROPERTY_ICON, "Texture2D"),
+		make_resource_property("Resource", "Resource"),
+		make_script_resource_property("ThingModule", ThingModule),
 	]
 	for i in range(TYPE_MAX):
-		if i in INVALID_TYPES:
+		if i in INVALID_TYPES or i == TYPE_OBJECT:
 			continue
 
 		list.append(make_property(type_string(i), i))
-	prints("list", list)
 	return list
 
 

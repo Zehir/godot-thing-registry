@@ -4,9 +4,6 @@
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/module.gd" id="2_vqujn"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="3_1oswm"]
 
-[sub_resource type="JSON" id="JSON_crj6d"]
-data = ["foo", "bar"]
-
 [resource]
 resource_name = "Iron Bar"
 script = ExtResource("3_1oswm")
@@ -33,7 +30,6 @@ item:Transform3D = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item:Projection = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 item:Color = Color(0.2531504, 0.59746426, 0.58970696, 1)
 item:StringName = &"dze"
-item:Object = SubResource("JSON_crj6d")
 item:Array = ["Coucou"]
 item:PackedByteArray = PackedByteArray("AA==")
 item:PackedInt32Array = PackedInt32Array(0)

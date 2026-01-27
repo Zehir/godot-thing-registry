@@ -4,9 +4,6 @@
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/module.gd" id="2_7djsc"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="3_3b3jd"]
 
-[sub_resource type="JSON" id="JSON_0scnm"]
-data = ["foo", "bar"]
-
 [resource]
 resource_name = "Cloth"
 script = ExtResource("3_3b3jd")
@@ -33,7 +30,7 @@ item:Transform3D = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item:Projection = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 item:Color = Color(0.53761935, 0.43870914, 0.9212112, 1)
 item:StringName = &"string_name"
-item:Object = SubResource("JSON_0scnm")
+item:Dictionary = {}
 item:Array = ["Coucou"]
 item:PackedByteArray = PackedByteArray("AA==")
 item:PackedInt32Array = PackedInt32Array(0)

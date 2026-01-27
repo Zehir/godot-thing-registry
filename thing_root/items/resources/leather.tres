@@ -4,20 +4,6 @@
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/module.gd" id="2_nwgqw"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="3_kny3g"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hg2t6"]
-bg_color = Color(0.59607846, 0.76862746, 0.105882354, 1)
-border_width_left = 15
-border_width_top = 15
-border_width_right = 15
-border_width_bottom = 15
-border_color = Color(0.8, 0.8, 0.8, 0)
-corner_radius_top_left = 620
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-corner_detail = 20
-anti_aliasing_size = 0.01
-
 [resource]
 resource_name = "Leather"
 script = ExtResource("3_kny3g")
@@ -44,7 +30,7 @@ item:Transform3D = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item:Projection = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 item:Color = Color(0.785569, 0.42091712, 0.2728463, 1)
 item:StringName = &"string_name"
-item:Object = SubResource("StyleBoxFlat_hg2t6")
+item:Dictionary = {}
 item:Array = ["Coucou"]
 item:PackedByteArray = PackedByteArray("AA==")
 item:PackedInt32Array = PackedInt32Array(0)

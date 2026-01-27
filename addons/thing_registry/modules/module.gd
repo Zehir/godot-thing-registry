@@ -1,4 +1,5 @@
 @tool
+@icon("res://thing_root/assets/tools_crafting_profession_woodcutting_lumber_trees_wood_chopping_axe_hatchet.png")
 @abstract
 class_name ThingModule
 extends Resource
@@ -58,21 +59,39 @@ func get_instance_name() -> StringName:
 
 
 #region Properties helper
-func make_property(name: StringName, type: Variant.Type, hint: PropertyHint = PROPERTY_HINT_NONE, hint_string: String = "", usage: PropertyUsageFlags = PROPERTY_USAGE_DEFAULT) -> Dictionary:
+func make_property(name: StringName, type: Variant.Type, hint: PropertyHint = PROPERTY_HINT_NONE, hint_string: String = "", usage: PropertyUsageFlags = PROPERTY_USAGE_DEFAULT, extra_properties: Dictionary[String, Variant] = {}) -> Dictionary:
 	if type in INVALID_TYPES:
 		push_error("Invalid type '%s' provided for property '%s', switching type to string." % [type_string(type), name])
 		type = TYPE_STRING
-	return {
+	var property: Dictionary = {
 		"name": name,
 		"type": type,
 		"hint": hint,
 		"hint_string": hint_string,
 		"usage": usage
 	}
+	for property_name: String in extra_properties.keys():
+		property.set(property_name, extra_properties.get(property_name))
+	return property
 
 
-func make_resource_property(name: StringName, resource_type: String, usage: PropertyUsageFlags = PROPERTY_USAGE_DEFAULT) -> Dictionary:
+func make_resource_property(name: StringName, resource_type: String = "Resource", usage: PropertyUsageFlags = PROPERTY_USAGE_DEFAULT) -> Dictionary:
+	if not ClassDB.class_exists(resource_type):
+		push_error("Could not find the resource type '%s', make sure the provided type is correct and a built-in class. For custom resources in GDScript use method make_gdscript_resource_property()" % resource_type)
+		return make_property(name, TYPE_STRING, PROPERTY_HINT_NONE, "", usage)
 	return make_property(name, TYPE_OBJECT, PROPERTY_HINT_RESOURCE_TYPE, resource_type, usage)
+
+
+func make_script_resource_property(name: StringName, script: Script, usage: PropertyUsageFlags = PROPERTY_USAGE_DEFAULT) -> Dictionary:
+	return make_property(
+		name,
+		TYPE_OBJECT,
+		PROPERTY_HINT_RESOURCE_TYPE,
+		script.get_global_name(),
+		usage,
+		{"script": script}
+	)
+
 #endregion
 
 
