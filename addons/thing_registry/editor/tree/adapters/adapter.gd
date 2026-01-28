@@ -10,6 +10,12 @@ func _init(header: ThingTreeColumn) -> void:
 	_header = header
 
 
+	var property: Dictionary = header.get_property()
+	_header.icon = _get_icon(property)
+
+
+
+
 func tree_item_callv(method: StringName, tree_item: ThingTreeItem, args: Array = []) -> Variant:
 	if has_method(method):
 		return (get(method) as Callable).bindv(args).call(tree_item)
@@ -75,3 +81,31 @@ func notify_drop_data(tree_item: ThingTreeItem, column_index: int, section: int,
 @warning_ignore("unused_parameter")
 func _on_drop_data(tree_item: ThingTreeItem, column_index: int, section: int, data: Variant) -> void:
 	pass
+
+
+#region Icon finder
+func _get_icon(property: Dictionary) -> Texture2D:
+	if property.type < TYPE_MAX:
+		if property.type == TYPE_OBJECT:
+			return _get_class_icon(property.hint_string)
+		var theme : Theme = EditorInterface.get_editor_theme()
+		return theme.get_icon(type_string(property.type), &"EditorIcons")
+	return _get_class_icon(&"Object")
+
+
+func _get_class_icon(name: StringName) -> Texture2D:
+	if ClassDB.class_exists(name):
+		var theme: Theme = EditorInterface.get_editor_theme()
+		if theme.has_icon(name, &"EditorIcons"):
+			return theme.get_icon(name, &"EditorIcons")
+		return _get_class_icon(ClassDB.get_parent_class(name))
+
+	if Engine.is_editor_hint():
+		for script: Dictionary in ProjectSettings.get_global_class_list():
+			if script.class != name:
+				continue
+			if not script.icon.is_empty() and ResourceLoader.exists(script.icon):
+				return load(script.icon)
+			return _get_class_icon(script.base)
+	return _get_class_icon(&"Object")
+#endregion

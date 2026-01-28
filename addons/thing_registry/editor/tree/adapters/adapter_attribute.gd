@@ -9,7 +9,6 @@ func _init(header: ThingTreeColumnAttribute) -> void:
 
 	_header.custom_minimum_size.x = 200.0
 	var property: Dictionary = _header.get_property()
-	_header.icon = EditorInterface.get_editor_theme().get_icon(type_string(property.type), "EditorIcons")
 	_header.text = property.name.capitalize()
 
 
