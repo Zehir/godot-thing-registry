@@ -9,6 +9,7 @@ func _init(header: ThingTreeColumnAttribute) -> void:
 
 	_header.custom_minimum_size.x = 200.0
 	var property: Dictionary = _header.get_property()
+	_header.icon = _get_icon(property)
 	_header.text = property.name.capitalize()
 
 

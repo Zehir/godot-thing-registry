@@ -30,6 +30,7 @@ item:Transform3D = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item:Projection = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 item:Color = Color(0.10644531, 0.25779724, 0.8515625, 1)
 item:StringName = &"string_name"
+item:Dictionary = {}
 item:Array = ["Coucou"]
 item:PackedByteArray = PackedByteArray("AA==")
 item:PackedInt32Array = PackedInt32Array(0)

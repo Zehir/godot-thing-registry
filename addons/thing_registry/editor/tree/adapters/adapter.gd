@@ -10,11 +10,6 @@ func _init(header: ThingTreeColumn) -> void:
 	_header = header
 
 
-	var property: Dictionary = header.get_property()
-	_header.icon = _get_icon(property)
-
-
-
 
 func tree_item_callv(method: StringName, tree_item: ThingTreeItem, args: Array = []) -> Variant:
 	if has_method(method):
