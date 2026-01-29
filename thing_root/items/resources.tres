@@ -5,14 +5,11 @@
 [ext_resource type="Resource" uid="uid://cl2oj6mu37o4g" path="res://thing_root/items/currency/godot_coin_module.tres" id="2_m44sm"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_mnpwi"]
 
-[sub_resource type="GDScript" id="GDScript_m44sm"]
-
 [resource]
 resource_name = "Resources"
 script = ExtResource("2_mnpwi")
 modules = Array[ExtResource("1_elm5b")]([ExtResource("2_m44sm")])
 item:icon = ExtResource("1_m44sm")
-item:bool = false
 item:int = 12
 item:float = 4.5
 item:String = "String"
@@ -24,16 +21,8 @@ item:Vector3 = Vector3(13, 14, 15)
 item:Vector3i = Vector3i(16, 17, 18)
 item:Transform2D = Transform2D(19, 22, 20, 23, 21, 24)
 item:Vector4 = Vector4(25, 26, 27, 28)
-item:Vector4i = Vector4i(0, 0, 0, 0)
-item:Plane = Plane(0, 0, 0, 0)
-item:Quaternion = Quaternion(0, 0, 0, 1)
-item:AABB = AABB(0, 0, 0, 0, 0, 0)
-item:Basis = Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
-item:Transform3D = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-item:Projection = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 item:Color = Color(0.785569, 0.42091712, 0.2728463, 1)
 item:StringName = &"string_name"
-item:Object = SubResource("GDScript_m44sm")
 item:Array = ["Coucou"]
 item:PackedByteArray = PackedByteArray("AA==")
 item:PackedInt32Array = PackedInt32Array(0)
@@ -45,4 +34,3 @@ item:PackedVector2Array = PackedVector2Array(0, 0)
 item:PackedVector3Array = PackedVector3Array(0, 0, 0)
 item:PackedColorArray = PackedColorArray(0, 0, 0, 1)
 item:PackedVector4Array = PackedVector4Array(0, 0, 0, 0)
-price_dtdw88s5e4kfp:value = 0.0

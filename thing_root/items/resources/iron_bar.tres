@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Thing" format=4 uid="uid://dcouemi0i2dgv"]
+[gd_resource type="Resource" script_class="Thing" format=3 uid="uid://dcouemi0i2dgv"]
 
 [ext_resource type="Texture2D" uid="uid://blcqhollhpl8w" path="res://thing_root/assets/tools_crafting_smithing_metal_bars_materials.png" id="1_crj6d"]
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/module.gd" id="2_vqujn"]
@@ -9,36 +9,6 @@ resource_name = "Iron Bar"
 script = ExtResource("3_1oswm")
 item:name = "Iron Bar"
 item:icon = ExtResource("1_crj6d")
-item:bool = false
-item:int = 12
-item:float = 4.5
-item:String = "String"
-item:Vector2 = Vector2(1, 2)
-item:Vector2i = Vector2i(3, 4)
-item:Rect2 = Rect2(5, 6, 7, 8)
-item:Rect2i = Rect2i(9, 10, 11, 12)
-item:Vector3 = Vector3(13, 14, 15)
-item:Vector3i = Vector3i(16, 17, 18)
-item:Transform2D = Transform2D(19, 22, 20, 23, 21, 24)
-item:Vector4 = Vector4(25, 26, 27, 28)
-item:Vector4i = Vector4i(0, 0, 0, 0)
-item:Plane = Plane(0, 0, 0, 0)
-item:Quaternion = Quaternion(0, 0, 0, 1)
-item:AABB = AABB(0, 0, 0, 0, 0, 0)
-item:Basis = Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
-item:Transform3D = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-item:Projection = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
 item:Color = Color(0.2531504, 0.59746426, 0.58970696, 1)
 item:StringName = &"dze"
-item:Array = ["Coucou"]
-item:PackedByteArray = PackedByteArray("AA==")
-item:PackedInt32Array = PackedInt32Array(0)
-item:PackedInt64Array = PackedInt64Array(0)
-item:PackedFloat32Array = PackedFloat32Array(0)
-item:PackedFloat64Array = PackedFloat64Array(0)
-item:PackedStringArray = PackedStringArray("")
-item:PackedVector2Array = PackedVector2Array(0, 0)
-item:PackedVector3Array = PackedVector3Array(0, 0, 0)
-item:PackedColorArray = PackedColorArray(0, 0, 0, 1)
-item:PackedVector4Array = PackedVector4Array(0, 0, 0, 0)
 price_dtdw88s5e4kfp:value = 10.0

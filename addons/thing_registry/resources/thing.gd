@@ -204,7 +204,9 @@ func _property_get_revert(property: StringName) -> Variant:
 	if not property.contains(SEPERATOR):
 		return null
 	if is_instance_valid(parent):
-		return parent._property_get_revert(property)
+		if parent.has_property_direct(property):
+			return parent.get_direct(property)
+		return parent.property_get_revert(property)
 	return call_module_property_method(property, &"thing_property_get_revert")
 
 
