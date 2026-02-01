@@ -59,18 +59,21 @@ func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 	tree_item.set_text_alignment(column_index, HORIZONTAL_ALIGNMENT_LEFT)
 	tree_item.set_edit_multiline(column_index, _expected_type in MULTI_LINE_TYPES)
 	var value: Variant = thing.get_inherited(property)
-	if _expected_type in [TYPE_STRING, TYPE_STRING_NAME]:
-		tree_item.set_text(column_index, String(thing.get_inherited(property)))
-	elif value != null:
-		tree_item.set_text(column_index, var_to_str(thing.get_inherited(property)))
-	else:
-		tree_item.set_text(column_index, "")
 
 	if not thing.has_property_direct(property):
 		var tree: Tree = tree_item.get_tree()
 		var color: Color = tree.get_theme_color(&"font_color")
 		color.a *= 0.5
 		tree_item.set_custom_color(column_index, color)
+	else:
+		tree_item.clear_custom_color(column_index)
+
+	if _expected_type in [TYPE_STRING, TYPE_STRING_NAME]:
+		tree_item.set_text(column_index, String(thing.get_inherited(property)))
+	elif value != null:
+		tree_item.set_text(column_index, var_to_str(thing.get_inherited(property)))
+	else:
+		tree_item.set_text(column_index, "")
 
 
 func _on_edited(tree_item: ThingTreeItem, column_index: int) -> void:

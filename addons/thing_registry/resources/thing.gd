@@ -111,6 +111,7 @@ func notify_parent_changed():
 	_update_modules_list()
 	parent_changed.emit()
 
+
 ## Called when a parent property value has changed.
 func _on_parent_property_value_changed(property_name: StringName, old_value: Variant):
 	if get(property_name) == old_value:
@@ -237,7 +238,9 @@ func _get(property: StringName) -> Variant:
 
 
 func has_property_direct(property: StringName) -> bool:
-	return properties.has(property)
+	if not properties.has(property):
+		return false
+	return properties.get(property) != property_get_revert(property)
 
 
 func has_property_inherited(property: StringName) -> bool:
