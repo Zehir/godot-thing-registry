@@ -25,18 +25,16 @@ func get_thing() -> Thing:
 
 func populate(thing: Thing) -> void:
 	_thing = thing
-	_connect_signals()
+	_thing.changed.connect(_on_thing_changed)
+	var tree: ThingTree = get_tree()
 
 	for module in _thing.modules:
-		var tree: Tree = get_tree()
-		if tree is ThingTree:
-			tree.open_module(module)
+		tree.open_module(module)
 
 	for child: String in _thing.get_childs_paths():
 		var loaded: Thing = Thing.load_thing_at(child)
 		if loaded != null:
 			create_thing_child().populate(loaded)
-
 
 func call_adapter(column: ThingTreeColumn, method: StringName, args: Array = []) -> Variant:
 	return column.adapter.tree_item_callv(method, self, args)
@@ -84,19 +82,11 @@ func update_attribute_column(index: int, header: ThingTreeColumnAttribute, prope
 #
 
 
-
-func unpopulate() -> void:
-	_disconnect_signals()
-
-
-func _connect_signals():
-	_thing.changed.connect(set_dirty.bind(true))
-
-
-func _disconnect_signals():
-	# TODO Vérifier si ca marche bien et qu'il ne faut pas le bind(true)
-	if _thing.changed.is_connected(set_dirty):
-		_thing.changed.disconnect(set_dirty)
+func _on_thing_changed() -> void:
+	set_dirty(true)
+	var tree: ThingTree = get_tree()
+	for colum: ThingTreeColumn in tree.tree_columns.values():
+		call_adapter(colum, &"update_column", [colum.get_index()])
 
 
 func set_dirty(value: bool) -> void:

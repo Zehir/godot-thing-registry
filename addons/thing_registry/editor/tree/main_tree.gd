@@ -348,7 +348,8 @@ func _on_item_edited() -> void:
 	prints("_on_item_edited")
 	for tree_column: ThingTreeColumn in tree_columns.values():
 		var column_index: int = tree_column.get_index()
-		(get_edited() as ThingTreeItem).call_adapter(tree_column, &"notify_edited", [column_index])
+		var edited: ThingTreeItem = get_edited()
+		edited.call_adapter(tree_column, &"notify_edited", [column_index])
 
 
 func _on_button_clicked(item: ThingTreeItem, column_index: int, id: int, mouse_button_index: int) -> void:

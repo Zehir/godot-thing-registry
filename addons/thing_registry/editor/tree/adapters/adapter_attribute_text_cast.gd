@@ -66,6 +66,12 @@ func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 	else:
 		tree_item.set_text(column_index, "")
 
+	if not thing.has_property_direct(property):
+		var tree: Tree = tree_item.get_tree()
+		var color: Color = tree.get_theme_color(&"font_color")
+		color.a *= 0.5
+		tree_item.set_custom_color(column_index, color)
+
 
 func _on_edited(tree_item: ThingTreeItem, column_index: int) -> void:
 	var thing: Thing = tree_item.get_thing()
