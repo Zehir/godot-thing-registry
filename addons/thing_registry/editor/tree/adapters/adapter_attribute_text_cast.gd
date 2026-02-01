@@ -55,11 +55,12 @@ func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 	var thing: Thing = tree_item.get_thing()
 	var property: StringName = get_property_path()
 	tree_item.set_editable(column_index, true)
+	tree_item.set_selectable(column_index, true)
 	tree_item.set_text_alignment(column_index, HORIZONTAL_ALIGNMENT_LEFT)
 	tree_item.set_edit_multiline(column_index, _expected_type in MULTI_LINE_TYPES)
-	var value: Variant = thing.get_direct(property)
+	var value: Variant = thing.get_inherited(property)
 	if value != null:
-		tree_item.set_text(column_index, var_to_str(thing.get_direct(property)))
+		tree_item.set_text(column_index, var_to_str(thing.get_inherited(property)))
 	else:
 		tree_item.set_text(column_index, "")
 
@@ -70,6 +71,7 @@ func _on_edited(tree_item: ThingTreeItem, column_index: int) -> void:
 	var value: Variant = tree_item.get_text(column_index)
 	if _expected_type in [TYPE_FLOAT, TYPE_INT]:
 		value = "0%s" % value
+	#elif _expected_type != TYPE_STRING:
 	value = str_to_var(value)
 	value = type_convert(value, _expected_type)
 	var value_type: int = typeof(value)

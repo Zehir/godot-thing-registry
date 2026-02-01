@@ -260,7 +260,7 @@ func get_inherited(property: StringName, default: Variant = null) -> Variant:
 	if properties.has(property):
 		return properties.get(property)
 	if is_instance_valid(parent):
-		return parent.get_property_with_inheritance(property)
+		return parent.get_inherited(property)
 	return call_module_property_method(property, &"thing_property_get_revert", [], default)
 
 

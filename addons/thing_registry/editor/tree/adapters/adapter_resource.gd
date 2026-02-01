@@ -14,7 +14,7 @@ func _init(header: ThingTreeColumn) -> void:
 func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 	tree_item.set_icon(column_index, EditorInterface.get_editor_theme().get_icon("ResourcePreloader", "EditorIcons"))
 	tree_item.set_text(column_index, tree_item.get_thing().get_display_name())
-	tree_item.set_editable(column_index, true)
+	tree_item.set_editable(column_index, false)
 
 
 func _on_edited(tree_item: ThingTreeItem, column_index: int) -> void:

@@ -102,7 +102,9 @@ size_flags_vertical = 3
 theme_override_constants/draw_relationship_lines = 1
 theme_override_styles/hovered = SubResource("StyleBoxEmpty_ybxgq")
 hide_root = true
+select_mode = 2
 scroll_horizontal_enabled = false
+scroll_vertical_enabled = false
 script = ExtResource("4_cwkf3")
 search = NodePath("../../../../HBoxContainer/Search")
 file_dialog = NodePath("../../../../FileDialog")
@@ -115,5 +117,7 @@ tree_container = NodePath("..")
 [connection signal="action_pressed" from="VBoxContainer/TopMenu" to="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/MainTree" method="_on_menu_action_pressed"]
 [connection signal="pressed" from="VBoxContainer/TopMenu/Button" to="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/MainTree" method="_on_debug_button_pressed"]
 [connection signal="button_clicked" from="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/MainTree" to="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/MainTree" method="_on_button_clicked"]
+[connection signal="gui_input" from="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/MainTree" to="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/MainTree" method="_on_gui_input"]
 [connection signal="item_edited" from="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/MainTree" to="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/MainTree" method="_on_item_edited"]
 [connection signal="item_mouse_selected" from="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/MainTree" to="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/MainTree" method="_on_item_mouse_selected"]
+[connection signal="multi_selected" from="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/MainTree" to="VBoxContainer/PanelContainer/ScrollContainer/TreeContainer/MainTree" method="_on_multi_selected"]

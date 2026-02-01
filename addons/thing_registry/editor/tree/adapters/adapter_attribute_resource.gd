@@ -18,7 +18,7 @@ func _init(header: ThingTreeColumnAttribute) -> void:
 func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 	var thing: Thing = tree_item.get_thing()
 	var property: StringName = get_property_path()
-	tree_item.set_editable(column_index, false)
+	tree_item.set_editable(column_index, true)
 
 	#var value: Variant = thing.get_direct(property, null)
 	#if value is Texture2D:

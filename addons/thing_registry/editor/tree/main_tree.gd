@@ -17,6 +17,10 @@ var _root_item: ThingTreeItem
 
 var tree_columns: Dictionary[StringName, ThingTreeColumn] = {}
 
+var tree_clicked: bool = false
+var pending_click_select: ThingTreeItem
+var ignore_selection_signal: bool = false
+
 #region Virtual methods
 func _enter_tree() -> void:
 	if is_part_of_edited_scene():
@@ -268,12 +272,6 @@ func _on_unsaved_file_found(file: Variant) -> void:
 
 	#edited.get_tree_node().set_text(get_property_index(&"resource_path, "[unsaved]")
 	#_start_save_as(file)
-#endregion
-
-
-func _on_item_mouse_selected(mouse_position: Vector2, _mouse_button_index: int) -> void:
-	var item: ThingTreeItem = get_item_at_position(mouse_position)
-	EditorInterface.get_inspector().edit(item.get_thing())
 
 
 func _on_edited_thing_dirty_changed(new_value: bool, edited: Variant) -> void:
@@ -287,6 +285,7 @@ func _on_edited_thing_dirty_changed(new_value: bool, edited: Variant) -> void:
 
 func _on_file_dialog_canceled() -> void:
 	pass # Replace with function body.
+#endregion
 
 
 func rebuild_tree() -> void:
@@ -316,6 +315,7 @@ func rebuild_tree() -> void:
 
 #region Adapter calls
 func _get_drag_data(at_position: Vector2) -> Variant:
+	pending_click_select = null
 	var column_index: int = get_column_at_position(at_position)
 	if column_index == -1:
 		return null
@@ -345,6 +345,7 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 
 
 func _on_item_edited() -> void:
+	prints("_on_item_edited")
 	for tree_column: ThingTreeColumn in tree_columns.values():
 		var column_index: int = tree_column.get_index()
 		(get_edited() as ThingTreeItem).call_adapter(tree_column, &"notify_edited", [column_index])
@@ -360,3 +361,58 @@ func _on_button_clicked(item: ThingTreeItem, column_index: int, id: int, mouse_b
 
 func _on_debug_button_pressed() -> void:
 	rebuild_tree()
+
+
+func _on_item_mouse_selected(mouse_position: Vector2, _mouse_button_index: int) -> void:
+	if tree_clicked:
+		pending_click_select = get_item_at_position(mouse_position)
+	else:
+		EditorInterface.get_inspector().edit(get_item_at_position(mouse_position).get_thing())
+
+
+func _on_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion or event.is_echo():
+		return
+
+	if event is InputEventMouseButton:
+		if event.is_pressed():
+			if event.shift_pressed:
+				_handle_shift_selection(event)
+			if get_rect().has_point(get_local_mouse_position()):
+				tree_clicked = true
+		else:
+			tree_clicked = false
+			if is_instance_valid(pending_click_select):
+				EditorInterface.get_inspector().edit(pending_click_select.get_thing())
+				pending_click_select = null
+
+
+func _handle_shift_selection(event: InputEventMouseButton) -> void:
+	if true:
+		return
+	# TODO do we want custom beavior to allow shift selection ?
+	accept_event()
+	var cursor_item: ThingTreeItem = get_selected()
+	var cursor_column: int = get_selected_column()
+
+
+	var target_item: ThingTreeItem = get_item_at_position(event.position)
+	if not is_instance_valid(target_item):
+		return
+	var target_column: int = get_column_at_position(event.position)
+
+
+	prints("cursor", cursor_item.get_thing().get_display_name(), cursor_column)
+	prints("target", target_item.get_thing().get_display_name(), target_column)
+
+
+
+func _on_multi_selected(item: TreeItem, column: int, selected: bool) -> void:
+	pass
+	#if ignore_selection_signal:
+		#return
+	#ignore_selection_signal = true
+	#deselect_all()
+	#if selected:
+		#set_selected(item, column)
+	#ignore_selection_signal = false

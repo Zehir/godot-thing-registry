@@ -34,3 +34,4 @@ item:PackedVector2Array = PackedVector2Array(0, 0)
 item:PackedVector3Array = PackedVector3Array(0, 0, 0)
 item:PackedColorArray = PackedColorArray(0, 0, 0, 1)
 item:PackedVector4Array = PackedVector4Array(0, 0, 0, 0)
+price_dtdw88s5e4kfp:value = 0.0
