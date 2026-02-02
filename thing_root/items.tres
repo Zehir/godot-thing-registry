@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Thing" format=4 uid="uid://dyghcwvt62rb7"]
+[gd_resource type="Resource" script_class="Thing" format=3 uid="uid://dyghcwvt62rb7"]
 
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/module.gd" id="1_hr87b"]
 [ext_resource type="Script" uid="uid://dt6m4ybqdtu6r" path="res://addons/thing_registry/modules/module_items.gd" id="2_1xmvu"]
@@ -14,35 +14,3 @@ resource_name = "Items"
 script = ExtResource("3_tsm5d")
 modules = Array[ExtResource("1_hr87b")]([SubResource("Resource_f5rwo")])
 item:name = "Items"
-item:bool = false
-item:int = 0
-item:float = 0.0
-item:String = "<null>"
-item:Vector2 = Vector2(0, 0)
-item:Vector2i = Vector2i(0, 0)
-item:Rect2 = Rect2(0, 0, 0, 0)
-item:Rect2i = Rect2i(0, 0, 0, 0)
-item:Vector3 = Vector3(0, 0, 0)
-item:Vector3i = Vector3i(0, 0, 0)
-item:Transform2D = Transform2D(1, 0, 0, 1, 0, 0)
-item:Vector4 = Vector4(0, 0, 0, 0)
-item:Vector4i = Vector4i(0, 0, 0, 0)
-item:Plane = Plane(0, 0, 0, 0)
-item:Quaternion = Quaternion(0, 0, 0, 1)
-item:AABB = AABB(0, 0, 0, 0, 0, 0)
-item:Basis = Basis(1, 0, 0, 0, 1, 0, 0, 0, 1)
-item:Transform3D = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-item:Projection = Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-item:StringName = &""
-item:Dictionary = {}
-item:Array = []
-item:PackedByteArray = PackedByteArray()
-item:PackedInt32Array = PackedInt32Array()
-item:PackedInt64Array = PackedInt64Array()
-item:PackedFloat32Array = PackedFloat32Array()
-item:PackedFloat64Array = PackedFloat64Array()
-item:PackedStringArray = PackedStringArray()
-item:PackedVector2Array = PackedVector2Array()
-item:PackedVector3Array = PackedVector3Array()
-item:PackedColorArray = PackedColorArray()
-item:PackedVector4Array = PackedVector4Array()

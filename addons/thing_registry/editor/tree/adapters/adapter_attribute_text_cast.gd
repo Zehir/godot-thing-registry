@@ -82,7 +82,7 @@ func _on_edited(tree_item: ThingTreeItem, column_index: int) -> void:
 	var value: Variant = tree_item.get_text(column_index)
 	if _expected_type in [TYPE_FLOAT, TYPE_INT]:
 		value = "0%s" % value
-	elif _expected_type != TYPE_STRING:
+	elif not _expected_type in [TYPE_STRING, TYPE_STRING_NAME]:
 		value = str_to_var(value)
 	value = type_convert(value, _expected_type)
 	thing.set(property, value)

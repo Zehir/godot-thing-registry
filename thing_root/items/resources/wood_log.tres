@@ -9,6 +9,4 @@ resource_name = "Wood Log"
 script = ExtResource("2_da106")
 item:name = "Wood Log"
 item:icon = ExtResource("1_da106")
-item:bool = true
-item:Color = Color(0.2531504, 0.59746426, 0.58970696, 1)
 price_dtdw88s5e4kfp:value = 60.0

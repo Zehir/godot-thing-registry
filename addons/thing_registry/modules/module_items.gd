@@ -26,11 +26,10 @@ func _get_thing_property_list() -> Array[Dictionary]:
 		make_resource_property("Resource", "Resource"),
 		make_resource_property("ThingModule", "ThingModule"),
 	]
-	for i in range(TYPE_MAX):
-		if i in INVALID_TYPES or i == TYPE_OBJECT:
-			continue
-
-		list.append(make_property(type_string(i), i))
+	#for i in range(TYPE_MAX):
+		#if i in INVALID_TYPES or i == TYPE_OBJECT:
+			#continue
+		#list.append(make_property(type_string(i), i))
 	return list
 
 

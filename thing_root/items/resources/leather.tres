@@ -9,5 +9,4 @@ resource_name = "Leather"
 script = ExtResource("3_kny3g")
 item:name = "Leather"
 item:icon = ExtResource("1_hg2t6")
-item:bool = true
 price_dtdw88s5e4kfp:value = 50.0

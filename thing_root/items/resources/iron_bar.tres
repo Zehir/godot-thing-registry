@@ -9,6 +9,4 @@ resource_name = "Iron Bar"
 script = ExtResource("3_1oswm")
 item:name = "Iron Bar"
 item:icon = ExtResource("1_crj6d")
-item:Color = Color(0.2531504, 0.59746426, 0.58970696, 1)
-item:StringName = &"dze"
 price_dtdw88s5e4kfp:value = 10.0
