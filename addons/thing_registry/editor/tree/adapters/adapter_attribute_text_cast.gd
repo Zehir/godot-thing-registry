@@ -85,8 +85,4 @@ func _on_edited(tree_item: ThingTreeItem, column_index: int) -> void:
 	elif _expected_type != TYPE_STRING:
 		value = str_to_var(value)
 	value = type_convert(value, _expected_type)
-	var value_type: int = typeof(value)
-	if value_type == _expected_type:
-		thing.set(property, value)
-	elif value_type == TYPE_NIL:
-		thing.set(property, null)
+	thing.set(property, value)

@@ -20,7 +20,6 @@ item:Vector3i = Vector3i(16, 17, 18)
 item:Transform2D = Transform2D(19, 22, 20, 23, 21, 24)
 item:Vector4 = Vector4(25, 26, 27, 28)
 item:Color = Color(0.785569, 0.42091712, 0.2728463, 1)
-item:StringName = &"string_name"
 item:Array = ["Coucou"]
 item:PackedByteArray = PackedByteArray("AA==")
 item:PackedInt32Array = PackedInt32Array(0)

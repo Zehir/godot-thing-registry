@@ -8,5 +8,5 @@
 resource_name = "Godot coin"
 script = ExtResource("3_ygq84")
 item:icon = ExtResource("1_w5268")
+item:bool = false
 item:Color = Color(0.78431374, 0.78431374, 0.78431374, 1)
-item:StringName = &""

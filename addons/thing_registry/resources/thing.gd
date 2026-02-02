@@ -223,8 +223,9 @@ func _set(property: StringName, value: Variant) -> bool:
 		return false
 	var old_value = properties.get(property)
 	properties.set(property, value)
-	notify_childrens_property_value_changed(property, old_value)
-	emit_changed()
+	if old_value != value:
+		notify_childrens_property_value_changed(property, old_value)
+		emit_changed()
 	return true
 
 

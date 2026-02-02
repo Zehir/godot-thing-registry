@@ -83,10 +83,10 @@ func update_attribute_column(index: int, header: ThingTreeColumnAttribute, prope
 
 
 func _on_thing_changed() -> void:
-	set_dirty(true)
 	var tree: ThingTree = get_tree()
 	for colum: ThingTreeColumn in tree.tree_columns.values():
-		call_adapter(colum, &"update_column", [colum.get_index()])
+		call_adapter.call_deferred(colum, &"update_column", [colum.get_index()])
+
 
 
 func set_dirty(value: bool) -> void:

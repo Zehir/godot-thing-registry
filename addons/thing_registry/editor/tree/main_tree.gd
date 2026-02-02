@@ -345,10 +345,9 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 
 
 func _on_item_edited() -> void:
-	prints("_on_item_edited")
+	var edited: ThingTreeItem = get_edited()
 	for tree_column: ThingTreeColumn in tree_columns.values():
 		var column_index: int = tree_column.get_index()
-		var edited: ThingTreeItem = get_edited()
 		edited.call_adapter(tree_column, &"notify_edited", [column_index])
 
 
