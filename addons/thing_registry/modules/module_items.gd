@@ -22,6 +22,8 @@ func _get_description() -> String:
 func _get_thing_property_list() -> Array[Dictionary]:
 	var list: Array[Dictionary] = [
 		make_property(PROPERTY_NAME, TYPE_STRING),
+		make_property("bool", TYPE_BOOL),
+		make_property("color", TYPE_COLOR),
 		make_resource_property(PROPERTY_ICON, "Texture2D"),
 		make_resource_property("Resource", "Resource"),
 		make_resource_property("ThingModule", "ThingModule"),

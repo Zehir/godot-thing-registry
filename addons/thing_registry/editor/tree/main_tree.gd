@@ -21,10 +21,15 @@ var tree_clicked: bool = false
 var pending_click_select: ThingTreeItem
 var ignore_selection_signal: bool = false
 
+
 #region Virtual methods
 func _enter_tree() -> void:
 	if is_part_of_edited_scene():
 		return
+
+#
+#
+	#RenderingServer.canvas_item_set_default_texture_filter(get_custom_canvas_item(), RenderingServer.CANVAS_ITEM_TEXTURE_FILTER_NEAREST_WITH_MIPMAPS)
 
 	search.right_icon = EditorInterface.get_editor_theme().get_icon("Search", "EditorIcons")
 
@@ -35,6 +40,8 @@ func _enter_tree() -> void:
 	_add_header(&"resource", ThingTreeColumnResource.new())
 
 	rebuild_tree()
+
+
 #endregion
 
 

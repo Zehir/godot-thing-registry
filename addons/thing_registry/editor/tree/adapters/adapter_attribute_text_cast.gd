@@ -3,7 +3,6 @@ class_name TreeValueAdapterAttributeTextCast
 extends TreeValueAdapterAttribute
 
 const VALID_TYPES: Array[Variant.Type] = [
-	#TYPE_BOOL,
 	TYPE_INT,
 	TYPE_FLOAT,
 	TYPE_STRING,
@@ -22,7 +21,6 @@ const VALID_TYPES: Array[Variant.Type] = [
 	TYPE_BASIS,
 	TYPE_TRANSFORM3D,
 	TYPE_PROJECTION,
-	#TYPE_COLOR,
 	TYPE_STRING_NAME,
 	TYPE_OBJECT,
 	TYPE_DICTIONARY,

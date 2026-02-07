@@ -14,3 +14,4 @@ resource_name = "Items"
 script = ExtResource("3_tsm5d")
 modules = Array[ExtResource("1_hr87b")]([SubResource("Resource_f5rwo")])
 item:name = "Items"
+item:bool = true

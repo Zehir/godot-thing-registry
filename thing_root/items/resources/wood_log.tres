@@ -4,9 +4,12 @@
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/module.gd" id="1_siuwo"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_da106"]
 
+[sub_resource type="X509Certificate" id="X509Certificate_da106"]
+
 [resource]
 resource_name = "Wood Log"
 script = ExtResource("2_da106")
 item:name = "Wood Log"
 item:icon = ExtResource("1_da106")
+item:Resource = SubResource("X509Certificate_da106")
 price_dtdw88s5e4kfp:value = 60.0
