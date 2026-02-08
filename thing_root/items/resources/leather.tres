@@ -4,17 +4,13 @@
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/module.gd" id="2_nwgqw"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="3_kny3g"]
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_hg2t6"]
-seed = 20
-
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_nwgqw"]
-noise = SubResource("FastNoiseLite_hg2t6")
 
 [resource]
 resource_name = "Leather"
 script = ExtResource("3_kny3g")
 item:name = "Leather"
-item:bool = true
+item:bool = false
 item:icon = ExtResource("1_hg2t6")
 item:Resource = SubResource("NoiseTexture2D_nwgqw")
 price_dtdw88s5e4kfp:value = 50.0

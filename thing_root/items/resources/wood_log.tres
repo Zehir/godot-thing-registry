@@ -10,6 +10,7 @@
 resource_name = "Wood Log"
 script = ExtResource("2_da106")
 item:name = "Wood Log"
+item:bool = false
 item:icon = ExtResource("1_da106")
 item:Resource = SubResource("X509Certificate_da106")
 price_dtdw88s5e4kfp:value = 60.0

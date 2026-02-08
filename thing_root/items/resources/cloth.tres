@@ -8,6 +8,5 @@
 resource_name = "Cloth"
 script = ExtResource("3_3b3jd")
 item:name = "Cloth"
-item:bool = true
 item:icon = ExtResource("1_0scnm")
 price_dtdw88s5e4kfp:value = 10.0

@@ -5,8 +5,6 @@
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_3xrmx"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ybxgq"]
-
 [node name="ThingsEditor" type="MarginContainer" unique_id=672459698]
 anchors_preset = 15
 anchor_right = 1.0
@@ -100,7 +98,6 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 3
 theme_override_constants/draw_relationship_lines = 1
-theme_override_styles/hovered = SubResource("StyleBoxEmpty_ybxgq")
 hide_root = true
 select_mode = 2
 scroll_horizontal_enabled = false
