@@ -6,5 +6,4 @@
 
 [resource]
 script = ExtResource("2_vdaed")
-item:bool = false
 item:icon = ExtResource("1_vdaed")

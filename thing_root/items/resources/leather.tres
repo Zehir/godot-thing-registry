@@ -1,7 +1,6 @@
 [gd_resource type="Resource" script_class="Thing" format=3 uid="uid://bkuh4hyqrts4g"]
 
 [ext_resource type="Texture2D" uid="uid://d0cijsxqt6tfg" path="res://thing_root/assets/tools_crafting_leatherworking_hide_tanning_materials.png" id="1_hg2t6"]
-[ext_resource type="Texture2D" uid="uid://brj0kk3ud5q6v" path="res://icon.svg" id="1_nwgqw"]
 [ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/module.gd" id="2_nwgqw"]
 [ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="3_kny3g"]
 
@@ -9,6 +8,6 @@
 resource_name = "Leather"
 script = ExtResource("3_kny3g")
 item:name = "Leather"
+item:color = Color(0.6875, 0.5721054, 0.35180664, 1)
 item:icon = ExtResource("1_hg2t6")
-item:Resource = ExtResource("1_nwgqw")
 price_dtdw88s5e4kfp:value = 50.0

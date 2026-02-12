@@ -74,14 +74,17 @@ func _get_drag_data(tree_item: ThingTreeItem, column_index: int) -> Variant:
 
 
 func _get_dropped_value(data: Variant) -> Variant:
-	#prints("_get_dropped_value", data)
 	if data is Dictionary:
-		if data.get("type") != "files" or typeof(data.get("files")) != TYPE_PACKED_STRING_ARRAY:
-			return
-		var files: PackedStringArray = data.get("files")
-		if files.size() != 1:
-			return
-		if not ResourceLoader.exists(files[0], "Resource"):
-			return
-		return load(files[0])
+		match data.get("type"):
+			"files":
+				if typeof(data.get("files")) != TYPE_PACKED_STRING_ARRAY:
+					return
+				var files: PackedStringArray = data.get("files")
+				if files.size() != 1:
+					return
+				if not ResourceLoader.exists(files[0], "Resource"):
+					return
+				return load(files[0])
+			"thing_property":
+				return data.get("value")
 	return data

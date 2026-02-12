@@ -9,4 +9,3 @@ resource_name = "Tools"
 script = ExtResource("2_oxtan")
 modules = Array[ExtResource("1_kvnt2")]([ExtResource("2_ckwp7")])
 item:name = "Tools"
-item:bool = false
