@@ -88,7 +88,6 @@ func _on_thing_changed() -> void:
 		call_adapter.call_deferred(colum, &"update_column", [colum.get_index()])
 
 
-
 func set_dirty(value: bool) -> void:
 	var prev_value: bool = _dirty
 	_dirty = value
@@ -99,3 +98,20 @@ func set_dirty(value: bool) -> void:
 func is_unsaved() -> bool:
 	return _dirty
 ##endregion
+
+
+func set_drag_preview(text: String, icon: Texture2D = null) -> void:
+	var preview: HBoxContainer = HBoxContainer.new()
+	if is_instance_valid(icon):
+		var icon_rect: TextureRect = TextureRect.new()
+		var icon_size: int = EditorInterface.get_editor_theme().get_constant("class_icon_size", "Editor")
+		icon_rect.custom_minimum_size = Vector2(icon_size, icon_size)
+		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon_rect.texture = icon
+		preview.add_child(icon_rect)
+	var label: Label = Label.new()
+	label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	label.text = text
+	preview.add_child(label)
+	get_tree().set_drag_preview(preview)

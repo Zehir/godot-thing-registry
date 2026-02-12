@@ -9,5 +9,6 @@
 resource_name = "Resources"
 script = ExtResource("2_mnpwi")
 modules = Array[ExtResource("1_elm5b")]([ExtResource("2_m44sm")])
+item:bool = false
 item:icon = ExtResource("1_m44sm")
 price_dtdw88s5e4kfp:value = 0.0

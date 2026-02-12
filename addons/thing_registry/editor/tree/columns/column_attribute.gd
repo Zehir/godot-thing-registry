@@ -17,8 +17,6 @@ func _init(module: ThingModule, property: Dictionary) -> void:
 			adapter = TreeValueAdapterAttributeBool.new(self)
 		[TYPE_COLOR, _, _]:
 			adapter = TreeValueAdapterAttributeColor.new(self)
-		#[TYPE_OBJECT, PROPERTY_HINT_RESOURCE_TYPE, "Texture2D"]:
-			#adapter = TreeValueAdapterAttributeTexture2D.new(self)
 		[TYPE_OBJECT, PROPERTY_HINT_RESOURCE_TYPE, _]:
 			adapter = TreeValueAdapterAttributeResource.new(self)
 

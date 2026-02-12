@@ -7,4 +7,5 @@
 [resource]
 resource_name = "Godot coin"
 script = ExtResource("3_ygq84")
+item:name = null
 item:icon = ExtResource("1_w5268")

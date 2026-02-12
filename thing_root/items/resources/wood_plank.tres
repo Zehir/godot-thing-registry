@@ -7,6 +7,6 @@
 [resource]
 resource_name = "Wood Plank"
 script = ExtResource("2_uk0hf")
-item:name = "Wood Plank"
+item:name = null
 item:icon = ExtResource("1_uk0hf")
 price_dtdw88s5e4kfp:value = 0.6

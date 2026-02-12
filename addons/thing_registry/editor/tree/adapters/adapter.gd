@@ -50,6 +50,7 @@ func _on_button_clicked(tree_item: ThingTreeItem, column_index: int, id: int, mo
 	pass
 
 
+#region Drag and drop
 func get_drag_data(tree_item: ThingTreeItem, column_index: int) -> Variant:
 	return _get_drag_data(tree_item, column_index)
 
@@ -75,7 +76,7 @@ func notify_drop_data(tree_item: ThingTreeItem, column_index: int, section: int,
 @warning_ignore("unused_parameter")
 func _on_drop_data(tree_item: ThingTreeItem, column_index: int, section: int, data: Variant) -> void:
 	pass
-
+#endregion
 
 #region Icon finder
 func _get_icon(property: Dictionary) -> Texture2D:
@@ -102,4 +103,45 @@ func _get_class_icon(name: StringName) -> Texture2D:
 				return load(script.icon)
 			return _get_class_icon(script.base)
 	return _get_class_icon(&"Object")
+
+
+func is_valid_typed_value(property: Dictionary, value: Variant) -> bool:
+	# Null or Unknown type, we guess it's valid
+	if value == null or property.type >= TYPE_MAX:
+		return true
+	if property.type == TYPE_OBJECT:
+		return _is_valid_resource_type(property.hint_string, value)
+	return typeof(value) == property.type
+
+
+func _is_valid_resource_type(expected_type: StringName, value: Variant) -> bool:
+	if value == null:
+		return true
+
+	if not value is Resource:
+		return false
+
+	var resource: Resource = value as Resource
+	var script: Variant = resource.get_script()
+	if script is GDScript:
+		return is_class_is_subclass_of(script.get_global_name(), expected_type)
+	return is_class_is_subclass_of(resource.get_class(), expected_type)
+
+
+func is_class_is_subclass_of(name: StringName, parent_class: StringName) -> bool:
+	if name == parent_class:
+		return true
+
+	if ClassDB.class_exists(name):
+		var parent: StringName = ClassDB.get_parent_class(name)
+		if not parent.is_empty():
+			return is_class_is_subclass_of(parent, parent_class)
+
+	for script: Dictionary in ProjectSettings.get_global_class_list():
+		if script.class != name:
+			continue
+		if not script.base.is_empty():
+			return is_class_is_subclass_of(script.base, parent_class)
+
+	return false
 #endregion

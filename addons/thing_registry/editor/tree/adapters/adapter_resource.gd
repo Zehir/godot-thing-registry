@@ -24,19 +24,10 @@ func _on_edited(tree_item: ThingTreeItem, column_index: int) -> void:
 
 func _get_drag_data(tree_item: ThingTreeItem, column_index: int) -> Variant:
 	var thing: Thing = tree_item.get_thing()
-	var preview: HBoxContainer = HBoxContainer.new()
-	var icon: TextureRect = TextureRect.new()
-	var icon_size: int = EditorInterface.get_editor_theme().get_constant("class_icon_size", "Editor")
-	icon.custom_minimum_size = Vector2(icon_size, icon_size)
-	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	icon.texture = tree_item.get_icon(column_index)
-	preview.add_child(icon)
-	var label: Label = Label.new()
-	label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	label.text = thing.resource_path.get_file()
-	preview.add_child(label)
-	tree_item.get_tree().set_drag_preview(preview)
+	tree_item.set_drag_preview(
+		thing.resource_path.get_file(),
+		tree_item.get_icon(column_index)
+	)
 	return {"type": "thing", "from": self, "things": [thing]}
 
 
