@@ -244,12 +244,6 @@ func has_property_self(property: StringName) -> bool:
 	return properties.get(property) != property_get_revert(property)
 
 
-func has_property_inherited(property: StringName) -> bool:
-	if not property.contains(SEPERATOR):
-		return false
-	return properties.has(property)
-
-
 ## Get the property value without looking at parent, return default if not found or if the property is not directly set on this Thing.
 func get_self(property: StringName, default: Variant = null) -> Variant:
 	if not property.contains(SEPERATOR):
