@@ -205,8 +205,8 @@ func _property_get_revert(property: StringName) -> Variant:
 	if not property.contains(SEPERATOR):
 		return null
 	if is_instance_valid(parent):
-		if parent.has_property_direct(property):
-			return parent.get_direct(property)
+		if parent.has_property_self(property):
+			return parent.get_self(property)
 		return parent.property_get_revert(property)
 	return call_module_property_method(property, &"thing_property_get_revert")
 
@@ -238,7 +238,7 @@ func _get(property: StringName) -> Variant:
 	return null
 
 
-func has_property_direct(property: StringName) -> bool:
+func has_property_self(property: StringName) -> bool:
 	if not properties.has(property):
 		return false
 	return properties.get(property) != property_get_revert(property)
@@ -250,7 +250,8 @@ func has_property_inherited(property: StringName) -> bool:
 	return properties.has(property)
 
 
-func get_direct(property: StringName, default: Variant = null) -> Variant:
+## Get the property value without looking at parent, return default if not found or if the property is not directly set on this Thing.
+func get_self(property: StringName, default: Variant = null) -> Variant:
 	if not property.contains(SEPERATOR):
 		return default
 	if properties.has(property):
@@ -258,6 +259,7 @@ func get_direct(property: StringName, default: Variant = null) -> Variant:
 	return call_module_property_method(property, &"thing_property_get_revert", [], default)
 
 
+## Get the property value looking at parent, return default if not found.
 func get_inherited(property: StringName, default: Variant = null) -> Variant:
 	if not property.contains(SEPERATOR):
 		return default
