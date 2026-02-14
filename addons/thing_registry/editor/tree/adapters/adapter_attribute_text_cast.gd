@@ -66,12 +66,12 @@ func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 	else:
 		tree_item.clear_custom_color(column_index)
 
-	if _expected_type in [TYPE_STRING, TYPE_STRING_NAME]:
-		tree_item.set_text(column_index, String(thing.get_inherited(property)))
-	elif value != null:
-		tree_item.set_text(column_index, var_to_str(thing.get_inherited(property)))
-	else:
+	if value == null:
 		tree_item.set_text(column_index, "")
+	elif _expected_type in [TYPE_STRING, TYPE_STRING_NAME]:
+		tree_item.set_text(column_index, String(value))
+	else:
+		tree_item.set_text(column_index, var_to_str(value))
 
 
 func _on_edited(tree_item: ThingTreeItem, column_index: int) -> void:

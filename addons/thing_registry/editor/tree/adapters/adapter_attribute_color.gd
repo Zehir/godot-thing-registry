@@ -30,7 +30,7 @@ func _init(header: ThingTreeColumnAttribute) -> void:
 
 func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 	var stylebox: StyleBoxFlat = base_stylebox.duplicate()
-	var value: Variant = tree_item.get_thing().get_direct(get_property_path())
+	var value: Variant = tree_item.get_thing().get_inherited(get_property_path())
 	if not value is Color:
 		value = Color.BLACK
 	stylebox.bg_color = value
@@ -46,7 +46,7 @@ func _on_button_clicked(tree_item: ThingTreeItem, column_index: int, _id: int, m
 	if mouse_button_index != MOUSE_BUTTON_LEFT:
 		return
 
-	color_picker.color = tree_item.get_thing().get_direct(get_property_path(), Color.BLACK)
+	color_picker.color = tree_item.get_thing().get_inherited(get_property_path(), Color.BLACK)
 	color_picker_popup.close_requested.connect(_on_popup_closed.bind(tree_item, column_index), CONNECT_ONE_SHOT)
 	color_picker_popup.position = DisplayServer.mouse_get_position()
 	color_picker_popup.popup()
