@@ -4,8 +4,13 @@ extends Resource
 
 const SEPERATOR: String = ":"
 
+# Theses signals are calling each other : parent_changed -> module_changed -> property_list_changed
+
+signal parent_changed(old_parent: Thing)
+
 signal module_changed()
-signal parent_changed()
+
+const passthrough_signals = [&"module_changed", &"changed"]
 
 ## Parent thing
 #@export_custom(PROPERTY_HINT_RESOURCE_TYPE, "Thing", PROPERTY_USAGE_EDITOR)
@@ -13,7 +18,7 @@ var _parent: Thing
 var parent: Thing:
 	get = get_parent
 
-var _is_deserialized: bool = false
+#var _is_deserialized: bool = false
 
 static func load_thing_at(path: String) -> Thing:
 	if not ResourceLoader.exists(path, "Resource"):
@@ -33,6 +38,7 @@ func get_root_path() -> String:
 func have_child_directory() -> bool:
 	return DirAccess.dir_exists_absolute(resource_path.get_basename())
 
+
 ## Return Thing resource path that is directly the child of this Thing.
 ## Return an empty array if no child if found. Does not return sub childs.
 ## The returned path might not be a Thing, you should use [method load_thing_at] to validate it.
@@ -46,6 +52,7 @@ func get_childs_paths() -> Array[String]:
 
 	list.sort_custom(func(a, b): return a.naturalnocasecmp_to(b) < 0)
 	return list
+
 
 
 func get_parent() -> Thing:
@@ -62,14 +69,7 @@ func get_parent() -> Thing:
 @export_custom(PROPERTY_HINT_ARRAY_TYPE, "ThingModule", PROPERTY_USAGE_DEFAULT) var modules: Array[ThingModule] = []:
 	set(value):
 		modules = value
-		if not _is_deserialized:
-			return
 		module_changed.emit()
-		for module in modules:
-			if not is_instance_valid(module):
-				continue
-			if not module.property_list_changed.is_connected(module_changed.emit):
-				module.property_list_changed.connect(module_changed.emit)
 
 ## Stores property values
 var properties: Dictionary[StringName, Variant] = {}
@@ -78,46 +78,27 @@ var properties: Dictionary[StringName, Variant] = {}
 var _loaded_modules: Dictionary[StringName, ThingModule] = {}
 
 
+## TODO check https://github.com/godotengine/godot/pull/109752#issuecomment-3901871520
 func _init() -> void:
-	module_changed.connect(_on_module_changed)
+	_init_deferred.call_deferred()
 
 
-func _notification(what):
-	if what == NOTIFICATION_RESOURCE_DESERIALIZED:
-		_update_modules_list()
-		_is_deserialized = true
-
-
-
-func _on_module_changed():
+func _init_deferred() -> void:
+	parent_changed.connect(_on_parent_changed)
+	parent_changed.emit(null)
 	_update_modules_list()
-	notify_property_list_changed()
-	notify_childrens_property_list_changed()
-	#TODO notify children module changed
 
 
-## Notify childrens that their property list may have changed.
-func notify_childrens_property_list_changed() -> void:
-	for child_path: String in get_childs_paths():
-		var child: Thing = load_thing_at(child_path)
-		if child != null:
-			child.notify_childrens_property_list_changed()
-			child.notify_property_list_changed()
-
-
-## Notify childrens that a property value has changed.
-func notify_childrens_property_value_changed(property_name: StringName, old_value: Variant):
-	for child_path: String in get_childs_paths():
-		var child: Thing = load_thing_at(child_path)
-		if child != null:
-			child.emit_changed()
-			child.notify_childrens_property_value_changed(property_name, old_value)
-
-
-func notify_parent_changed():
-	prints("notify_parent_changed")
-	_update_modules_list()
-	parent_changed.emit()
+func _on_parent_changed(old_parent: Thing) -> void:
+	for signal_name: StringName in passthrough_signals:
+		var target: Callable = Signal(self, signal_name).emit
+		if is_instance_valid(old_parent):
+			if Signal(old_parent, signal_name).is_connected(target):
+				Signal(old_parent, signal_name).disconnect(target)
+		if is_instance_valid(parent):
+			if not Signal(parent, signal_name).is_connected(target):
+				Signal(parent, signal_name).connect(target)
+	module_changed.emit()
 
 
 ## Load modules from parent and self.
@@ -128,7 +109,7 @@ func get_modules() -> Dictionary[StringName, ThingModule]:
 
 func _update_modules_list() -> void:
 	_loaded_modules.clear()
-	if parent is Thing:
+	if is_instance_valid(parent):
 		_loaded_modules.assign(parent.get_modules())
 	for module in modules:
 		if not module is ThingModule:
@@ -143,6 +124,7 @@ func _update_modules_list() -> void:
 			# TODO display error in the inspector
 			continue
 		_loaded_modules.set(instance_name, module)
+	notify_property_list_changed()
 
 
 func has_module(instance_name: StringName) -> bool:
@@ -209,7 +191,7 @@ func _property_get_revert(property: StringName) -> Variant:
 
 
 func _set(property: StringName, value: Variant) -> bool:
-	if not property.contains(SEPERATOR) or !_is_deserialized:
+	if not property.contains(SEPERATOR): # or !_is_deserialized:
 		return false
 	var old_value = properties.get(property)
 	if value != property_get_revert(property):
@@ -217,7 +199,6 @@ func _set(property: StringName, value: Variant) -> bool:
 	else:
 		properties.erase(property)
 	if old_value != value:
-		notify_childrens_property_value_changed(property, old_value)
 		emit_changed()
 	return true
 

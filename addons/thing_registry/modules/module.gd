@@ -13,6 +13,7 @@ const INVALID_TYPES: Array[Variant.Type] = [
 	TYPE_SIGNAL,
 ]
 
+#TODO remove _thing_property_list_invalid ?
 var _thing_property_list_invalid: bool = true
 var _thing_property_list: Array[Dictionary] = []
 
