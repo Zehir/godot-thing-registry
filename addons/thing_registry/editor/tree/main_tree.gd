@@ -319,7 +319,6 @@ func rebuild_tree() -> void:
 			item.call_recursive(&"call_adapter", tree_column, &"update_column", [index])
 
 
-
 #region Adapter calls
 func _get_drag_data(at_position: Vector2) -> Variant:
 	pending_click_select = null

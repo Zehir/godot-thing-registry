@@ -13,9 +13,10 @@ var _parent: Thing
 var parent: Thing:
 	get = get_parent
 
+var _is_deserialized: bool = false
 
 static func load_thing_at(path: String) -> Thing:
-	if not ResourceLoader.exists(path):
+	if not ResourceLoader.exists(path, "Resource"):
 		return null
 	var resource: Resource = ResourceLoader.load(path)
 	if resource is Thing:
@@ -61,6 +62,8 @@ func get_parent() -> Thing:
 @export_custom(PROPERTY_HINT_ARRAY_TYPE, "ThingModule", PROPERTY_USAGE_DEFAULT) var modules: Array[ThingModule] = []:
 	set(value):
 		modules = value
+		if not _is_deserialized:
+			return
 		module_changed.emit()
 		for module in modules:
 			if not is_instance_valid(module):
@@ -71,21 +74,26 @@ func get_parent() -> Thing:
 ## Stores property values
 var properties: Dictionary[StringName, Variant] = {}
 
-var _is_loaded_modules_valid: bool = false
-
 ## Contains loaded modules for this Thing and its parents
 var _loaded_modules: Dictionary[StringName, ThingModule] = {}
 
 
 func _init() -> void:
-	# Deferred call because "resource_path" it not always defined at that time.
-	module_changed.connect(_on_module_changed, CONNECT_DEFERRED)
+	module_changed.connect(_on_module_changed)
+
+
+func _notification(what):
+	if what == NOTIFICATION_RESOURCE_DESERIALIZED:
+		_update_modules_list()
+		_is_deserialized = true
+
 
 
 func _on_module_changed():
 	_update_modules_list()
 	notify_property_list_changed()
 	notify_childrens_property_list_changed()
+	#TODO notify children module changed
 
 
 ## Notify childrens that their property list may have changed.
@@ -102,8 +110,8 @@ func notify_childrens_property_value_changed(property_name: StringName, old_valu
 	for child_path: String in get_childs_paths():
 		var child: Thing = load_thing_at(child_path)
 		if child != null:
+			child.emit_changed()
 			child.notify_childrens_property_value_changed(property_name, old_value)
-			child._on_parent_property_value_changed(property_name, old_value)
 
 
 func notify_parent_changed():
@@ -112,17 +120,9 @@ func notify_parent_changed():
 	parent_changed.emit()
 
 
-## Called when a parent property value has changed.
-func _on_parent_property_value_changed(property_name: StringName, old_value: Variant):
-	if get(property_name) == old_value:
-		set(property_name, parent.get(property_name))
-
-
 ## Load modules from parent and self.
 ## The returned Dictionary contain module name and ThingModule
-func get_modules(force_refresh: bool = false) -> Dictionary[StringName, ThingModule]:
-	if force_refresh or not _is_loaded_modules_valid:
-		_update_modules_list()
+func get_modules() -> Dictionary[StringName, ThingModule]:
 	return _loaded_modules
 
 
@@ -143,13 +143,9 @@ func _update_modules_list() -> void:
 			# TODO display error in the inspector
 			continue
 		_loaded_modules.set(instance_name, module)
-	_is_loaded_modules_valid = true
 
 
 func has_module(instance_name: StringName) -> bool:
-	#TODO optimise by looking parent if modules are not loaded ?
-	if not _is_loaded_modules_valid:
-		_update_modules_list()
 	return _loaded_modules.has(instance_name)
 
 
@@ -205,24 +201,21 @@ func _property_get_revert(property: StringName) -> Variant:
 	if not property.contains(SEPERATOR):
 		return null
 	if is_instance_valid(parent):
-		if parent.has_property_self(property):
-			return parent.get_self(property)
-		return parent.property_get_revert(property)
+		#if parent.has_self(property):
+			#return parent.get_self(property)
+		#return parent.property_get_revert(property)
+		return parent.get(property)
 	return call_module_property_method(property, &"thing_property_get_revert")
 
 
-func _validate_property(property: Dictionary) -> void:
-	if not property.name.contains(SEPERATOR):
-		return
-	if get(property.name) == property_get_revert(property.name):
-		property.usage &= ~PROPERTY_USAGE_STORAGE
-
-
 func _set(property: StringName, value: Variant) -> bool:
-	if not property.contains(SEPERATOR):
+	if not property.contains(SEPERATOR) or !_is_deserialized:
 		return false
 	var old_value = properties.get(property)
-	properties.set(property, value)
+	if value != property_get_revert(property):
+		properties.set(property, value)
+	else:
+		properties.erase(property)
 	if old_value != value:
 		notify_childrens_property_value_changed(property, old_value)
 		emit_changed()
@@ -232,36 +225,25 @@ func _set(property: StringName, value: Variant) -> bool:
 func _get(property: StringName) -> Variant:
 	if not property.contains(SEPERATOR):
 		return null
-
-	if properties.has(property):
-		return properties.get(property)
-	return null
-
-
-func has_property_self(property: StringName) -> bool:
-	if not properties.has(property):
-		return false
-	return properties.get(property) != property_get_revert(property)
-
-
-## Get the property value without looking at parent, return default if not found or if the property is not directly set on this Thing.
-func get_self(property: StringName, default: Variant = null) -> Variant:
-	if not property.contains(SEPERATOR):
-		return default
-	if properties.has(property):
-		return properties.get(property)
-	return call_module_property_method(property, &"thing_property_get_revert", [], default)
-
-
-## Get the property value looking at parent, return default if not found.
-func get_inherited(property: StringName, default: Variant = null) -> Variant:
-	if not property.contains(SEPERATOR):
-		return default
 	if properties.has(property):
 		return properties.get(property)
 	if is_instance_valid(parent):
-		return parent.get_inherited(property)
-	return call_module_property_method(property, &"thing_property_get_revert", [], default)
+		return parent.get(property)
+	return call_module_property_method(property, &"thing_property_get_revert")
+
+
+func has_self(property: StringName) -> bool:
+	return properties.has(property)
+
+
+## Get the property value without looking at parent, return default if not found or if the property is not directly set on this Thing.
+func get_self(property: StringName) -> Variant:
+	if not property.contains(SEPERATOR):
+		return null
+	if properties.has(property):
+		return properties.get(property)
+	return call_module_property_method(property, &"thing_property_get_revert")
+
 
 
 func get_display_name() -> String:

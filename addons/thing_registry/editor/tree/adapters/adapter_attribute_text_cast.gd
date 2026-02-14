@@ -56,9 +56,9 @@ func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 	tree_item.set_selectable(column_index, true)
 	tree_item.set_text_alignment(column_index, HORIZONTAL_ALIGNMENT_LEFT)
 	tree_item.set_edit_multiline(column_index, _expected_type in MULTI_LINE_TYPES)
-	var value: Variant = thing.get_inherited(property)
+	var value: Variant = thing.get(property)
 
-	if not thing.has_property_self(property):
+	if not thing.has_self(property):
 		var tree: Tree = tree_item.get_tree()
 		var color: Color = tree.get_theme_color(&"font_color")
 		color.a *= 0.5

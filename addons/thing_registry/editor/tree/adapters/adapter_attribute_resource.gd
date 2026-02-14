@@ -17,7 +17,7 @@ func _init(header: ThingTreeColumnAttribute) -> void:
 func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 	var thing: Thing = tree_item.get_thing()
 	var property: StringName = get_property_path()
-	var resource: Resource = thing.get_inherited(property)
+	var resource: Resource = thing.get(property)
 
 	tree_item.set_cell_mode(column_index, TreeItem.CELL_MODE_CUSTOM)
 	tree_item.set_custom_draw_callback(column_index, _custom_draw.bind(column_index))
