@@ -187,7 +187,7 @@ func _on_file_dialog_file_selected(path: String) -> void:
 
 #region Opening
 func open_root_file_from_path(path: String) -> void:
-	open_root_file(Thing.load_thing_at(path))
+	open_root_file(Thing.load(path))
 
 
 func open_root_file(thing: Thing) -> void:
@@ -309,7 +309,7 @@ func rebuild_tree() -> void:
 	for file in root.get_files():
 		if not file.ends_with(".tres"):
 			continue
-		var loaded: Thing = Thing.load_thing_at(root.get_current_dir().path_join(file))
+		var loaded: Thing = Thing.load(root.get_current_dir().path_join(file))
 		if loaded != null:
 			open_root_file(loaded)
 
@@ -366,7 +366,9 @@ func _on_button_clicked(item: ThingTreeItem, column_index: int, id: int, mouse_b
 
 
 func _on_debug_button_pressed() -> void:
-	rebuild_tree()
+	#rebuild_tree()
+
+	Thing.create()
 
 
 func _on_item_mouse_selected(mouse_position: Vector2, _mouse_button_index: int) -> void:

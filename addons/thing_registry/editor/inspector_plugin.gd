@@ -126,7 +126,7 @@ class ThingBreadcrumb extends MarginContainer:
 				var things: Array[Thing] = []
 
 				for path: String in _thing.get_childs_paths():
-					var maybe: Thing = Thing.load_thing_at(path)
+					var maybe: Thing = Thing.load(path)
 					if is_instance_valid(maybe):
 						things.append(maybe)
 				visible = things.size() > 0

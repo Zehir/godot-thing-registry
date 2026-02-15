@@ -32,7 +32,7 @@ func populate(thing: Thing) -> void:
 		tree.open_module(module)
 
 	for child: String in _thing.get_childs_paths():
-		var loaded: Thing = Thing.load_thing_at(child)
+		var loaded: Thing = Thing.load(child)
 		if loaded != null:
 			create_thing_child().populate(loaded)
 

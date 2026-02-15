@@ -5,6 +5,7 @@ extends Resource
 
 signal thing_property_list_changed
 
+
 const INVALID_TYPES: Array[Variant.Type] = [
 	TYPE_NIL,
 	TYPE_NODE_PATH,

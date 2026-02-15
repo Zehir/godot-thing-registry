@@ -13,14 +13,17 @@ signal module_changed()
 const passthrough_signals = [&"module_changed", &"changed"]
 
 ## Parent thing
-#@export_custom(PROPERTY_HINT_RESOURCE_TYPE, "Thing", PROPERTY_USAGE_EDITOR)
+@export_custom(PROPERTY_HINT_RESOURCE_TYPE, "Thing", PROPERTY_USAGE_EDITOR | PROPERTY_USAGE_READ_ONLY)
 var _parent: Thing
 var parent: Thing:
 	get = get_parent
 
-#var _is_deserialized: bool = false
 
-static func load_thing_at(path: String) -> Thing:
+static func create() -> Thing:
+	return Thing.new(true)
+
+
+static func load(path: String) -> Thing:
 	if not ResourceLoader.exists(path, "Resource"):
 		return null
 	var resource: Resource = ResourceLoader.load(path)
@@ -41,7 +44,7 @@ func have_child_directory() -> bool:
 
 ## Return Thing resource path that is directly the child of this Thing.
 ## Return an empty array if no child if found. Does not return sub childs.
-## The returned path might not be a Thing, you should use [method load_thing_at] to validate it.
+## The returned path might not be a Thing, you should use [method load] to validate it.
 func get_childs_paths() -> Array[String]:
 	var list: Array[String] = []
 	if not have_child_directory():
@@ -54,15 +57,13 @@ func get_childs_paths() -> Array[String]:
 	return list
 
 
-
 func get_parent() -> Thing:
 	# Storing a reference to the parent to make sure it's keep in memory.
 	# TODO invalidate this if the parent moved
 	var expected_parent_path: String = resource_path.get_base_dir() + ".tres"
 	if not is_instance_valid(_parent) or _parent.resource_path != expected_parent_path:
-		_parent = load_thing_at(expected_parent_path)
+		_parent = Thing.load(expected_parent_path)
 	return _parent
-	#return load_thing_at(expected_parent_path)
 
 
 ## Reference to ThingModule scripts that could add properties
@@ -78,18 +79,30 @@ var properties: Dictionary[StringName, Variant] = {}
 var _loaded_modules: Dictionary[StringName, ThingModule] = {}
 
 
-## TODO check https://github.com/godotengine/godot/pull/109752#issuecomment-3901871520
-func _init() -> void:
-	_init_deferred.call_deferred()
+# TODO check https://github.com/godotengine/godot/pull/109752#issuecomment-3901871520
+func _init(setup_now: bool = false):
+	if setup_now:
+		setup()
+	else:
+		setup.call_deferred()
 
 
-func _init_deferred() -> void:
-	parent_changed.connect(_on_parent_changed)
-	parent_changed.emit(null)
+func _notification(what: int):
+	if what == NOTIFICATION_RESOURCE_DESERIALIZED:
+		setup()
+
+
+func setup() -> Thing:
+	if parent_changed.is_connected(_update_passthrough_connections):
+		return
+	_update_passthrough_connections(null)
 	_update_modules_list()
+	parent_changed.connect(_update_passthrough_connections)
+	module_changed.connect(_update_modules_list)
+	return self
 
 
-func _on_parent_changed(old_parent: Thing) -> void:
+func _update_passthrough_connections(old_parent: Thing) -> void:
 	for signal_name: StringName in passthrough_signals:
 		var target: Callable = Signal(self, signal_name).emit
 		if is_instance_valid(old_parent):
