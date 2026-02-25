@@ -46,7 +46,7 @@ func _can_drop_data(tree_item: ThingTreeItem, _column_index: int, data: Variant)
 func _on_drop_data(tree_item: ThingTreeItem, _column_index: int, _section: int, data: Variant) -> void:
 	var value: Variant = _get_dropped_value(data)
 	if is_valid_typed_value(_header.get_property(), value):
-		tree_item.get_thing().set(get_property_path(), value)
+		set_value(tree_item, value)
 
 
 func _get_drag_data(tree_item: ThingTreeItem, column_index: int) -> Variant:
