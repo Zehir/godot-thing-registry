@@ -8,4 +8,4 @@
 resource_name = "Items"
 script = ExtResource("3_tsm5d")
 modules = Array[ExtResource("1_hr87b")]([ExtResource("2_f5rwo")])
-item:bool = false
+item:name = "Items"

@@ -8,5 +8,6 @@
 resource_name = "Iron Bar"
 script = ExtResource("3_1oswm")
 item:name = "Iron Bar"
+item:bool = false
 item:icon = ExtResource("1_crj6d")
 price_dtdw88s5e4kfp:value = 10.0

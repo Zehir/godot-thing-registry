@@ -7,5 +7,5 @@
 [resource]
 resource_name = "Wool"
 script = ExtResource("3_wqcnr")
-item:bool = false
+item:name = "Wool"
 item:icon = ExtResource("1_x5vba")
