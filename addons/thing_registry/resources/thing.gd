@@ -161,8 +161,9 @@ func _get_property_list() -> Array[Dictionary]:
 			property.name = module.get_property_full_name(property.name)
 
 			# TODO check the next 2 lines if this is valid code, what is the side effects to set a value in that method ?
-			if not properties.has(property.name) and property_can_revert(property.name):
-				properties.set(property.name, property_get_revert(property.name))
+			# Why this was here ?
+			#if not properties.has(property.name) and property_can_revert(property.name):
+				#properties.set(property.name, property_get_revert(property.name))
 
 			# See https://github.com/godotengine/godot/pull/111826
 			#func _validate_property(property: Dictionary) -> void:
