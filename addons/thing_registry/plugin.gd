@@ -65,9 +65,12 @@ func _handles(object: Object) -> bool:
 
 
 func _on_files_moved(old_file: String, _new_file: String):
+	pass
 	# TODO what about not edited Things ?
 	# TODO notify MainTree ?
+	# TODO remove ?
 	var edited_object = EditorInterface.get_inspector().get_edited_object()
 	if edited_object is Thing:
 		if edited_object.resource_path == old_file:
-			edited_object.notify_parent_changed.call_deferred()
+			#TODO send real old parent
+			edited_object.parent_changed.emit(null)

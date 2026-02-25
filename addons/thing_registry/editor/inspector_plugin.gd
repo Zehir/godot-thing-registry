@@ -98,7 +98,11 @@ class ThingBreadcrumb extends MarginContainer:
 		add_child(label)
 		update_breadcrumb()
 
-		_thing.parent_changed.connect(update_breadcrumb)
+		_thing.parent_changed.connect(_on_parent_changed)
+
+
+	func _on_parent_changed(_old_parent: Thing):
+		update_breadcrumb()
 
 
 	func update_breadcrumb() -> void:
