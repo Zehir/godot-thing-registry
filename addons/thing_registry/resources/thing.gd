@@ -140,7 +140,12 @@ func _update_modules_list() -> void:
 	notify_property_list_changed()
 
 
-func has_module(instance_name: StringName) -> bool:
+
+func has_module(module: ThingModule) -> bool:
+	return _loaded_modules.get(module.get_instance_name()) == module
+
+
+func has_module_instance(instance_name: StringName) -> bool:
 	return _loaded_modules.has(instance_name)
 
 

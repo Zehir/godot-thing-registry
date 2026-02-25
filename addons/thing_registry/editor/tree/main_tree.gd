@@ -51,7 +51,6 @@ func open_module(module: ThingModule) -> void:
 	if tree_columns.has(module_path):
 		#push_error("Was trying to open an already opened module.")
 		return
-
 	_add_header(module_path, ThingTreeColumnModule.new(module))
 
 	for property in module.get_thing_property_list():
@@ -59,10 +58,13 @@ func open_module(module: ThingModule) -> void:
 
 
 func open_property(module: ThingModule, property: Dictionary, after: StringName = &"") -> void:
-	var fullname: StringName = module.get_property_full_name(property.name)
-	if tree_columns.has(fullname):
+	var property_path: StringName = StringName("module::%s::%s" % [
+		module.resource_path,
+		module.get_property_full_name(property.name)
+	])
+	if tree_columns.has(property_path):
 		return
-	_add_header(fullname, ThingTreeColumnAttribute.new(module, property), after)
+	_add_header(property_path, ThingTreeColumnAttribute.new(module, property), after)
 
 
 func _add_header(key: StringName, control: Control, after: StringName = &"") -> void:
@@ -366,9 +368,7 @@ func _on_button_clicked(item: ThingTreeItem, column_index: int, id: int, mouse_b
 
 
 func _on_debug_button_pressed() -> void:
-	#rebuild_tree()
-
-	Thing.create()
+	rebuild_tree()
 
 
 func _on_item_mouse_selected(mouse_position: Vector2, _mouse_button_index: int) -> void:

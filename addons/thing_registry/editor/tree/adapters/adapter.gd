@@ -17,6 +17,10 @@ func tree_item_callv(method: StringName, tree_item: ThingTreeItem, args: Array =
 	return null
 
 
+func has_module(tree_item: ThingTreeItem) -> bool:
+	return tree_item.get_thing().has_module(_header.get_module())
+
+
 func set_disabled(tree_item: ThingTreeItem, column_index: int) -> void:
 	tree_item.set_custom_bg_color(column_index, Color.DIM_GRAY)
 	tree_item.set_editable(column_index, false)

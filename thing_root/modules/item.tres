@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ThingModuleItem" format=3 uid="uid://dfukb5t6vj4a0"]
+
+[ext_resource type="Script" uid="uid://dt6m4ybqdtu6r" path="res://addons/thing_registry/modules/module_items.gd" id="1_howwi"]
+
+[resource]
+script = ExtResource("1_howwi")
+test_property = "Fooooo"
+metadata/_custom_type_script = "uid://dt6m4ybqdtu6r"

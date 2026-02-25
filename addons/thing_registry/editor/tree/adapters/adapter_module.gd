@@ -19,7 +19,7 @@ func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 		tree_item.set_icon(column_index, module.get_icon())
 		tree_item.set_text(column_index, "D")
 		tree_item.set_tooltip_text(column_index, "This module is Defined on this Thing.")
-	elif thing.has_module(module.get_instance_name()):
+	elif thing.has_module(module):
 		tree_item.set_icon(column_index, module.get_icon())
 		tree_item.set_text(column_index, "H")
 		tree_item.set_tooltip_text(column_index, "This module is Herited from a parent Thing.")
