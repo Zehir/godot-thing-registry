@@ -102,6 +102,11 @@ func setup() -> Thing:
 	return self
 
 
+func notify_parent_changed(old_parent: Thing = null):
+	parent_changed.emit(old_parent)
+	module_changed.emit()
+
+
 func _update_passthrough_connections(old_parent: Thing) -> void:
 	for signal_name: StringName in passthrough_signals:
 		var target: Callable = Signal(self, signal_name).emit

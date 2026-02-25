@@ -64,13 +64,16 @@ func _handles(object: Object) -> bool:
 		#things_editor.filesystem_panel.open_file(object)
 
 
-func _on_files_moved(old_file: String, _new_file: String):
+func _on_files_moved(old_file: String, new_file: String):
 	pass
 	# TODO what about not edited Things ?
 	# TODO notify MainTree ?
-	# TODO remove ?
+	# TODO fix moving thing not updating correctly modules
 	var edited_object = EditorInterface.get_inspector().get_edited_object()
 	if edited_object is Thing:
 		if edited_object.resource_path == old_file:
 			#TODO send real old parent
-			edited_object.parent_changed.emit(null)
+			edited_object.notify_parent_changed(null)
+
+		#edited_object = load(new_file)
+		#edited_object.notify_parent_changed(null)

@@ -35,7 +35,7 @@ static func set_parent(thing: Thing, new_parent: Thing) -> void:
 
 	## Maybe we can do a less brute force than a full scan but it's fast for now.
 	EditorInterface.get_resource_filesystem().scan()
-	thing.parent_changed.emit(current_parent)
+	thing.notify_parent_changed(current_parent)
 
 
 static func rename(thing: Thing, new_name: String) -> bool:
