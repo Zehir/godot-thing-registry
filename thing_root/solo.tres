@@ -1,10 +1,8 @@
 [gd_resource type="Resource" script_class="Thing" format=3 uid="uid://bjbmo5ihc3ooj"]
 
-[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/module.gd" id="1_x4c02"]
-[ext_resource type="Resource" uid="uid://dfukb5t6vj4a0" path="res://thing_root/modules/item.tres" id="2_hiifm"]
-[ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="2_wvfyd"]
+[ext_resource type="Script" uid="uid://pecp7gcgu5mr" path="res://addons/thing_registry/modules/module.gd" id="1_an0m2"]
+[ext_resource type="Script" uid="uid://dirfs1dh5k0r" path="res://addons/thing_registry/resources/thing.gd" id="3_ws5r1"]
 
 [resource]
-script = ExtResource("2_wvfyd")
-modules = Array[ExtResource("1_x4c02")]([ExtResource("2_hiifm")])
+script = ExtResource("3_ws5r1")
 metadata/_custom_type_script = "uid://dirfs1dh5k0r"

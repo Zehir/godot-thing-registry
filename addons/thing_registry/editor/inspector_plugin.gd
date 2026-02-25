@@ -141,8 +141,7 @@ class ThingBreadcrumb extends MarginContainer:
 			Mode.MODULE:
 				_module = _thing.get_modules().get(_module_instance_name)
 				if not is_instance_valid(_module):
-					push_error("Could not find module that have the instance '%s'" % _module_instance_name)
-					queue_free.call_deferred()
+					# This can happen when the module is removed but the breadcrumb was not yet removed.
 					return
 
 				label.tooltip_text = _module.get_description()
