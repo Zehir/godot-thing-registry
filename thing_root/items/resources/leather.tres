@@ -8,6 +8,7 @@
 resource_name = "Leather"
 script = ExtResource("3_kny3g")
 item:name = "Leather"
+item:bool = false
 item:color = Color(0.6875, 0.5721054, 0.35180664, 1)
 item:icon = ExtResource("1_hg2t6")
 price_dtdw88s5e4kfp:value = 50.0

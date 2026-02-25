@@ -8,6 +8,7 @@
 resource_name = "Wood Plank"
 script = ExtResource("2_uk0hf")
 item:name = "Wood Plank"
+item:bool = false
 item:color = Color(0.6346607, 0.65625, 0.2614746, 1)
 item:icon = ExtResource("1_uk0hf")
 price_dtdw88s5e4kfp:value = 0.6

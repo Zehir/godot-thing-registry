@@ -1,7 +1,14 @@
 @tool
+class_name ThingRegistryPlugin
 extends EditorPlugin
 
 var things_editor: CanvasItem
+
+const SINGLETON_ID: StringName = &"ThingRegistryPlugin"
+
+static func get_singleton() -> ThingRegistryPlugin:
+	return Engine.get_singleton(SINGLETON_ID)
+
 
 func _enter_tree() -> void:
 	if not Engine.is_editor_hint():
@@ -20,6 +27,13 @@ func _enter_tree() -> void:
 
 	var filesystem: FileSystemDock = EditorInterface.get_file_system_dock()
 	filesystem.files_moved.connect(_on_files_moved)
+
+	Engine.register_singleton(SINGLETON_ID, self)
+
+
+func _exit_tree() -> void:
+	if Engine.has_singleton(SINGLETON_ID):
+		Engine.unregister_singleton(SINGLETON_ID)
 
 
 func _has_main_screen():

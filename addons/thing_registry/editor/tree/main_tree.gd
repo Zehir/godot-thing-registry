@@ -27,10 +27,6 @@ func _enter_tree() -> void:
 	if is_part_of_edited_scene():
 		return
 
-#
-#
-	#RenderingServer.canvas_item_set_default_texture_filter(get_custom_canvas_item(), RenderingServer.CANVAS_ITEM_TEXTURE_FILTER_NEAREST_WITH_MIPMAPS)
-
 	search.right_icon = EditorInterface.get_editor_theme().get_icon("Search", "EditorIcons")
 
 	var root_item: TreeItem = create_item()

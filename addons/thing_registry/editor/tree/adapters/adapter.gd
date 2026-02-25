@@ -10,7 +10,6 @@ func _init(header: ThingTreeColumn) -> void:
 	_header = header
 
 
-
 func tree_item_callv(method: StringName, tree_item: ThingTreeItem, args: Array = []) -> Variant:
 	if has_method(method):
 		return (get(method) as Callable).bindv(args).call(tree_item)

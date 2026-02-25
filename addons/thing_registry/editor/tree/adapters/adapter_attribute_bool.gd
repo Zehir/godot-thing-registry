@@ -14,4 +14,4 @@ func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 
 
 func _on_edited(tree_item: ThingTreeItem, column_index: int) -> void:
-	tree_item.get_thing().set(get_property_path(), tree_item.is_checked(column_index))
+	set_value(tree_item, tree_item.is_checked(column_index))

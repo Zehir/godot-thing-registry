@@ -20,6 +20,19 @@ func update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 	super(tree_item, column_index)
 
 
+func set_value(tree_item: ThingTreeItem, value: Variant) -> void:
+	var thing: Thing = tree_item.get_thing()
+	var property: StringName = get_property_path()
+	var old_value = thing.get(property)
+	if value == old_value:
+		return
+	var undo_redo: EditorUndoRedoManager = ThingRegistryPlugin.get_singleton().get_undo_redo()
+	undo_redo.create_action("Set %s" % property)
+	undo_redo.add_do_property(thing, property, value)
+	undo_redo.add_undo_property(thing, property, thing.get(property))
+	undo_redo.commit_action()
+
+
 func get_property_path() -> StringName:
 	return _header.get_module().get_property_full_name(_header.get_property().name)
 

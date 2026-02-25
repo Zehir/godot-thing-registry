@@ -53,7 +53,5 @@ func _on_button_clicked(tree_item: ThingTreeItem, column_index: int, _id: int, m
 
 
 func _on_popup_closed(tree_item: ThingTreeItem, column_index: int) -> void:
-	var thing: Thing = tree_item.get_thing()
-	var property: StringName = get_property_path()
-	thing.set(property, color_picker.color)
+	set_value(tree_item, color_picker.color)
 	update_column(tree_item, column_index)

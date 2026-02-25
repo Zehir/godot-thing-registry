@@ -75,12 +75,10 @@ func _update_column(tree_item: ThingTreeItem, column_index: int) -> void:
 
 
 func _on_edited(tree_item: ThingTreeItem, column_index: int) -> void:
-	var thing: Thing = tree_item.get_thing()
-	var property: StringName = get_property_path()
 	var value: Variant = tree_item.get_text(column_index)
 	if _expected_type in [TYPE_FLOAT, TYPE_INT]:
 		value = "0%s" % value
 	elif not _expected_type in [TYPE_STRING, TYPE_STRING_NAME]:
 		value = str_to_var(value)
 	value = type_convert(value, _expected_type)
-	thing.set(property, value)
+	set_value(tree_item, value)
