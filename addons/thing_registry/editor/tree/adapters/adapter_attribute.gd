@@ -29,7 +29,9 @@ func set_value(tree_item: ThingTreeItem, value: Variant) -> void:
 	var undo_redo: EditorUndoRedoManager = ThingRegistryPlugin.get_singleton().get_undo_redo()
 	undo_redo.create_action("Set %s" % property)
 	undo_redo.add_do_property(thing, property, value)
+	undo_redo.add_do_method(thing, &"emit_changed")
 	undo_redo.add_undo_property(thing, property, thing.get(property))
+	undo_redo.add_undo_method(thing, &"emit_changed")
 	undo_redo.commit_action()
 
 

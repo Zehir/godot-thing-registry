@@ -7,7 +7,5 @@
 [resource]
 script = ExtResource("2_wvfyd")
 modules = Array[ExtResource("1_x4c02")]([ExtResource("2_hiifm")])
-item:name = ""
-item:bool = null
-item:color = null
+item:bool = false
 metadata/_custom_type_script = "uid://dirfs1dh5k0r"
